@@ -1,0 +1,18 @@
+[
+null,
+{"id":1,"atypeId":5,"description":"相手の攻撃を受け流す小型の盾。回避率が上昇する。\n【回避 +5%】","etypeId":2,"traits":[{"code":22,"dataId":1,"value":0.05}],"iconIndex":128,"name":"Buckler","note":"","params":[0,0,0,5,0,0,0,0],"price":200},
+{"id":2,"atypeId":5,"description":"魔法に対する抵抗力を付与した盾。\n【回避 +5%】","etypeId":2,"traits":[{"code":22,"dataId":1,"value":0.05}],"iconIndex":128,"name":"Magic Shield","note":"","params":[0,0,0,10,0,10,0,0],"price":500},
+{"id":3,"atypeId":1,"description":"革製のおしゃれな帽子。敏捷性が上昇する。","etypeId":3,"traits":[],"iconIndex":130,"name":"Leather Cap","note":"","params":[0,0,0,5,0,0,5,0],"price":200},
+{"id":4,"atypeId":4,"description":"攻撃力を高める魔法がかかった騎士のための頭飾り。","etypeId":3,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":132,"name":"Knight Cress","note":"","params":[0,0,10,15,0,0,0,0],"price":500},
+{"id":5,"atypeId":2,"description":"魔法力を高める加護がかかった頭飾り。魔法使いに人気。","etypeId":3,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":134,"name":"Circlet","note":"","params":[0,0,0,0,10,15,0,0],"price":500},
+{"id":6,"atypeId":1,"description":"動きやすさを重視した旅人御用達の衣服。","etypeId":4,"traits":[],"iconIndex":135,"name":"Traveler Clothes","note":"","params":[0,0,0,10,0,0,0,0],"price":200},
+{"id":7,"atypeId":4,"description":"壮麗な装飾の施された騎士のための鎧。\n【狙われ率150%】","etypeId":4,"traits":[{"code":22,"dataId":1,"value":0},{"code":23,"dataId":0,"value":1.5}],"iconIndex":137,"name":"Caliber Mail","note":"","params":[0,0,0,25,0,0,0,0],"price":500},
+{"id":8,"atypeId":2,"description":"真紅に彩られた宮廷魔導士のための魔法衣。","etypeId":4,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":139,"name":"Crimson Mantle","note":"","params":[0,0,0,10,0,15,0,0],"price":500},
+{"id":9,"atypeId":1,"description":"攻撃力を上昇する魔法の腕輪。戦士たちが愛用する。","etypeId":5,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":144,"name":"Warrior Armlet","note":"","params":[0,0,10,0,0,0,0,0],"price":500},
+{"id":10,"atypeId":1,"description":"防御力を高める首飾り。後衛職が好んで身に着ける。","etypeId":5,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":146,"name":"Protective Necklace","note":"","params":[0,0,0,10,0,0,0,0],"price":500},
+{"id":11,"atypeId":1,"description":"魔法力を高める指輪。魔法使いが好んで身に着ける。","etypeId":5,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":145,"name":"Magic Ring","note":"","params":[0,0,0,0,10,0,0,0],"price":500},
+{"id":12,"atypeId":1,"description":"魔法防御を高める装飾。聖教会の印が刻まれる。","etypeId":5,"traits":[{"code":22,"dataId":1,"value":0}],"iconIndex":147,"name":"Holy Brooch","note":"","params":[0,0,0,0,0,10,0,0],"price":500},
+{"id":13,"atypeId":1,"description":"癒しの祝福を宿したリボン。ＨＰが徐々に回復する。","etypeId":5,"traits":[{"code":22,"dataId":7,"value":0.04}],"iconIndex":149,"name":"Healing Ribbon","note":"","params":[0,0,0,0,0,0,0,0],"price":1000},
+{"id":14,"atypeId":1,"description":"移動力を高める魔法の布。戦場を駆けまわれる。\n【移動力 +1】","etypeId":5,"traits":[],"iconIndex":150,"name":"Gale Bandana","note":"<srpgMovePlus:1>","params":[0,0,0,0,0,0,10,0],"price":1000},
+{"id":15,"atypeId":1,"description":"普通なら通れない場所が通れるようになる魔法の靴。\n【水上・穴　通行可能】【ダメージ床無効】","etypeId":5,"traits":[{"code":23,"dataId":8,"value":0}],"iconIndex":140,"name":"Wing Boots","note":"<srpgThroughTag:1>","params":[0,0,0,0,0,0,0,0],"price":1000}
+]
