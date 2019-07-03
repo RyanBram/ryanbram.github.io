@@ -19,5 +19,6 @@ var $plugins =
 {"name":"AudioStreaming","status":true,"description":"Load audio faster and use only ogg files.","parameters":{"mode":"10","deleteM4a":"false"}},
 {"name":"YEP_X_BattleObject","status":true,"description":"Adding \"Battle Object\" to Yanfly Action Sequence","parameters":{}},
 {"name":"CXJ_Exit","status":true,"description":"Adds an exit option to desktop versions of the game","parameters":{"Text - Exit":"Exit","Text - To Desktop":"Exit","Add to title":"true","Add to Game End":"true"}},
-{"name":"RS_MessageAlign","status":true,"description":"(v1.0.12) This plugin allows you to align the text in the message system.","parameters":{}}
+{"name":"RS_MessageAlign","status":true,"description":"(v1.0.12) This plugin allows you to align the text in the message system.","parameters":{}},
+{"name":"DRGV","status":true,"description":"Dynamic Resize the Game Window","parameters":{}}
 ];
