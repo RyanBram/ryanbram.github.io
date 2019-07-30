@@ -22,5 +22,6 @@ var $plugins =
 {"name":"CXJ_Exit","status":true,"description":"Adds an exit option to desktop versions of the game","parameters":{"Text - Exit":"Exit","Text - To Desktop":"Exit","Add to title":"true","Add to Game End":"true"}},
 {"name":"RS_MessageAlign","status":true,"description":"(v1.0.12) This plugin allows you to align the text in the message system.","parameters":{}},
 {"name":"Fullscreen_Options","status":true,"description":"v1.1 Add fullscreen option, force fullscreen in Stretch Mode and disable F3.","parameters":{"fullscreenOptionName":"Fullscreen","forceFullscreen":"false","Add command to option?":"false","Disable F3?":"true","Disable F4?":"false"}},
-{"name":"ChangeWindowTouchPolicy","status":true,"description":"Change Window Touch Policy","parameters":{"ActionOutsideFrame":"cancel"}}
+{"name":"ChangeWindowTouchPolicy","status":true,"description":"Change Window Touch Policy","parameters":{"ActionOutsideFrame":"cancel"}},
+{"name":"Irina_PerformanceUpgrade","status":true,"description":"<PerformanceUpgrade> for RPG Maker MV version 1.6.2.","parameters":{"":"","AnimationHue":"true","BlurMenuBackground":"true","BlurIntensity":"0.5","CacheTextColors":"true","EnemyHue":"true","PixiContainerFlush":"true","SkipUnnecessarySnapshots":"true"}}
 ];
