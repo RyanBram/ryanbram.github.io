@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_sprites.js v1.5.2
+// rpg_sprites.js v1.6.0
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -657,7 +657,7 @@ Sprite_Actor.MOTIONS = {
     swing:    { index: 7,  loop: false },
     missile:  { index: 8,  loop: false },
     skill:    { index: 9,  loop: false },
-    spell:    { index: 10, loop: false },
+    spell:    { index: 10, loop: true  },
     item:     { index: 11, loop: false },
     escape:   { index: 12, loop: true  },
     victory:  { index: 13, loop: true  },
@@ -1810,8 +1810,8 @@ Sprite_Weapon.prototype.loadBitmap = function() {
 Sprite_Weapon.prototype.updateFrame = function() {
     if (this._weaponImageId > 0) {
         var index = (this._weaponImageId - 1) % 12;
-        var w = 96;
-        var h = 64;
+        var w = 144;//l96
+        var h = 96;//l64
         var sx = (Math.floor(index / 6) * 3 + this._pattern) * w;
         var sy = Math.floor(index % 6) * h;
         this.setFrame(sx, sy, w, h);
@@ -2535,7 +2535,6 @@ Spriteset_Battle.prototype.battleback2Name = function() {
 };
 
 Spriteset_Battle.prototype.overworldBattleback1Name = function() {
-    if ($gameMap.battleback1Name() === '') return '';
     if ($gamePlayer.isInVehicle()) {
         return this.shipBattleback1Name();
     } else {
@@ -2544,7 +2543,6 @@ Spriteset_Battle.prototype.overworldBattleback1Name = function() {
 };
 
 Spriteset_Battle.prototype.overworldBattleback2Name = function() {
-    if ($gameMap.battleback2Name() === '') return '';
     if ($gamePlayer.isInVehicle()) {
         return this.shipBattleback2Name();
     } else {

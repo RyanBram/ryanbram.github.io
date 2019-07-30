@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_windows.js v1.5.2
+// rpg_windows.js v1.6.1
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -1894,7 +1894,6 @@ Window_ItemCategory.prototype.makeCommandList = function() {
 
 Window_ItemCategory.prototype.setItemWindow = function(itemWindow) {
     this._itemWindow = itemWindow;
-    this.update();
 };
 
 //-----------------------------------------------------------------------------
@@ -2070,7 +2069,6 @@ Window_SkillType.prototype.update = function() {
 
 Window_SkillType.prototype.setSkillWindow = function(skillWindow) {
     this._skillWindow = skillWindow;
-    this.update();
 };
 
 Window_SkillType.prototype.selectLast = function() {
@@ -2431,7 +2429,6 @@ Window_EquipSlot.prototype.setStatusWindow = function(statusWindow) {
 
 Window_EquipSlot.prototype.setItemWindow = function(itemWindow) {
     this._itemWindow = itemWindow;
-    this.update();
 };
 
 Window_EquipSlot.prototype.updateHelp = function() {
@@ -3568,15 +3565,15 @@ Window_NameInput.LATIN1 =
           '5','6','7','8','9',  '(',')','*','+','-',
           '/','=','@','<','>',  ':',';',' ','Page','OK' ];
 Window_NameInput.LATIN2 =
-        [ 'A','E','I','O','U',  'a','e','i','o','u',
-          'A','E','I','O','U',  'a','e','i','o','u',
-          'A','E','I','O','U',  'a','e','i','o','u',
-          'A','E','I','O','U',  'a','e','i','o','u',
-          '?','?','?','?','?',  '?','?','?','?','?',
-          'A','A','A','C','D',  'a','a','a','c','d',
-          'N','O','O','?','?',  'n','o','o','?','?',
-          'Y','?','?','?','T',  'y','y','?','?','t',
-          '?','?','?','?','s',  '≪','≫',' ','Page','OK' ];
+        [ 'Á','É','Í','Ó','Ú',  'á','é','í','ó','ú',
+          'À','È','Ì','Ò','Ù',  'à','è','ì','ò','ù',
+          'Â','Ê','Î','Ô','Û',  'â','ê','î','ô','û',
+          'Ä','Ë','Ï','Ö','Ü',  'ä','ë','ï','ö','ü',
+          'Ā','Ē','Ī','Ō','Ū',  'ā','ē','ī','ō','ū',
+          'Ã','Å','Æ','Ç','Ð',  'ã','å','æ','ç','ð',
+          'Ñ','Õ','Ø','Š','Ŵ',  'ñ','õ','ø','š','ŵ',
+          'Ý','Ŷ','Ÿ','Ž','Þ',  'ý','ÿ','ŷ','ž','þ',
+          'Ĳ','Œ','ĳ','œ','ß',  '«','»',' ','Page','OK' ];
 Window_NameInput.RUSSIA =
         [ 'А','Б','В','Г','Д',  'а','б','в','г','д',
           'Е','Ё','Ж','З','И',  'е','ё','ж','з','и',
@@ -3596,7 +3593,7 @@ Window_NameInput.JAPAN1 =
           'は','ひ','ふ','へ','ほ',  'ぁ','ぃ','ぅ','ぇ','ぉ',
           'ま','み','む','め','も',  'っ','ゃ','ゅ','ょ','ゎ',
           'や','ゆ','よ','わ','ん',  'ー','～','・','＝','☆',
-          'ら','り','る','れ','ろ',  'ヴ','を','　','カナ','決定' ];
+          'ら','り','る','れ','ろ',  'ゔ','を','　','カナ','決定' ];
 Window_NameInput.JAPAN2 =
         [ 'ア','イ','ウ','エ','オ',  'ガ','ギ','グ','ゲ','ゴ',
           'カ','キ','ク','ケ','コ',  'ザ','ジ','ズ','ゼ','ゾ',
@@ -5901,7 +5898,6 @@ Window_DebugRange.prototype.processCancel = function() {
 
 Window_DebugRange.prototype.setEditWindow = function(editWindow) {
     this._editWindow = editWindow;
-    this.update();
 };
 
 //-----------------------------------------------------------------------------
