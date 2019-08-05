@@ -200,8 +200,8 @@ Default:true
 @default
 
 @param Button Opacity
-@desc Button opacity (0 to 1) Default: 0.7
-@default 0.700
+@desc Button opacity (0 to 1) Default: 0.9
+@default 0.900
 @type number
 @max 1.000
 @min 0.000
@@ -210,7 +210,7 @@ Default:true
 @param Vertical BtnZoom
 @desc Magnification of all buttons when displayed in portrait
 初期値:1.700
-@default 1.700
+@default 0.900
 @type number
 @decimals 3
 
@@ -230,8 +230,8 @@ Default:true
 
 @param HideButton OnMessage
 @desc When the message is displayed at the bottom of the screen, lower the display order of the virtual button to the bottom of the game screen.
-初期値:true
-@default true
+初期値:false
+@default false
 @type boolean
 
 @param HideButton Switch
@@ -251,7 +251,7 @@ Default:true
 
 @param DPad Size
 @desc Direction pad size (px). Initial value: 200
-@default 200
+@default 120
 @type number
 
 @param DPad Margin
@@ -272,7 +272,7 @@ left か right; top か bottom で指定。 初期値:left; bottom
 @param DPad OpelationRange
 @desc For the direction pad image, the operating range of the touch (magnification, 1~ )
 to widen the touch determination to the outside of the image, to prevent operation error. Initial value: 1.3
-@default 1.300
+@default 1.000
 @type number
 @decimals 3
 
@@ -291,13 +291,13 @@ to widen the touch determination to the outside of the image, to prevent operati
 
 @param ActionBtn Size
 @desc The size of the decision button (px). Initial value: 100
-@default 100
+@default 60
 @type number
 
 @param ActionBtn Margin
 @desc The position of the decision button. The size of the gap from the edge of the screen.
  (width from right; width from bottom) Initial value: 10; 90
-@default 10; 90
+@default 10; 60
 
 @param ActionBtn Orientation
 @desc You want to change the reference position of the decision button to something other than the lower right.
@@ -317,13 +317,13 @@ left か right; top か bottom で指定。 初期値:right; bottom
 
 @param CancelBtn Size
 @desc キャンセルボタンの大きさ(px）。 初期値:100
-@default 100
+@default 600
 @type number
 
 @param CancelBtn Margin
 @desc キャンセルボタンの位置。画面端からの隙間の大きさで指定。
  (右からの幅; 下からの幅) 初期値:110; 10
-@default 110; 10
+@default 60; 10
 
 @param CancelBtn Orientation
 @desc キャンセルボタンの基準位置を、右下以外に変えたい場合。
