@@ -24,5 +24,6 @@ var $plugins =
 {"name":"RS_MessageAlign","status":true,"description":"(v1.0.12) This plugin allows you to align the text in the message system.","parameters":{}},
 {"name":"Fullscreen_Options","status":true,"description":"v1.1 Add fullscreen option, force fullscreen in Stretch Mode and disable F3.","parameters":{"fullscreenOptionName":"Fullscreen","forceFullscreen":"false","Add command to option?":"true","Disable F3?":"true","Disable F4?":"true"}},
 {"name":"ChangeWindowTouchPolicy","status":true,"description":"Change Window Touch Policy","parameters":{"ActionOutsideFrame":"cancel"}},
-{"name":"Irina_PerformanceUpgrade","status":true,"description":"<PerformanceUpgrade> for RPG Maker MV version 1.6.2.","parameters":{"":"","AnimationHue":"true","BlurMenuBackground":"true","BlurIntensity":"0.5","CacheTextColors":"true","EnemyHue":"true","PixiContainerFlush":"true","SkipUnnecessarySnapshots":"true"}}
+{"name":"Irina_PerformanceUpgrade","status":true,"description":"<PerformanceUpgrade> for RPG Maker MV version 1.6.2.","parameters":{"":"","AnimationHue":"true","BlurMenuBackground":"true","BlurIntensity":"0.5","CacheTextColors":"true","EnemyHue":"true","PixiContainerFlush":"true","SkipUnnecessarySnapshots":"true"}},
+{"name":"TTKC_IgnoreMouseTouch","status":true,"description":"Remove the mouse and touch functionality in the game, this\nfeature can be turned on / off\n<TTKC IgnoreMouseTouch>","parameters":{"Starts on":"true"}}
 ];
