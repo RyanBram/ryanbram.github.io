@@ -1361,28 +1361,28 @@ SceneManager.updateInputData = function() {
 // SceneManager
 //=============================================================================
 
-SceneManager._screenWidth  = Yanfly.Param.ScreenWidth;
-SceneManager._screenHeight = Yanfly.Param.ScreenHeight;
-SceneManager._boxWidth     = Yanfly.Param.ScreenWidth;
-SceneManager._boxHeight    = Yanfly.Param.ScreenHeight
+// SceneManager._screenWidth  = Yanfly.Param.ScreenWidth;
+// SceneManager._screenHeight = Yanfly.Param.ScreenHeight;
+// SceneManager._boxWidth     = Yanfly.Param.ScreenWidth;
+// SceneManager._boxHeight    = Yanfly.Param.ScreenHeight
 
 Yanfly.Core.SceneManager_run = SceneManager.run;
 SceneManager.run = function(sceneClass) {
   Yanfly.Core.SceneManager_run.call(this, sceneClass);
-  Yanfly.updateResolution();
+//  Yanfly.updateResolution();
   if (!Utils.isNwjs()) return;
   if (Utils.RPGMAKER_VERSION && Utils.RPGMAKER_VERSION >= "1.6.0") return;
   if (Yanfly.Param.OpenConsole) Yanfly.openConsole();
 };
 
-Yanfly.updateResolution = function() {
-  var resizeWidth = Yanfly.Param.ScreenWidth - window.innerWidth;
-  var resizeHeight = Yanfly.Param.ScreenHeight - window.innerHeight;
-  if (!Imported.ScreenResolution) {
-    window.moveBy(-1 * resizeWidth / 2, -1 * resizeHeight / 2);
-    window.resizeBy(resizeWidth, resizeHeight);
-  }
-};
+//Yanfly.updateResolution = function() {
+//  var resizeWidth = Yanfly.Param.ScreenWidth - window.innerWidth;
+//  var resizeHeight = Yanfly.Param.ScreenHeight - window.innerHeight;
+//  if (!Imported.ScreenResolution) {
+//    window.moveBy(-1 * resizeWidth / 2, -1 * resizeHeight / 2);
+//    window.resizeBy(resizeWidth, resizeHeight);
+//  }
+//};
 
 Yanfly.openConsole = function() {
   Yanfly._openedConsole = true;
