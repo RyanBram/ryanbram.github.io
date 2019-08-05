@@ -317,7 +317,7 @@ left か right; top か bottom で指定。 初期値:right; bottom
 
 @param CancelBtn Size
 @desc キャンセルボタンの大きさ(px）。 初期値:100
-@default 600
+@default 60
 @type number
 
 @param CancelBtn Margin
