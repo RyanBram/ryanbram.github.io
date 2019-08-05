@@ -123,7 +123,9 @@
 		var index = this.index();
 		var symbol = this.commandSymbol(index);
 		if (ConfigManager.callFullscreen && symbol == "callFullscreen") {
-			Graphics._requestFullScreen();
+                        event.preventDefault();
+                        this._switchFullScreen();
+			//Graphics._requestFullScreen();
 		} else if (!ConfigManager.callFullscreen && symbol == "callFullscreen") {
 			Graphics._cancelFullScreen();
 		}
