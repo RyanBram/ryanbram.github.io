@@ -183,4 +183,4 @@ TTK.IgnoreMouseTouch = {};
   	};
 })(TTK.IgnoreMouseTouch);
 // Hide Cursor
-document.body.style.cursor = 'none';
+// document.body.style.cursor = 'none';
