@@ -200,8 +200,8 @@ Default:true
 @default
 
 @param Button Opacity
-@desc Button opacity (0 to 1) Default: 0.9
-@default 0.900
+@desc Button opacity (0 to 1) Default: 0.7
+@default 0.700
 @type number
 @max 1.000
 @min 0.000
@@ -224,7 +224,7 @@ Default:true
 @param TabVertical BtnZoom
 @desc Magnification of all buttons when displayed in portrait in Tablet
 初期値:1.100
-@default 1.100
+@default 0.900
 @type number
 @decimals 3
 
@@ -251,13 +251,13 @@ Default:true
 
 @param DPad Size
 @desc Direction pad size (px). Initial value: 200
-@default 120
+@default 128
 @type number
 
 @param DPad Margin
 @desc The position of the direction pad image. The size of the gap from the edge of the screen.
 (width from left; width from bottom) Initial value: 10; 10
-@default 10; 10
+@default 20; 20
 
 @param DPad Orientation
 @desc You want to change the reference position of the direction pad to something other than the lower left.
@@ -297,7 +297,7 @@ to widen the touch determination to the outside of the image, to prevent operati
 @param ActionBtn Margin
 @desc The position of the decision button. The size of the gap from the edge of the screen.
  (width from right; width from bottom) Initial value: 10; 90
-@default 10; 60
+@default 20; 70
 
 @param ActionBtn Orientation
 @desc You want to change the reference position of the decision button to something other than the lower right.
@@ -323,7 +323,7 @@ left か right; top か bottom で指定。 初期値:right; bottom
 @param CancelBtn Margin
 @desc キャンセルボタンの位置。画面端からの隙間の大きさで指定。
  (右からの幅; 下からの幅) 初期値:110; 10
-@default 60; 10
+@default 70; 20
 
 @param CancelBtn Orientation
 @desc キャンセルボタンの基準位置を、右下以外に変えたい場合。
