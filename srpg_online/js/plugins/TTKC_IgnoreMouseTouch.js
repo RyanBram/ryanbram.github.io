@@ -76,7 +76,7 @@
     @desc O mouse e o touch iniciarão desligados? Sim: true | Não: false
     @default true
 */
-
+if (Utils.isMobileDevice()) {
 "use strict";
 
 var Imported = Imported || {};
@@ -184,3 +184,4 @@ TTK.IgnoreMouseTouch = {};
 })(TTK.IgnoreMouseTouch);
 // Hide Cursor
 // document.body.style.cursor = 'none';
+}
