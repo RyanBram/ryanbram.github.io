@@ -4170,11 +4170,13 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
     Window_SrpgPrediction.prototype.drawSrpgBattleDamage = function(damage, x, y) {
         this.changeTextColor(this.systemColor());
         if (damage >= 0) {
-            this.drawText('ダメージ', x, y, 164);
+// Japanese Term "ダメージ"
+            this.drawText('Damage', x, y, 164);
             this.resetTextColor();
             this.drawText(damage, x + 188, y, 100, 'right');
         } else {
-            this.drawText('回復', x, y, 164);
+// Japanese Term "回復"
+            this.drawText('Recovery', x, y, 164);
             this.resetTextColor();
             this.drawText(damage * -1, x + 188, y, 100, 'right');
         }
@@ -4183,7 +4185,8 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
     Window_SrpgPrediction.prototype.drawSrpgBattleHit = function(hit, eva, x, y) {
         var val = 1.0 * hit * (1.0 - eva);
         this.changeTextColor(this.systemColor());
-        this.drawText('命中', x, y, 98);
+// Japanese Term "回復"
+        this.drawText('Accuracy', x, y, 98);
         this.resetTextColor();
         this.drawText(Math.floor(val * 100) + '%', x + 64, y, 64, 'right');
     };
@@ -4310,7 +4313,8 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
     };
 
     Window_SrpgBattle.prototype.makeCommandList = function() {
-        this.addCommand('戦闘開始', 'battleStart', this.isEnabled(this._item));
+//======Japanese Term "戦闘開始"
+        this.addCommand('Execute', 'battleStart', this.isEnabled(this._item));
         this.addCommand(TextManager.cancel, 'cancel');
     };
 
