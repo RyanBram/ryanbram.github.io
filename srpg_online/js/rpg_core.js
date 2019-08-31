@@ -1,7 +1,48 @@
 //=============================================================================
-// rpg_core.js v1.6.1
+// rpg_core.js v1.6.1 (community-1.3b)
 //=============================================================================
 
+function ProgressWatcher(){
+    throw new Error('This is a static class');
+}
+
+ProgressWatcher.initialize = function(){
+    this.clearProgress();
+    ImageManager.setCreationHook(this._bitmapListener.bind(this));
+    AudioManager.setCreationHook(this._audioListener.bind(this));
+};
+
+ProgressWatcher._bitmapListener = function(bitmap){
+    this._countLoading++;
+    bitmap.addLoadListener(function(){
+        this._countLoaded++;
+        this._progressListener(this._countLoaded, this._countLoading);
+    }.bind(this));
+};
+
+ProgressWatcher._audioListener = function(audio){
+    this._countLoading++;
+    audio.addLoadListener(function(){
+        this._countLoaded++;
+        this._progressListener(this._countLoaded, this._countLoading);
+    }.bind(this));
+};
+
+ProgressWatcher.setProgressListener = function(progressListener){
+    this._progressListener = progressListener;
+};
+
+ProgressWatcher.clearProgress = function(){
+    this._countLoading = 0;
+    this._countLoaded = 0;
+};
+
+ProgressWatcher.truncateProgress = function(){
+    if(this._countLoaded){
+        this._countLoading -= this._countLoaded;
+        this._countLoaded = 0;
+    }
+};
 //-----------------------------------------------------------------------------
 /**
  * This is not a class, but contains some methods that will be added to the
@@ -182,6 +223,8 @@ Utils.RPGMAKER_NAME = 'MV';
  */
 Utils.RPGMAKER_VERSION = "1.6.1";
 
+Utils.RPGMAKER_ENGINE = "community-1.3b";
+
 /**
  * Checks whether the option is in the query string.
  *
@@ -191,9 +234,16 @@ Utils.RPGMAKER_VERSION = "1.6.1";
  * @return {Boolean} True if the option is in the query string
  */
 Utils.isOptionValid = function(name) {
-    if (location.search.slice(1).split('&').contains(name)) {return 1;};
-    if (typeof nw !== "undefined" && nw.App.argv.length > 0 && nw.App.argv[0].split('&').contains(name)) {return 1;};
-    return 0;
+    if (location.search.slice(1).split('&').contains(name)) {
+        return true;
+    }
+    if (typeof nw !== "undefined" &&
+        nw.App.argv.length > 0 &&
+        nw.App.argv[0].split('&').contains(name)
+    ) {
+        return true;
+    }
+    return false;
 };
 
 /**
@@ -1332,8 +1382,12 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
     // Note: Firefox has a bug with textBaseline: Bug 737852
     //       So we use 'alphabetic' here.
     if (text !== undefined) {
+        if (this.fontSize < Bitmap.minFontSize) {
+            this.drawSmallText(text, x, y, maxWidth, lineHeight, align);
+            return;
+        }
         var tx = x;
-        var ty = y + lineHeight - (lineHeight - this.fontSize * 0.7) / 2;
+        var ty = y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2);
         var context = this._context;
         var alpha = context.globalAlpha;
         maxWidth = maxWidth || 0xffffffff;
@@ -1354,6 +1408,45 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
         context.restore();
         this._setDirty();
     }
+};
+
+/**
+ * Draws the small text big once and resize it because modern broswers are poor at drawing small text.
+ *
+ * @method drawSmallText
+ * @param {String} text The text that will be drawn
+ * @param {Number} x The x coordinate for the left of the text
+ * @param {Number} y The y coordinate for the top of the text
+ * @param {Number} maxWidth The maximum allowed width of the text
+ * @param {Number} lineHeight The height of the text line
+ * @param {String} align The alignment of the text
+ */
+Bitmap.prototype.drawSmallText = function(text, x, y, maxWidth, lineHeight, align) {
+    var minFontSize = Bitmap.minFontSize;
+    var bitmap = Bitmap.drawSmallTextBitmap;
+    bitmap.fontFace = this.fontFace;
+    bitmap.fontSize = minFontSize;
+    bitmap.fontItalic = this.fontItalic;
+    bitmap.textColor = this.textColor;
+    bitmap.outlineColor = this.outlineColor;
+    bitmap.outlineWidth = this.outlineWidth * minFontSize / this.fontSize;
+    maxWidth = maxWidth || 816;
+    var height = this.fontSize * 1.5;
+    var scaledMaxWidth = maxWidth * minFontSize / this.fontSize;
+    var scaledMaxWidthWithOutline = scaledMaxWidth + bitmap.outlineWidth * 2;
+    var scaledHeight = height * minFontSize / this.fontSize;
+    var scaledHeightWithOutline = scaledHeight + bitmap.outlineWidth * 2;
+
+    var bitmapWidth = bitmap.width;
+    var bitmapHeight = bitmap.height;
+    while (scaledMaxWidthWithOutline > bitmapWidth) bitmapWidth *= 2;
+    while (scaledHeightWithOutline > bitmapHeight) bitmapHeight *= 2;
+    if (bitmap.width !== bitmapWidth || bitmap.height !== bitmapHeight) bitmap.resize(bitmapWidth, bitmapHeight);
+
+    bitmap.drawText(text, bitmap.outlineWidth, bitmap.outlineWidth, scaledMaxWidth, minFontSize, align);
+    this.blt(bitmap, 0, 0, scaledMaxWidthWithOutline, scaledHeightWithOutline,
+        x - this.outlineWidth, y - this.outlineWidth + (lineHeight - this.fontSize) / 2, maxWidth + this.outlineWidth * 2, height + this.outlineWidth * 2);
+    bitmap.clear();
 };
 
 /**
@@ -1649,6 +1742,10 @@ Bitmap.prototype._setDirty = function() {
 Bitmap.prototype.checkDirty = function() {
     if (this._dirty) {
         this._baseTexture.update();
+        var baseTexture = this._baseTexture;
+        setTimeout(function() {
+            baseTexture.update();
+        }, 0);
         this._dirty = false;
     }
 };
@@ -1675,7 +1772,6 @@ Bitmap.prototype._requestImage = function(url){
         this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
     }
 
-    this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
 
@@ -1707,6 +1803,9 @@ Bitmap.prototype.startRequest = function(){
     }
 };
 
+Bitmap.minFontSize = 21;
+Bitmap.drawSmallTextBitmap = new Bitmap(1632, Bitmap.minFontSize);
+
 //-----------------------------------------------------------------------------
 /**
  * The static class that carries out graphics processing.
@@ -1717,7 +1816,7 @@ function Graphics() {
     throw new Error('This is a static class');
 }
 
-Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
+Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
 
@@ -1771,6 +1870,7 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+    this._setupProgress();
 };
 
 
@@ -1869,7 +1969,7 @@ Graphics.tickEnd = function() {
  * @param {Stage} stage The stage object to be rendered
  */
 Graphics.render = function(stage) {
-    if (this._skipCount === 0) {
+    if (this._skipCount <= 0) {
         var startTime = Date.now();
         if (stage) {
             this._renderer.render(stage);
@@ -1949,6 +2049,16 @@ Graphics.setLoadingImage = function(src) {
 };
 
 /**
+ * Sets whether the progress bar is enabled.
+ *
+ * @static
+ * @method setEnableProgress
+ */
+Graphics.setProgressEnabled = function(enable) {
+    this._progressEnabled = enable;
+};
+
+/**
  * Initializes the counter for displaying the "Now Loading" image.
  *
  * @static
@@ -1956,6 +2066,70 @@ Graphics.setLoadingImage = function(src) {
  */
 Graphics.startLoading = function() {
     this._loadingCount = 0;
+
+    ProgressWatcher.truncateProgress();
+    ProgressWatcher.setProgressListener(this._updateProgressCount.bind(this));
+    this._progressTimeout = setTimeout(function() {
+        Graphics._showProgress();
+    }, 1500);
+};
+
+Graphics._setupProgress = function(){
+    this._progressElement = document.createElement('div');
+    this._progressElement.id = 'loading-progress';
+    this._progressElement.width = 600;
+    this._progressElement.height = 300;
+    this._progressElement.style.visibility = 'hidden';
+
+    this._barElement = document.createElement('div');
+    this._barElement.id = 'loading-bar';
+    this._barElement.style.width = '100%';
+    this._barElement.style.height = '10%';
+    this._barElement.style.background = 'linear-gradient(to top, gray, lightgray)';
+    this._barElement.style.border = '5px solid white';
+    this._barElement.style.borderRadius = '15px';
+    this._barElement.style.marginTop = '40%';
+
+    this._filledBarElement = document.createElement('div');
+    this._filledBarElement.id = 'loading-filled-bar';
+    this._filledBarElement.style.width = '0%';
+    this._filledBarElement.style.height = '100%';
+    this._filledBarElement.style.background = 'linear-gradient(to top, lime, honeydew)';
+    this._filledBarElement.style.borderRadius = '10px';
+
+    this._progressElement.appendChild(this._barElement);
+    this._barElement.appendChild(this._filledBarElement);
+    this._updateProgress();
+
+    document.body.appendChild(this._progressElement);
+};
+
+Graphics._showProgress = function(){
+    if (this._progressEnabled) {
+        this._progressElement.value = 0;
+        this._progressElement.style.visibility = 'visible';
+        this._progressElement.style.zIndex = 98;
+    }
+};
+
+Graphics._hideProgress = function(){
+    this._progressElement.style.visibility = 'hidden';
+    clearTimeout(this._progressTimeout);
+};
+
+Graphics._updateProgressCount = function(countLoaded, countLoading){
+    var progressValue;
+    if(countLoading !== 0){
+        progressValue = (countLoaded/countLoading) * 100;
+    }else{
+        progressValue = 100;
+    }
+
+    this._filledBarElement.style.width = progressValue + '%';
+};
+
+Graphics._updateProgress = function(){
+    this._centerElement(this._progressElement);
 };
 
 /**
@@ -1968,6 +2142,7 @@ Graphics.updateLoading = function() {
     this._loadingCount++;
     this._paintUpperCanvas();
     this._upperCanvas.style.opacity = 1;
+    this._updateProgress();
 };
 
 /**
@@ -1979,6 +2154,7 @@ Graphics.updateLoading = function() {
 Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
+    this._hideProgress();
 };
 
 /**
@@ -1990,16 +2166,24 @@ Graphics.endLoading = function() {
  */
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
+        this._errorPrinter.style.userSelect       = 'text';
+        this._errorPrinter.style.webkitUserSelect = 'text';
+        this._errorPrinter.style.msUserSelect     = 'text';
+        this._errorPrinter.style.mozUserSelect    = 'text';
+        this._errorPrinter.oncontextmenu = null;    // enable context menu
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.onmousedown = button.ontouchstart = function(event) {
-            ResourceHandler.retry();
+        button.addEventListener('touchstart', function(event) {
             event.stopPropagation();
-        };
+        });
+        button.addEventListener('click', function(event) {
+            ResourceHandler.retry();
+        });
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
@@ -2014,10 +2198,16 @@ Graphics.printLoadingError = function(url) {
 Graphics.eraseLoadingError = function() {
     if (this._errorPrinter && !this._errorShowed) {
         this._errorPrinter.innerHTML = '';
+        this._errorPrinter.style.userSelect       = 'none';
+        this._errorPrinter.style.webkitUserSelect = 'none';
+        this._errorPrinter.style.msUserSelect     = 'none';
+        this._errorPrinter.style.mozUserSelect    = 'none';
+        this._errorPrinter.oncontextmenu = function() { return false; };
         this.startLoading();
     }
 };
 
+// The following code is partly borrowed from triacontane.
 /**
  * Displays the error text to the screen.
  *
@@ -2028,11 +2218,58 @@ Graphics.eraseLoadingError = function() {
  */
 Graphics.printError = function(name, message) {
     this._errorShowed = true;
+    this._hideProgress();
+    this.hideFps();
     if (this._errorPrinter) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
+        this._errorPrinter.style.userSelect       = 'text';
+        this._errorPrinter.style.webkitUserSelect = 'text';
+        this._errorPrinter.style.msUserSelect     = 'text';
+        this._errorPrinter.style.mozUserSelect    = 'text';
+        this._errorPrinter.oncontextmenu = null;    // enable context menu
+        if (this._errorMessage) {
+            this._makeErrorMessage();
+        }
     }
     this._applyCanvasFilter();
     this._clearUpperCanvas();
+};
+
+/**
+ * Shows the detail of error.
+ *
+ * @static
+ * @method printErrorDetail
+ */
+Graphics.printErrorDetail = function(error) {
+    if (this._errorPrinter && this._showErrorDetail) {
+        var eventInfo = this._formatEventInfo(error);
+        var eventCommandInfo = this._formatEventCommandInfo(error);
+        var info = eventCommandInfo ? eventInfo + ", " + eventCommandInfo : eventInfo;
+        var stack = this._formatStackTrace(error);
+        this._makeErrorDetail(info, stack);
+    }
+};
+
+/**
+ * Sets the error message.
+ *
+ * @static
+ * @method setErrorMessage
+ */
+Graphics.setErrorMessage = function(message) {
+    this._errorMessage = message;
+};
+
+/**
+ * Sets whether shows the detail of error.
+ *
+ * @static
+ * @method setShowErrorDetail
+ */
+Graphics.setShowErrorDetail = function(showErrorDetail) {
+    this._showErrorDetail = showErrorDetail;
 };
 
 /**
@@ -2355,6 +2592,7 @@ Graphics._updateAllElements = function() {
     this._updateUpperCanvas();
     this._updateRenderer();
     this._paintUpperCanvas();
+    this._updateProgress();
 };
 
 /**
@@ -2384,7 +2622,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-            '<font color="white">' + message + '</font><br>');
+            '<font color="white">' + decodeURIComponent(message) + '</font><br>');
 };
 
 /**
@@ -2458,12 +2696,107 @@ Graphics._createErrorPrinter = function() {
  */
 Graphics._updateErrorPrinter = function() {
     this._errorPrinter.width = this._width * 0.9;
-    this._errorPrinter.height = 40;
+    if (this._errorShowed && this._showErrorDetail) {
+        this._errorPrinter.height = this._height * 0.9;
+    } else if (this._errorShowed && this._errorMessage) {
+        this._errorPrinter.height = 100;
+    } else {
+        this._errorPrinter.height = 40;
+    }
     this._errorPrinter.style.textAlign = 'center';
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
     this._centerElement(this._errorPrinter);
+};
+
+/**
+ * @static
+ * @method _makeErrorMessage
+ * @private
+ */
+Graphics._makeErrorMessage = function() {
+    var mainMessage       = document.createElement('div');
+    var style             = mainMessage.style;
+    style.color           = 'white';
+    style.textAlign       = 'left';
+    style.fontSize        = '18px';
+    mainMessage.innerHTML = '<hr>' + this._errorMessage;
+    this._errorPrinter.appendChild(mainMessage);
+};
+
+/**
+ * @static
+ * @method _makeErrorDetail
+ * @private
+ */
+Graphics._makeErrorDetail = function(info, stack) {
+    var detail             = document.createElement('div');
+    var style              = detail.style;
+    style.color            = 'white';
+    style.textAlign        = 'left';
+    style.fontSize         = '18px';
+    detail.innerHTML       = '<br><hr>' + info + '<br><br>' + stack;
+    this._errorPrinter.appendChild(detail);
+};
+
+/**
+ * @static
+ * @method _formatEventInfo
+ * @private
+ */
+Graphics._formatEventInfo = function(error) {
+    switch (String(error.eventType)) {
+    case "map_event":
+        return "MapID: %1, MapEventID: %2, page: %3, line: %4".format(error.mapId, error.mapEventId, error.page, error.line);
+    case "common_event":
+        return "CommonEventID: %1, line: %2".format(error.commonEventId, error.line);
+    case "battle_event":
+        return "TroopID: %1, page: %2, line: %3".format(error.troopId, error.page, error.line);
+    case "test_event":
+        return "TestEvent, line: %1".format(error.line);
+    default:
+        return "No information";
+    }
+};
+
+/**
+ * @static
+ * @method _formatEventCommandInfo
+ * @private
+ */
+Graphics._formatEventCommandInfo = function(error) {
+    switch (String(error.eventCommand)) {
+    case "plugin_command":
+        return "◆Plugin Command: " + error.content;
+    case "script":
+        return "◆Script: " + error.content;
+    case "control_variables":
+        return "◆Control Variables: Script: " + error.content;
+    case "conditional_branch_script":
+        return "◆If: Script: " + error.content;
+    case "set_route_script":
+        return "◆Set Movement Route: ◇Script: " + error.content;
+    case "auto_route_script":
+        return "Autonomous Movement Custom Route: ◇Script: " + error.content;
+    case "other":
+    default:
+        return "";
+    }
+};
+
+/**
+ * @static
+ * @method _formatStackTrace
+ * @private
+ */
+Graphics._formatStackTrace = function(error) {
+    return decodeURIComponent((error.stack || '')
+        .replace(/file:.*js\//g, '')
+        .replace(/http:.*js\//g, '')
+        .replace(/https:.*js\//g, '')
+        .replace(/chrome-extension:.*js\//g, '')
+        .replace(/\n/g, '<br>'));
 };
 
 /**
@@ -2899,9 +3232,9 @@ Graphics._switchStretchMode = function() {
  */
 Graphics._switchFullScreen = function() {
     if (this._isFullScreen()) {
-        this._requestFullScreen();
-    } else {
         this._cancelFullScreen();
+    } else {
+        this._requestFullScreen();
     }
 };
 
@@ -2912,9 +3245,10 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return ((document.fullScreenElement && document.fullScreenElement !== null) ||
-            (!document.mozFullScreen && !document.webkitFullscreenElement &&
-             !document.msFullscreenElement));
+    return document.fullscreenElement ||
+           document.mozFullScreen || 
+           document.webkitFullscreenElement ||
+           document.msFullscreenElement;
 };
 
 /**
@@ -2924,8 +3258,8 @@ Graphics._isFullScreen = function() {
  */
 Graphics._requestFullScreen = function() {
     var element = document.body;
-    if (element.requestFullScreen) {
-        element.requestFullScreen();
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
     } else if (element.webkitRequestFullScreen) {
@@ -2941,8 +3275,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.cancelFullScreen) {
-        document.cancelFullScreen();
+    if (document.exitFullscreen) { 
+        document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
@@ -3697,6 +4031,7 @@ TouchInput._setupEventHandlers = function() {
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
     document.addEventListener('touchcancel', this._onTouchCancel.bind(this));
     document.addEventListener('pointerdown', this._onPointerDown.bind(this));
+    window.addEventListener('blur', this._onLostFocus.bind(this));
 };
 
 /**
@@ -3879,6 +4214,15 @@ TouchInput._onPointerDown = function(event) {
             event.preventDefault();
         }
     }
+};
+
+/**
+ * @static
+ * @method _onLostFocus
+ * @private
+ */
+TouchInput._onLostFocus = function() {
+    this.clear();
 };
 
 /**
@@ -4282,35 +4626,37 @@ Sprite.prototype._executeTint = function(x, y, w, h) {
     context.globalCompositeOperation = 'copy';
     context.drawImage(this._bitmap.canvas, x, y, w, h, 0, 0, w, h);
 
-    if (Graphics.canUseSaturationBlend()) {
-        var gray = Math.max(0, tone[3]);
-        context.globalCompositeOperation = 'saturation';
-        context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
-        context.fillRect(0, 0, w, h);
-    }
+    if (tone[0] || tone[1] || tone[2] || tone[3]) {
+        if (Graphics.canUseSaturationBlend()) {
+            var gray = Math.max(0, tone[3]);
+            context.globalCompositeOperation = 'saturation';
+            context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
+            context.fillRect(0, 0, w, h);
+        }
 
-    var r1 = Math.max(0, tone[0]);
-    var g1 = Math.max(0, tone[1]);
-    var b1 = Math.max(0, tone[2]);
-    context.globalCompositeOperation = 'lighter';
-    context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
-    context.fillRect(0, 0, w, h);
-
-    if (Graphics.canUseDifferenceBlend()) {
-        context.globalCompositeOperation = 'difference';
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, w, h);
-
-        var r2 = Math.max(0, -tone[0]);
-        var g2 = Math.max(0, -tone[1]);
-        var b2 = Math.max(0, -tone[2]);
+        var r1 = Math.max(0, tone[0]);
+        var g1 = Math.max(0, tone[1]);
+        var b1 = Math.max(0, tone[2]);
         context.globalCompositeOperation = 'lighter';
-        context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
+        context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
         context.fillRect(0, 0, w, h);
 
-        context.globalCompositeOperation = 'difference';
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, w, h);
+        if (Graphics.canUseDifferenceBlend()) {
+            context.globalCompositeOperation = 'difference';
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, w, h);
+
+            var r2 = Math.max(0, -tone[0]);
+            var g2 = Math.max(0, -tone[1]);
+            var b2 = Math.max(0, -tone[2]);
+            context.globalCompositeOperation = 'lighter';
+            context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
+            context.fillRect(0, 0, w, h);
+
+            context.globalCompositeOperation = 'difference';
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, w, h);
+        }
     }
 
     var r3 = Math.max(0, color[0]);
@@ -5949,23 +6295,6 @@ TilingSprite.prototype._renderCanvas = function(renderer) {
 };
 
 /**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function(renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-        this._renderWebGL_PIXI(renderer);
-    }
-};
-
-/**
  * The image for the tiling sprite.
  *
  * @property bitmap
@@ -7164,7 +7493,7 @@ WindowLayer.prototype._maskWindow = function(window, shift) {
     this._windowMask.boundsDirty = true;
     var rect = this._windowRect;
     rect.x = this.x + shift.x + window.x;
-    rect.y = this.x + shift.y + window.y + window.height / 2 * (1 - window._openness / 255);
+    rect.y = this.y + shift.y + window.y + window.height / 2 * (1 - window._openness / 255);
     rect.width = window.width;
     rect.height = window.height * window._openness / 255;
 };
@@ -8342,7 +8671,14 @@ WebAudio.prototype._readOgg = function(array) {
                     if (headerType === 1) {
                         this._sampleRate = this._readLittleEndian(array, index + 12);
                     } else if (headerType === 3) {
-                        this._readMetaData(array, index, segments[i]);
+                        var size = 0;
+                        for (; i < numSegments; i++) {
+                            size += segments[i];
+                            if (segments[i] < 255) {
+                                break;
+                            }
+                        }
+                        this._readMetaData(array, index, size);
                     }
                     vorbisHeaderFound = true;
                 }
@@ -9037,7 +9373,7 @@ JsonEx._encode = function(value, circular, depth) {
             value['@'] = constructorName;
         }
         for (var key in value) {
-            if (value.hasOwnProperty(key) && !key.match(/^@./)) {
+            if ((!value.hasOwnProperty || value.hasOwnProperty(key)) && !key.match(/^@./)) {
                 if(value[key] && typeof value[key] === 'object'){
                     if(value[key]['@c']){
                         circular.push([key, value, value[key]]);
@@ -9079,14 +9415,16 @@ JsonEx._decode = function(value, circular, registry) {
     if (type === '[object Object]' || type === '[object Array]') {
         registry[value['@c']] = value;
 
-        if (value['@']) {
+        if (value['@'] === null) {
+            value = this._resetPrototype(value, null);
+        } else if (value['@']) {
             var constructor = window[value['@']];
             if (constructor) {
                 value = this._resetPrototype(value, constructor.prototype);
             }
         }
         for (var key in value) {
-            if (value.hasOwnProperty(key)) {
+            if (!value.hasOwnProperty || value.hasOwnProperty(key)) {
                 if(value[key] && value[key]['@a']){
                     //object is array wrapper
                     var body = value[key]['@a'];
@@ -9112,6 +9450,9 @@ JsonEx._decode = function(value, circular, registry) {
  * @private
  */
 JsonEx._getConstructorName = function(value) {
+    if (!value.constructor) {
+        return null;
+    }
     var name = value.constructor.name;
     if (name === undefined) {
         var func = /^\s*function\s*([A-Za-z0-9_$]*)/;

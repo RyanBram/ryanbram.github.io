@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_scenes.js v1.6.1
+// rpg_scenes.js v1.6.1 (community-1.3b)
 //=============================================================================
 
 //=============================================================================
@@ -599,6 +599,9 @@ Scene_Map.prototype.update = function() {
 Scene_Map.prototype.updateMainMultiply = function() {
     this.updateMain();
     if (this.isFastForward()) {
+        if (!this.isMapTouchOk()) {
+            this.updateDestination();
+        }
         this.updateMain();
     }
 };
@@ -1142,11 +1145,14 @@ Scene_ItemBase.prototype.onActorOk = function() {
 Scene_ItemBase.prototype.onActorCancel = function() {
     this.hideSubWindow(this._actorWindow);
 };
+Scene_ItemBase.prototype.action=function(){
+    var action = new Game_Action(this.user());
+    action.setItemObject(this.item());
+    return action;
+};
 
 Scene_ItemBase.prototype.determineItem = function() {
-    var action = new Game_Action(this.user());
-    var item = this.item();
-    action.setItemObject(item);
+    var action = this.action();
     if (action.isForFriend()) {
         this.showSubWindow(this._actorWindow);
         this._actorWindow.selectForItem(this.item());
@@ -1170,9 +1176,8 @@ Scene_ItemBase.prototype.activateItemWindow = function() {
     this._itemWindow.activate();
 };
 
-Scene_ItemBase.prototype.itemTargetActors = function() {
-    var action = new Game_Action(this.user());
-    action.setItemObject(this.item());
+Scene_ItemBase.prototype.itemTargetActors =function(){
+    var action = this.action();
     if (!action.isForFriend()) {
         return [];
     } else if (action.isForAll()) {
@@ -1183,25 +1188,29 @@ Scene_ItemBase.prototype.itemTargetActors = function() {
 };
 
 Scene_ItemBase.prototype.canUse = function() {
-    return this.user().canUse(this.item()) && this.isItemEffectsValid();
+    var user = this.user();
+    if(user){
+        return user.canUse(this.item()) && this.isItemEffectsValid();
+    }
+    return false;
 };
 
 Scene_ItemBase.prototype.isItemEffectsValid = function() {
-    var action = new Game_Action(this.user());
-    action.setItemObject(this.item());
+    var action = this.action();
     return this.itemTargetActors().some(function(target) {
         return action.testApply(target);
     }, this);
 };
 
-Scene_ItemBase.prototype.applyItem = function() {
-    var action = new Game_Action(this.user());
-    action.setItemObject(this.item());
-    this.itemTargetActors().forEach(function(target) {
-        for (var i = 0; i < action.numRepeats(); i++) {
-            action.apply(target);
+Scene_ItemBase.prototype.applyItem =function(){
+    var action = this.action();
+    var targets = this.itemTargetActors();
+    targets.forEach(function(battler) {
+        var repeats = action.numRepeats();
+        for (var i = 0; i < repeats; i++) {
+            action.apply(battler);                    
         }
-    }, this);
+    });
     action.applyGlobal();
 };
 
@@ -1702,6 +1711,10 @@ Scene_Save.prototype.firstSavefileIndex = function() {
 };
 
 Scene_Save.prototype.onSavefileOk = function() {
+    if (DataManager.isAutoSaveFileId(this.savefileId())) {
+        this.onSaveFailure();
+        return;
+    }
     Scene_File.prototype.onSavefileOk.call(this);
     $gameSystem.onBeforeSave();
     if (DataManager.saveGame(this.savefileId())) {
