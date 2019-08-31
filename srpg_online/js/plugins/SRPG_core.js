@@ -14,7 +14,7 @@
 //=============================================================================
 
 /*:
- * @plugindesc v1.22 SRPG battle system (tactical battle system) on map.
+ * @plugindesc (v1.22) SRPG battle system (tactical battle system) on map.
  * @author Gakuto Mikagami
  *
  * @param srpgTroopID
@@ -4323,7 +4323,8 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
     };
 
     Window_SrpgBattle.prototype.makeCommandList = function() {
-        this.addCommand('戦闘開始', 'battleStart', this.isEnabled(this._item));
+// Japanese Term "戦闘開始"
+        this.addCommand('Execute', 'battleStart', this.isEnabled(this._item));
         this.addCommand(TextManager.cancel, 'cancel');
     };
 

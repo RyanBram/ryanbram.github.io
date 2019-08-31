@@ -21,7 +21,7 @@
 *
 * @param Disable F3?
 * @desc Disable F3? and force Stretch Mode by default. true or false Default: false
-* @default false
+* @default true
 *
 * @param Disable F4?
 * @desc true or false Default: false
@@ -72,11 +72,11 @@
 	Graphics._onKeyDown = function(event) {
 		if (!event.ctrlKey && !event.altKey) {
 			switch (event.keyCode) {
-			case 113:   /* F2 */
+			case 114:   /* F2 */
 				event.preventDefault();
 				this._switchFPSMeter();
 				break;
-			case 114:   /* F3 */
+			case 113:   /* F3 */
 				if (disable_F3 == true) return;
 				event.preventDefault();
 				this._switchStretchMode();
