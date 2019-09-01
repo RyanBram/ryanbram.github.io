@@ -3468,7 +3468,8 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
         if (item) {
             this.drawItemName(item, x + 96, y, 240);
         } else {
-            this.drawText('なし', x + 96, y, 240);
+// Japanese Term "なし"
+            this.drawText('None', x + 96, y, 240);
         }
     };
 
@@ -3481,7 +3482,8 @@ Game_Interpreter.prototype.unitAddState = function(eventId, stateId) {
         if (item) {
             this.drawItemName(item, x + 96, y, 240);
         } else {
-            this.drawText('なし', x + 96, y, 240);
+// Japanese Term "なし"
+            this.drawText('None', x + 96, y, 240);
         }
     };
 
