@@ -5,10 +5,10 @@ new Docute({
   sourcePath: './',
   versions: {
     'Dynamic Motion': {
-      link: '/'
+      link: 'https://ryanbram.github.io/documentation/dynamicmotion/'
     },
     'Dynamic Animation': {
-      link: '/DynamicAnimation/'
+      link: 'https://ryanbram.github.io/documentation/dynamicanimation/'
     }
   },
   nav: [
