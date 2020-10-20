@@ -187,10 +187,13 @@ If you connect the templates with `&`, you can execute the functions at the same
 ![Image](https://newrpg.up.seesaa.net/image/20200315_jumpSlash.gif)
 
 It became a jump slash.
-By the way, it`s okay to put a space like `<D-Motion: near & jump/>`. Please make it easy to see.
+By the way, it`s okay to put a space like `<D-Motion: near & jump/>` to make it easy to see.
 
-The jump height can be changed with arcY. The initial value is -100, so I tried to multiply it by 5.
-*) Depending on the specifications of Maker MV, the minus will be higher.
+The jump height can be changed with `arcY`.
+The initial value is -100, now let's multiply it by 5.
+
+*) Based on the specifications of RPG Maker MV, minus mean higher position.
+
 ```
 <D-Setting:NoStep> // 前進しない
 <D-Motion:near&jump> // 対象へジャンプして接近
@@ -203,7 +206,8 @@ duration = 30 // 30/60秒で移動
 ```
 ![Image](https://newrpg.up.seesaa.net/image/20200315_highJumpSlash.gif)
 
-You can also change the jump movement (airborne) time with "duration" or "frame". The initial value was too fast, so I tried to lengthen it.
+You can also change the jump movement (airborne) time with "duration" or "frame".
+The initial value was too fast, so we'll lengthen it.
 
 If it is delicate to swing the weapon after landing each time, you can also write as follows.
 ```
@@ -215,12 +219,12 @@ If it is delicate to swing the weapon after landing each time, you can also writ
 ![Image](https://newrpg.up.seesaa.net/image/20200315_jumpSlash2.gif)
 
 This one is faster, isn`t it?
-Actually, you can adjust the timing more finely, but since it is a basic edition, it is in such a place.
+Actually, you can adjust the timing more finely, but since it is just a basic usage, we don't show it here.
 
 ## repeat, interval
 
-If you specify "repeat", you can repeat the operation.
-Specify the interval with "interval".
+If you specify `repeat`, you can repeat the operation.
+Specify the interval duration with `interval`.
 ```
 <D-Animation:randomAll/> // アニメーションの大量生成
 <D-Motion:attack> // 武器振り
@@ -231,7 +235,7 @@ interval = 5 // 繰り返し間隔
 ![Image](https://newrpg.up.seesaa.net/image/20200315_repeatSlash.gif)
 
 
-The repeat interval specified by interval is the length based on the animation frame.
+The repeat interval specified by `interval` is the length based on the animation frame.
 Even if it is in the middle of a motion, it will be interrupted and the next motion will be started.
 
 If no interval is specified, the repeat interval is automatically adjusted to the length of movement or motion.
