@@ -8,7 +8,7 @@ We aimed for something with a lower threshold than existing motion plug-ins such
 
 The following is an introductory video.
 
-[INSERT VIDEO HERE]
+https://newrpg.up.seesaa.net/image/20200321_DynamicMotion.mp4
 
 ## Download
 
