@@ -9,7 +9,7 @@ Furthermore , by linking with Dynamic Motion, you can freely set the movement of
 
 The following is an introductory video.
 
-*) If the screen is small, click the full screen display at the bottom right.
+https://newrpg.up.seesaa.net/image/20200904_DynamicMZ.mp4
 
 ## Download
 
