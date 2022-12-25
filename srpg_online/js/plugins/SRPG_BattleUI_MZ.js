@@ -86,7 +86,13 @@
     }
   };
 
-// REMOVE MENU COMMAND ----------------------------------------------------------
+// REMOVE MENU COMMAND Stretch----------------------------------------------------------
+
+  _Graphics_defaultStretchMode_Alias = Graphics._defaultStretchMode;
+   Graphics._defaultStretchMode = function() {
+        return true;
+        _Graphics_defaultStretchMode_Alias.call(this);
+  };
 
 /*
 // ==============================================================================
