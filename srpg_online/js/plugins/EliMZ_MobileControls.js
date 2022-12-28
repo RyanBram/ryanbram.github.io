@@ -488,7 +488,7 @@ If you want to use a script choose "script".
 */
     
 }
-
+if(Utils.isMobileDevice()){
 "use strict"
 
 var Eli = Eli || {}
@@ -1680,6 +1680,8 @@ Window_Message.prototype.updateMobileControls = function() {
     }else if(this.isClosing()){
         Plugin.showButtons()
     }
+}
+
 }
 
 }
