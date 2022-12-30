@@ -263,10 +263,7 @@
             this._parallaxX = x;
         } else {
             const endX = this.width() - this.screenTileX() + this._extraScreenTileX * 2;
-            this._displayX = 
-                endX < 0
-                    ? endX / 2 - this._extraScreenTileX
-                    : x.clamp(this._extraScreenTileX * -1, endX - this._extraScreenTileX);
+            this._displayX = endX < 0 ? endX / 2 - this._extraScreenTileX : x.clamp(this._extraScreenTileX * -1, endX - this._extraScreenTileX);
             this._parallaxX = this._displayX;
         }
         if (this.isLoopVertical()) {
@@ -277,10 +274,7 @@
             this._parallaxY = y;
         } else {
             const endY = this.height() - this.screenTileY() + this._extraScreenTileY * 2;
-            this._displayY =
-                endY < 0
-                    ? endY / 2 - this._extraScreenTileY
-                    : y.clamp(this._extraScreenTileY * -1, endY - this._extraScreenTileY);
+            this._displayY = endY < 0 ? endY / 2 - this._extraScreenTileY : y.clamp(this._extraScreenTileY * -1, endY - this._extraScreenTileY);
             this._parallaxY = this._displayY;
         }
     };
@@ -325,11 +319,7 @@
         const frameToZoom = +args.FramesToZoom;
         const valueZoom = +args.ZoomValue;
         $gameMap.extraScreenTile(valueZoom);
-        $gameScreen.startZoom(
-            $gamePlayer.screenX(),
-            $gamePlayer.screenY() - $gameMap.tileWidth() / 2,
-            valueZoom,
-            frameToZoom);
+        $gameScreen.startZoom($gamePlayer.screenX(), $gamePlayer.screenY() - $gameMap.tileWidth() / 2, valueZoom, frameToZoom);
     });
 
 })();
