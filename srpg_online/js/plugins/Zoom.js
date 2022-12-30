@@ -87,6 +87,7 @@
     'use strict';
 
     window.ScSWinterZoom = window.ScSWinterZoom || {};
+
     ScSWinterZoom.params = PluginManager.parameters('Zoom');
 
     var s_extractNoteValue = function(notes, ntag) {
@@ -107,9 +108,11 @@
     ScSWinterZoom.FixSprites = (ScSWinterZoom.params['Fix sprite black lines'] == "true");
     if(ScSWinterZoom.FixSprites) {
         Sprite_Character.prototype.setFrame = function(x, y, width, height) {
+          if ($gameMap._currentZoom > 1.0) {
             width = (width == 0 ? 0 : width-1);
             height= (height == 0 ? 0 : height-1);
             Sprite.prototype.setFrame.call(this, x + 1, y + 1, width, height);
+          } else Sprite.prototype.setFrame.call(this, x, y, width, height);
         };
     }
 
@@ -147,6 +150,7 @@
 
     ScSWinterZoom.FreeCamera = (ScSWinterZoom.params['Always free camera'] == "true");
 
+
     Game_Map.prototype.extraScreenTile = function(zoom) {
         var zoomTileX = Math.round((Graphics.width / (this.tileWidth() * zoom)) * 16) / 16;
         var zoomTileY = Math.round((Graphics.height / (this.tileHeight() * zoom)) * 16) / 16;
@@ -169,7 +173,8 @@
         const mapY = Math.floor((originY + y) / tileHeight);
         return this.roundY(mapY);
     };
-
+    /* Without a correct initial camera position, this code is not useful.
+     It works only when we start in middle of a not-looped map. */
     Game_Map.prototype.scrollLeft = function(distance) {
         if (this.isLoopHorizontal()) {
             this._displayX += $dataMap.width - distance;
@@ -258,7 +263,10 @@
             this._parallaxX = x;
         } else {
             const endX = this.width() - this.screenTileX() + this._extraScreenTileX * 2;
-            this._displayX = endX < 0 ? endX / 2 - this._extraScreenTileX : x.clamp(this._extraScreenTileX * -1, endX - this._extraScreenTileX);
+            this._displayX = 
+                endX < 0
+                    ? endX / 2 - this._extraScreenTileX
+                    : x.clamp(this._extraScreenTileX * -1, endX - this._extraScreenTileX);
             this._parallaxX = this._displayX;
         }
         if (this.isLoopVertical()) {
@@ -269,7 +277,10 @@
             this._parallaxY = y;
         } else {
             const endY = this.height() - this.screenTileY() + this._extraScreenTileY * 2;
-            this._displayY = endY < 0 ? endY / 2 - this._extraScreenTileY : y.clamp(this._extraScreenTileY * -1, endY - this._extraScreenTileY);
+            this._displayY =
+                endY < 0
+                    ? endY / 2 - this._extraScreenTileY
+                    : y.clamp(this._extraScreenTileY * -1, endY - this._extraScreenTileY);
             this._parallaxY = this._displayY;
         }
     };
@@ -314,7 +325,11 @@
         const frameToZoom = +args.FramesToZoom;
         const valueZoom = +args.ZoomValue;
         $gameMap.extraScreenTile(valueZoom);
-        $gameScreen.startZoom($gamePlayer.screenX(), $gamePlayer.screenY() - $gameMap.tileWidth() / 2, valueZoom, frameToZoom);
+        $gameScreen.startZoom(
+            $gamePlayer.screenX(),
+            $gamePlayer.screenY() - $gameMap.tileWidth() / 2,
+            valueZoom,
+            frameToZoom);
     });
 
 })();
