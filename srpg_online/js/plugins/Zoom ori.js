@@ -87,7 +87,6 @@
     'use strict';
 
     window.ScSWinterZoom = window.ScSWinterZoom || {};
-
     ScSWinterZoom.params = PluginManager.parameters('Zoom');
 
     var s_extractNoteValue = function(notes, ntag) {
@@ -108,11 +107,9 @@
     ScSWinterZoom.FixSprites = (ScSWinterZoom.params['Fix sprite black lines'] == "true");
     if(ScSWinterZoom.FixSprites) {
         Sprite_Character.prototype.setFrame = function(x, y, width, height) {
-          if ($gameMap._currentZoom > 1.00) {
             width = (width == 0 ? 0 : width-1);
             height= (height == 0 ? 0 : height-1);
             Sprite.prototype.setFrame.call(this, x + 1, y + 1, width, height);
-          } else Sprite.prototype.setFrame.call(this, x, y, width, height);
         };
     }
 
@@ -150,7 +147,6 @@
 
     ScSWinterZoom.FreeCamera = (ScSWinterZoom.params['Always free camera'] == "true");
 
-
     Game_Map.prototype.extraScreenTile = function(zoom) {
         var zoomTileX = Math.round((Graphics.width / (this.tileWidth() * zoom)) * 16) / 16;
         var zoomTileY = Math.round((Graphics.height / (this.tileHeight() * zoom)) * 16) / 16;
@@ -173,8 +169,7 @@
         const mapY = Math.floor((originY + y) / tileHeight);
         return this.roundY(mapY);
     };
-    /* Without a correct initial camera position, this code is not useful.
-     It works only when we start in middle of a not-looped map. */
+
     Game_Map.prototype.scrollLeft = function(distance) {
         if (this.isLoopHorizontal()) {
             this._displayX += $dataMap.width - distance;
