@@ -4,8 +4,8 @@
     "chromium-args": "--force-color-profile=srgb",
     "window": {
         "title": "SRPG Gear MZ Demo",
-        "width": 1110,
-        "height": 624,
+        "width": 1120,
+        "height": 630,
         "position": "center",
         "icon": "icon/icon.png"
     }

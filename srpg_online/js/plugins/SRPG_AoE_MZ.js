@@ -30,8 +30,15 @@
  * @off Don't move
  * @default false
  *
+ * @noteParam faceName
+ * @noteDir img/faces/
+ * @noteType file
+ * @noteData enemies
  *
  * @help
+ * copyright 2020 SRPG Team. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
  * Allows you to define an area of effect for attacks
  * Based on SRPG_AreaAttack.js by アンチョビ
  *
@@ -200,9 +207,16 @@
  * @on Move
  * @off Don't move
  * @default false
- *
- *
+ * 
+ * @noteParam faceName
+ * @noteDir img/faces/
+ * @noteType file
+ * @noteData enemies
+ * 
  * @help
+ * copyright 2020 SRPG Team. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
  * 範囲効果のあるスキル・アイテムを作成できるようにします
  * アンチョビ氏による SRPG_AreaAttack.js をベースにしています
  *
@@ -347,7 +361,7 @@
  * 注 / おひさまクラフトによる改変内容 ('modified by OhisamaCraft'で検索)
  * ・コスト消費の修正（応戦に対応するためgameTempからgameBattlerに変更）
  * ・<srpgAreaType:y> (AoE shape) に allActor, allEnemy を追加（射程範囲内のすべてのactor/enemyを対象とする）
- * ・Game_Player.prototype.triggerActionをSRPGgearMVに対応
+ * ・Game_Player.prototype.triggerActionをSRPGgearMZに対応
  * ・ヘルプの和訳
  * 
  */
@@ -711,7 +725,7 @@ Sprite_SrpgAoE.prototype.constructor = Sprite_SrpgAoE;
 			if ($gameSystem.isSubBattlePhase() === 'actor_target' && $gameSystem.positionInRange(x, y)) {
 				$gameTemp.showArea(x, y);
 			} else if ($gameSystem.isSubBattlePhase() !== 'invoke_action' &&
-			$gameSystem.isSubBattlePhase() !== 'battle_window') {
+					   $gameSystem.isSubBattlePhase() !== 'battle_window' && $gameSystem.isBattlePhase() == 'actor_phase') { //shoukang add && $gameSystem.isBattlePhase() == 'actor_phase'
 				$gameTemp.clearArea();
 			}
 		}
@@ -935,6 +949,7 @@ Sprite_SrpgAoE.prototype.constructor = Sprite_SrpgAoE;
 			actionArray[1].action(0).setItemObject(nextaction.item);
 			var targetArray = $gameSystem.EventToUnit(nextaction.event.eventId());
 			$gameTemp.setTargetEvent(nextaction.event);
+			$gameTemp.setSrpgDistance($gameSystem.unitDistance($gameTemp.activeEvent(), nextaction.event));//shoukang refresh distance
 			if (_refocus) {
 				$gameTemp.setAutoMoveDestinationValid(true);
 				$gameTemp.setAutoMoveDestination($gameTemp.targetEvent().posX(), $gameTemp.targetEvent().posY());
@@ -978,7 +993,7 @@ Sprite_SrpgAoE.prototype.constructor = Sprite_SrpgAoE;
 			$gameSystem.isSubBattlePhase() === 'auto_actor_action' ||
 			$gameSystem.isSubBattlePhase() === 'enemy_action' ||
 			$gameSystem.isSubBattlePhase() === 'battle_window') {
-				return $gameTemp.inArea($gameTemp.targetEvent());
+				return $gameTemp.inArea($gameTemp.targetEvent()) || item.meta.cellTarget; //shoukang edit: check cellTarget tag
 			}
 		}
 		return _canUse.call(this, item);

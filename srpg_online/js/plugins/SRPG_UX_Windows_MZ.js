@@ -21,6 +21,9 @@
  * @default false
  *
  * @help
+ * copyright 2020 SRPG Team. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
  * Minor improvements to the behavior of windows
  * 
  * Options:
@@ -66,6 +69,7 @@
 			se.volume = 90;
 			AudioManager.playSe(se);
 			this._srpgBattleResultWindow.open();
+			this._srpgBattleResultWindowCount = 90;
 			this.gainRewards();
 		}
 		// otherwise, skip right to the end
@@ -115,6 +119,7 @@
 	}
 
 	// cancel movement or target, plus quick targeting
+	/*
 	var _updateCallMenu = Scene_Map.prototype.updateCallMenu;
 	Scene_Map.prototype.updateCallMenu = function() {
 		if ($gameSystem.isSRPGMode() && !$gameSystem.srpgWaitMoving()) {
@@ -130,6 +135,7 @@
 		}
 		_updateCallMenu.call(this);
 	};
+	*/
 
 //====================================================================
 // correctly handle enabled / disabled options in the menu

@@ -175,6 +175,9 @@
  *
  *
  * @help
+ * copyright 2020 SRPG Team. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
  * Adds line of sight, modifiable ranges, passability options, zone of control,
  * and terrain-based movement costs for SRPG combat
  *
@@ -400,6 +403,9 @@
  *
  *
  * @help
+ * copyright 2020 SRPG Team. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
  * SRPG戦闘において、射線（攻撃範囲の制限）、射程の変更、通行オプション、zone of control(ZoC)、
  * 地形タグによる移動コストの機能を追加する。
  * 
@@ -597,7 +603,7 @@
 				var dx = $gameMap.roundXWithDirection(cell[0], d);
 				var dy = $gameMap.roundYWithDirection(cell[1], d);
 				if ($gameTemp.MoveTable(dx, dy)[0] >= 0) continue;
-				var dmove = Math.max(cell[2] - $gameMap.srpgMoveCost(dx, dy), 0);
+				var dmove = Math.max(cell[2] - $gameMap.srpgMoveCost(dx, dy, tag), 0);
 
 				var route = cell[3].concat(d);
 				$gameTemp.setMoveTable(dx, dy, dmove, route);
@@ -613,9 +619,13 @@
 	}
 
 	// get the cost of moving through a given space
-	Game_Map.prototype.srpgMoveCost = function(x, y) {
+	// modefied by OhisamaCraft
+	Game_Map.prototype.srpgMoveCost = function(x, y, tag) {
 		var terrain = this.terrainTag(x, y);
 
+		// tag
+		if (terrain <= tag) return 1;
+		
 		// map tags
 		if ($dataMap.meta["srpgTerrain"+terrain+"Cost"]) {
 			return Number($dataMap.meta["srpgTerrain"+terrain+"Cost"] || 1);
