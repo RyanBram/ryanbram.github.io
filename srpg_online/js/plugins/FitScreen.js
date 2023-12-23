@@ -22,6 +22,16 @@
         return true;
     };
 
+    Graphics._stretchHeight = function() {
+	    if (Utils.isMobileDevice()) {
+		    // [Note] Mobile browsers often have special operations at the top and
+		    //   bottom of the screen.
+		    return document.documentElement.clientHeight;
+	    } else {
+		    return window.innerHeight;
+	    }
+    };
+
     function adjustScreenWidth() {
         if (!SceneManager._scene || isNaN(screenHeight)) return;
 
