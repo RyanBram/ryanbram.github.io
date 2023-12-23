@@ -24,5 +24,6 @@ var $plugins =
 {"name":"SingleTouchMenu","status":true,"description":"Enables single touch selection for menu items in RPG Maker MZ while preserving swipe scrolling and mouse functionality.","parameters":{}},
 {"name":"MPP_ToneDownDeactiveWindow","status":true,"description":"Makes the inactive window where the cursor is displayed less noticeable.","parameters":{"Excluded Window Classes":"[\"Window_BattleStatus\",\"Window_NameEdit\"]"}},
 {"name":"FitScreen","status":true,"description":"Adjusts screen width based on device aspect ratio with an optional specified screen height and enables fullscreen in NWJS.","parameters":{"Screen Height":"630"}},
-{"name":"Zoom","status":false,"description":"v0.6.0 Map zoom","parameters":{"Default zoom for maps":"1.50","Always free camera":"false","Fix sprite black lines":"true","Fix map encounter zoom":"false"}}
+{"name":"Zoom","status":false,"description":"v0.6.0 Map zoom","parameters":{"Default zoom for maps":"1.50","Always free camera":"false","Fix sprite black lines":"true","Fix map encounter zoom":"false"}},
+{"name":"MPP_Pseudo3DBattle","status":true,"description":"A function to move the camera three-dimensionally during battle is added.","parameters":{"Battleback Scale":"1.3","Battleback2 Pivot Y Fixes":"[\"{\\\"Battleback2 Image\\\":\\\"Town2\\\",\\\"Pivot Y\\\":\\\"182\\\"}\"]"}}
 ];
