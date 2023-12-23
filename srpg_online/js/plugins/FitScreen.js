@@ -1,24 +1,29 @@
 /*:
  * @target MZ
- * @plugindesc Adjusts screen width based on device aspect ratio with a specified screen height and enables fullscreen in NWJS.
+ * @plugindesc Adjusts screen width based on device aspect ratio with an optional specified screen height and enables fullscreen in NWJS.
  * @author RPG Maker Coder
  *
  * @param Screen Height
  * @type number
- * @desc Set the constant screen height
- * @default 624
+ * @desc Set the constant screen height, leave blank to disable screen adjustment.
+ * @default 
  *
  * @help
- * This plugin adjusts the game's screen width based on the device's aspect ratio using a specified screen height and enables fullscreen in NWJS.
+ * This plugin adjusts the game's screen width based on the device's aspect ratio using an optional specified screen height and enables fullscreen in NWJS. If the screen height is not specified, the screen adjustment will not be performed.
  */
 
 (() => {
     const pluginName = 'FitScreen';
     const parameters = PluginManager.parameters(pluginName);
-    const screenHeight = parseInt(parameters['Screen Height']) || 624;
+    const screenHeightParam = parameters['Screen Height'];
+    const screenHeight = parseInt(screenHeightParam, 10);
+
+    Graphics._defaultStretchMode = function() {
+        return true;
+    };
 
     function adjustScreenWidth() {
-        if (!SceneManager._scene) return;
+        if (!SceneManager._scene || isNaN(screenHeight)) return;
 
         const aspectRatio = window.innerWidth / window.innerHeight;
         const screenWidth = Math.round(screenHeight * aspectRatio);
@@ -42,11 +47,15 @@
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() {
         _Scene_Boot_start.call(this);
-        adjustScreenWidth();
+        if (screenHeightParam !== undefined && screenHeightParam !== '') {
+            adjustScreenWidth();
+        }
     };
 
     // Menangani perubahan ukuran jendela
     window.addEventListener('resize', () => {
-        adjustScreenWidth();
+        if (screenHeightParam !== undefined && screenHeightParam !== '') {
+            adjustScreenWidth();
+        }
     });
 })();
