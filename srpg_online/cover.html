@@ -6,30 +6,31 @@
   margin: auto;
   width: 100%;
   border: 0px solid #000000;
-  padding: 10px;
-  text-align: center; /* Menambahkan alignment tengah */
+  padding: 0;
+  text-align: center;
 }
 
 .flexbody {
   display: flex;
   margin: auto;
   border: 0px solid #000000;
-  padding: 10px;
+  padding: 0;
   background-color: #000000;
   height: 100vh;
-  justify-content: center; /* Menengahkan secara horizontal */
-  align-items: center; /* Menengahkan secara vertikal */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .link-image {
   display: inline-block;
-  max-width: 25%; /* Menyesuaikan ukuran menjadi 1/9 dari lebar viewport */
-  height: auto; /* Menjaga rasio aspek gambar */
+  height: 50vh; /* Menggunakan tinggi sebagai acuan */
+  width: auto; /* Lebar otomatis untuk menjaga rasio aspek */
 }
 
 img {
-  max-width: 100%; /* Membuat gambar responsif */
-  height: auto; /* Menjaga rasio aspek */
+  height: 100%; /* Tinggi penuh dari container .link-image */
+  width: auto; /* Lebar otomatis untuk menjaga rasio aspek */
 }
 
 </style>
