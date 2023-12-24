@@ -4,10 +4,12 @@
 <style>
 .centeredobject {
   margin: auto;
-  width: 80%;
+  width: 100%;
   border: 0px solid #000000;
   padding: 10px;
+  text-align: center; /* Menambahkan alignment tengah */
 }
+
 .flexbody {
   display: flex;
   margin: auto;
@@ -15,17 +17,26 @@
   padding: 10px;
   background-color: #000000;
   height: 100vh;
+  justify-content: center; /* Menengahkan secara horizontal */
+  align-items: center; /* Menengahkan secara vertikal */
 }
 
 .link-image {
   display: inline-block;
+  max-width: 25%; /* Menyesuaikan ukuran menjadi 1/9 dari lebar viewport */
+  height: auto; /* Menjaga rasio aspek gambar */
+}
+
+img {
+  max-width: 100%; /* Membuat gambar responsif */
+  height: auto; /* Menjaga rasio aspek */
 }
 
 </style>
 </head>
 <body class="flexbody">
 
-<div class="centeredobject" style="text-align:center;">
+<div class="centeredobject">
 <a href="../srpg_online/" class="link-image"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbIAAAGyCAYAAACBc0EcAAAAw3pUWHRSYXcgcHJvZmlsZSB0eXBl
 IGV4aWYAAHjabVBbEsIgDPzPKTxCXgVyHKp1xht4fANJHVF3ht2UpUsIHM/HHS4DTAq61VasFHSo
 qXH3omGgTybUyRM7Z0XrPryNoeIqYbQSSud+/nAqda+2j6B2TWNfDdNQbl9BeZGMjtiLWwZZBgmH
@@ -454,7 +465,7 @@ g4zp9wCAhEaQAQAIMgAACDIAAAgyAABBBgAAQQYAAEEGAABBBgAgyAAAIMgAACDIAAAgyAAABBkA
 AAQZAAAEGQCAIAMAgCADAIAgAwCAIAMAEGQAABBkAAAQZAAAEGQAAIIMAACCDAAAggwAAIIMAECQ
 AQBAkAEAQJABAAgyAAAIMgAACDIAAAgyAABBBgAAQQYAAEEGAABBBgAgyAAAIMgAACDIAAAgyAAA
 Q4NH0sWSRtIVAIAE1PoffQ51e2k0kLUAAAAASUVORK5CYII=
-" style="width:100%;"/></a>
+" alt="Play Game"/></a>
 </div>
 
 </body>
