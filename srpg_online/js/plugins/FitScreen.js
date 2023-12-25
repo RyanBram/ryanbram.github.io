@@ -5,7 +5,7 @@
  *
  * @param Screen Height
  * @type number
- * @desc Set the constant screen height, leave blank to disable screen adjustment.
+ * @desc Set the constant screen height (630 is the best), leave blank to disable screen adjustment.
  * @default 
  *
  * @help
@@ -17,15 +17,15 @@
     const parameters = PluginManager.parameters(pluginName);
     const screenHeightParam = parameters['Screen Height'];
     const screenHeight = parseInt(screenHeightParam, 10);
-
+    
+    // Make sure always stretch in any supported platform
     Graphics._defaultStretchMode = function() {
         return true;
     };
 
+    // Disable window margin in Mobile device
     Graphics._stretchHeight = function() {
 	    if (Utils.isMobileDevice()) {
-		    // [Note] Mobile browsers often have special operations at the top and
-		    //   bottom of the screen.
 		    return document.documentElement.clientHeight;
 	    } else {
 		    return window.innerHeight;
@@ -38,17 +38,17 @@
         const aspectRatio = window.innerWidth / window.innerHeight;
         const screenWidth = Math.round(screenHeight * aspectRatio);
 
-        // Menyesuaikan ukuran layar
+        // Adjusting automatic screen ratio
         Graphics.width = screenWidth;
         Graphics.height = screenHeight;
         Graphics.resize(screenWidth, screenHeight);
         Graphics._updateAllElements();
 
-        // Menyesuaikan ukuran scene
+        // Adjusting scene size
         SceneManager._screenWidth = screenWidth;
         SceneManager._screenHeight = screenHeight;
 
-        // Periksa dan muat ulang Title Screen jika diperlukan
+        // Refreshing title screen whenever screen ratio is changed
         if (SceneManager._scene instanceof Scene_Title) {
             SceneManager.goto(Scene_Title);
         }
@@ -62,7 +62,7 @@
         }
     };
 
-    // Menangani perubahan ukuran jendela
+    // Handling change in window size
     window.addEventListener('resize', () => {
         if (screenHeightParam !== undefined && screenHeightParam !== '') {
             adjustScreenWidth();

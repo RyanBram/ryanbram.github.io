@@ -44,7 +44,9 @@
         const hitIndex = this.hitTest(localX, localY);
         if (hitIndex >= 0) {
             this.select(hitIndex);
-            this.processOk();
+            setTimeout(() => {
+                this.processOk();
+            }, 125); // 125 milliseconds delay
         }
     };
 
