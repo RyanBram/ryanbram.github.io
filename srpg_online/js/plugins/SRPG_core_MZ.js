@@ -5835,6 +5835,7 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
             var characterIndex = 0;
             this.setImage(characterName, characterIndex);
             this._followers.refresh();
+            this.setPriorityType(2)
         } else {
             _SRPG_Game_Player_refresh.call(this);
         }
@@ -8299,7 +8300,7 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
     // アクターコマンドの表示位置を調節する
     Window_ActorCommand.prototype.updatePlacement = function() {
         this.height = this.windowHeight();
-        this.x = Math.max($gameTemp.activeEvent().screenX() - $gameMap.tileWidth() / 2 - this.width, 0);
+        this.x = Math.max($gameTemp.activeEvent().screenX() - $gameMap.tileWidth() / 2 - this.width, 0); //try edit
         if ($gameTemp.activeEvent().screenY() < Graphics.boxHeight - 160) {
             var eventY = $gameTemp.activeEvent().screenY();
         } else {
@@ -9110,8 +9111,8 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
     Scene_Map.prototype.actorCommandWindowRect = function() {
         const ww = 192;
         const wh = this.calcWindowHeight(8, true);
-        const wx = Math.max(Graphics.boxWidth / 2 - ww, 0);
-        const wy = Math.max(Graphics.boxHeight / 2 - wh, 0);
+        const wx = Math.max(Graphics.boxWidth / 2 - ww, 0);  //try edit
+        const wy = Math.max(Graphics.boxHeight / 2 - wh, 0); //try edit
         return new Rectangle(wx, wy, ww, wh);
     };
 

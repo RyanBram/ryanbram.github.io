@@ -316,6 +316,45 @@ Game_Map.prototype.scrollDownRight = function(distance) {
     this.scrollRight(distance);
 };
 
+
+//=============================================================================
+// Update setHiddenPointer for some battlePhase & subBattlePhase
+//=============================================================================
+
+// setHiddenPointer in the beginning of actor turn
+$.srpgStartActorTurn = Game_System.prototype.srpgStartActorTurn;
+Game_System.prototype.srpgStartActorTurn = function() {
+    $.srpgStartActorTurn.call(this);
+    Graphics.setHiddenPointer(true);
+};
+
+// setHiddenPointer after selecting any command
+// I don't know how to prevent Graphics.setHiddenPointer(false); in $.TouchInput_onMouseMove to be executed until the cursor really arrived to target
+$.startActorTargetting = Scene_Map.prototype.startActorTargetting;
+Scene_Map.prototype.startActorTargetting = function() {
+    $.startActorTargetting.call(this);
+    Graphics.setHiddenPointer(true);
+};
+
+// setHiddenPointer after any action
+// I don't know how to prevent Graphics.setHiddenPointer(false); in $.TouchInput_onMouseMove to be executed until the cursor really arrived to target
+$.srpgAfterAction = Scene_Map.prototype.srpgAfterAction;
+Scene_Map.prototype.srpgAfterAction = function() {
+    $.srpgAfterAction.call(this);
+    if ($gameSystem.isBattlePhase() === 'actor_phase') {
+        Graphics.setHiddenPointer(true);
+    }
+};
+
+
+/* It seems this block of code can be used for Graphics.setHiddenPointer(true); in some subBattlePhase
+$.srpgControlPhase = Scene_Map.prototype.srpgControlPhase;
+Scene_Map.prototype.srpgControlPhase = function() {
+    $.srpgControlPhase.call(this);
+    // additional function here    
+};
+*/
+
 //=============================================================================
 // Input
 //=============================================================================
@@ -346,13 +385,13 @@ TouchInput._onWheel = function(event) {
 };
 
 
-/*Note for Mr Takumi Ariake
-I created an initial function for $.TouchInput_onLeftButtonDown, where a left mouse click will make the mouse pointer
-to reappear. But I haven't found a way to make the mouse pointer appear right above the actor event
-where the cursor(player) position is and directly select the actor event to enter the next subbattlephase,
-namely `actor_move`.
-This is the function used by SRPG Studio software.
-*/
+// Note for Mr Takumi Ariake
+// I created the initial function for $.TouchInput_onLeftButtonDown, where a left mouse click will make the mouse pointer to reappear.
+// But I haven't found a way to make the mouse pointer reappear right above the event where the current cursor(player) position is
+//  and directly select that event to enter the next subbattlephase.
+// This is the function used by SRPG Studio software.
+
+/* The function
 $.TouchInput_onLeftButtonDown = TouchInput._onLeftButtonDown;
 TouchInput._onLeftButtonDown = function(event) {
     $.TouchInput_onLeftButtonDown.call(this, event);
@@ -360,7 +399,7 @@ TouchInput._onLeftButtonDown = function(event) {
         Graphics.setHiddenPointer(false);
     }
 };
-
+*/
 
 //=============================================================================
 // TouchInput

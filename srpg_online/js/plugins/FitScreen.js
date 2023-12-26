@@ -1,6 +1,6 @@
 /*:
  * @target MZ
- * @plugindesc Adjusts screen width based on device aspect ratio with an optional specified screen height and enables fullscreen in NWJS.
+ * @plugindesc Adjusts screen width based on device aspect ratio with an optional specified screen height.
  * @author RPG Maker Coder
  *
  * @param Screen Height
@@ -9,7 +9,8 @@
  * @default 
  *
  * @help
- * This plugin adjusts the game's screen width based on the device's aspect ratio using an optional specified screen height and enables fullscreen in NWJS. If the screen height is not specified, the screen adjustment will not be performed.
+ * This plugin adjusts the game's screen width based on the device's aspect ratio using an optional specified screen height. 
+*  If the screen height is not specified, the screen adjustment will not be performed.
  */
 
 (() => {
