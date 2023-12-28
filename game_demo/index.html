@@ -154,7 +154,20 @@
 	<script src="code0.js" crossorigin="anonymous"></script>
 	<script src="code1.js" crossorigin="anonymous"></script>
 	<script src="data.js" crossorigin="anonymous"></script>
+    <script>
+        // Event listener untuk mendengarkan pesan dari parent
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'keydown') {
+                // Emulasikan tindakan tombol keyboard yang sesuai dalam game
+                simulateKeyDown(event.data.key);
+            }
+        });
 
+        function simulateKeyDown(key) {
+            // Logika untuk menangani tombol keyboard dalam game
+            // Contoh: jika key === 'ArrowUp', maka lakukan tindakan untuk menggerakkan karakter ke atas dalam game.
+        }
+    </script>
 
 </head>
 <body>

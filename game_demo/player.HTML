@@ -59,22 +59,22 @@
 
         function playGame() {
             // Kode untuk memulai game dalam iframe
-            // Contoh: gameIframe.contentWindow.postMessage({ action: 'play' }, '*');
+            gameIframe.contentWindow.postMessage({ action: 'play' }, '*');
         }
 
         function stopGame() {
             // Kode untuk menghentikan game dalam iframe
-            // Contoh: gameIframe.contentWindow.postMessage({ action: 'stop' }, '*');
+            gameIframe.contentWindow.postMessage({ action: 'stop' }, '*');
         }
 
         function toggleFullscreen() {
             // Kode untuk mengaktifkan mode layar penuh pada iframe
-            // Contoh: gameIframe.requestFullscreen();
+            gameIframe.requestFullscreen();
         }
 
         function pressVirtualButton(key) {
             // Kode untuk memetakan tombol virtual ke perintah keyboard
-            // Contoh: gameIframe.contentWindow.postMessage({ action: 'keydown', key: key }, '*');
+            gameIframe.contentWindow.postMessage({ action: 'keydown', key: key }, '*');
         }
     </script>
 </body>
