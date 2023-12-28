@@ -1,0 +1,7 @@
+[
+null,
+{"id":1,"list":[{"code":353,"indent":0,"parameters":[]},{"code":0,"indent":0,"parameters":[]}],"name":"全滅時の処理","switchId":1,"trigger":0},
+{"id":2,"list":[{"code":356,"indent":0,"parameters":["openLogScene"]},{"code":0,"indent":0,"parameters":[]}],"name":"ログ確認シーンの呼び出し","switchId":1,"trigger":0},
+{"id":3,"list":[{"code":0,"indent":0,"parameters":[]}],"name":"","switchId":1,"trigger":0},
+{"id":4,"list":[{"code":0,"indent":0,"parameters":[]}],"name":"","switchId":1,"trigger":0}
+]

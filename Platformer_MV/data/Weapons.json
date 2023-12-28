@@ -1,0 +1,7 @@
+[
+null,
+{"id":1,"animationId":6,"description":"目の前にいる敵を攻撃することができる近接武器。\n\\C[16]操作方法\\C[0] Ｚキー","etypeId":1,"traits":[{"code":31,"dataId":1,"value":0},{"code":22,"dataId":0,"value":0}],"iconIndex":97,"name":"剣","note":"<shot_way:1>\n<shot_index:7>\n<shot_count:-18>\n<shot_delay:20>\n<shot_se_name:Wind1>\n<shot_se_pitch:150>\n<weight:1>\n","params":[0,0,10,0,0,0,0,0],"price":500,"wtypeId":2},
+{"id":2,"animationId":6,"description":"目の前にいる敵を攻撃することができる近接武器。\n\\C[16]操作方法\\C[0] Ｚキー","etypeId":1,"traits":[{"code":31,"dataId":1,"value":0},{"code":22,"dataId":0,"value":0}],"iconIndex":99,"name":"斧","note":"<shot_way:2>\n<shot_space:0.3>\n<shot_index:7>\n<shot_count:-16>\n<shot_delay:20>\n<shot_se_name:Wind1>\n<shot_se_pitch:150>\n<weight:2>","params":[0,0,10,0,0,0,0,0],"price":500,"wtypeId":4},
+{"id":3,"animationId":1,"description":"複数の魔法弾を飛ばして離れた敵を攻撃できる遠隔武器。\n\\C[16]操作方法\\C[0] Ｚキー","etypeId":1,"traits":[{"code":31,"dataId":1,"value":0},{"code":22,"dataId":0,"value":0}],"iconIndex":101,"name":"杖","note":"<shot_way:3>\n<shot_index:5>\n<shot_speed:0.05>\n<shot_count:-10>\n<shot_delay:30>\n<shot_se_name:Attack2>\n<shot_se_pitch:150>\n","params":[0,0,10,0,0,0,0,0],"price":500,"wtypeId":6},
+{"id":4,"animationId":11,"description":"矢を飛ばして遠く離れた敵を攻撃できる遠隔武器。\n\\C[16]操作方法\\C[0] Ｚキー","etypeId":1,"traits":[{"code":31,"dataId":1,"value":0},{"code":22,"dataId":0,"value":0}],"iconIndex":102,"name":"弓","note":"<shot_way:1>\n<shot_index:6>\n<shot_speed:0.1>\n<shot_count:10>\n<shot_delay:50>\n<shot_se_name:CrossBow>\n","params":[0,0,10,0,0,0,0,0],"price":500,"wtypeId":7}
+]
