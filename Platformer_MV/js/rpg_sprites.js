@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_sprites.js v1.5.0
+// rpg_sprites.js v1.6.1 (community-1.3b)
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -2170,6 +2170,7 @@ Spriteset_Base.prototype.createWebGLToneChanger = function() {
     var width = Graphics.width + margin * 2;
     var height = Graphics.height + margin * 2;
     this._toneFilter = new ToneFilter();
+    this._toneFilter.enabled = false;
     this._baseSprite.filters = [this._toneFilter];
     this._baseSprite.filterArea = new Rectangle(-margin, -margin, width, height);
 };
@@ -2226,8 +2227,13 @@ Spriteset_Base.prototype.updateToneChanger = function() {
 Spriteset_Base.prototype.updateWebGLToneChanger = function() {
     var tone = this._tone;
     this._toneFilter.reset();
-    this._toneFilter.adjustTone(tone[0], tone[1], tone[2]);
-    this._toneFilter.adjustSaturation(-tone[3]);
+    if (tone[0] || tone[1] || tone[2] || tone[3]) {
+        this._toneFilter.enabled = true;
+        this._toneFilter.adjustTone(tone[0], tone[1], tone[2]);
+        this._toneFilter.adjustSaturation(-tone[3]);
+    } else {
+        this._toneFilter.enabled = false;
+    }
 };
 
 Spriteset_Base.prototype.updateCanvasToneChanger = function() {
@@ -2535,6 +2541,7 @@ Spriteset_Battle.prototype.battleback2Name = function() {
 };
 
 Spriteset_Battle.prototype.overworldBattleback1Name = function() {
+    if ($gameMap.battleback1Name() === '') return '';
     if ($gamePlayer.isInVehicle()) {
         return this.shipBattleback1Name();
     } else {
@@ -2543,6 +2550,7 @@ Spriteset_Battle.prototype.overworldBattleback1Name = function() {
 };
 
 Spriteset_Battle.prototype.overworldBattleback2Name = function() {
+    if ($gameMap.battleback2Name() === '') return '';
     if ($gamePlayer.isInVehicle()) {
         return this.shipBattleback2Name();
     } else {

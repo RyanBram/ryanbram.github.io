@@ -14,7 +14,7 @@
  */
 
 (() => {
-    const pluginName = 'FitScreen';
+    const pluginName = 'FitScreenOld';
     const parameters = PluginManager.parameters(pluginName);
     const screenHeightParam = parameters['Screen Height'];
     const screenHeight = parseInt(screenHeightParam, 10);
