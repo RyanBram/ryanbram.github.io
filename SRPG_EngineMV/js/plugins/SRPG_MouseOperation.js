@@ -311,7 +311,7 @@ TouchInput.atLeftBorder = function(){
 };
 
 TouchInput.atRightBorder = function(){
-  if(this._mouseX > Graphics.boxWidth - $.Parameters.borderDistance1) return true;
+  if(this._mouseX > Graphics.width - $.Parameters.borderDistance1) return true;
   return false;
 };
 
@@ -321,7 +321,7 @@ TouchInput.atTopBorder = function(){
 };
 
 TouchInput.atBottomBorder = function(){
-  if(this._mouseY > Graphics.boxHeight - $.Parameters.borderDistance1) return true;
+  if(this._mouseY > Graphics.height - $.Parameters.borderDistance1) return true;
   return false;
 };
 
@@ -331,7 +331,7 @@ TouchInput.atDeepLeftBorder = function(){
 };
 
 TouchInput.atDeepRightBorder = function(){
-  if(this._mouseX > Graphics.boxWidth - $.Parameters.borderDistance2) return true;
+  if(this._mouseX > Graphics.width - $.Parameters.borderDistance2) return true;
   return false;
 };
 
@@ -341,7 +341,7 @@ TouchInput.atDeepTopBorder = function(){
 };
 
 TouchInput.atDeepBottomBorder = function(){
-  if(this._mouseY > Graphics.boxHeight - $.Parameters.borderDistance2) return true;
+  if(this._mouseY > Graphics.height - $.Parameters.borderDistance2) return true;
   return false;
 };
 
