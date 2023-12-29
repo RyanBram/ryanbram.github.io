@@ -701,7 +701,11 @@ function Scene_Terminate() {
     Scene_Title.prototype.commandShutdown = function() {
         this._commandWindow.close();
         this.fadeOutAll();
-        SceneManager.goto(Scene_Terminate);
+        if (Utils.isMobileDevice()) {
+            SceneManager.goto(Scene_Title);
+        } else {
+            SceneManager.goto(Scene_Terminate);
+        }
     };
 
     //=============================================================================
