@@ -6,17 +6,17 @@
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
-// 1.6.1 2023/08/05 ElectronForMz.jsとの順序を定義するアノテーションを追加
-// 1.6.0 2023/07/23 オプション変更時にフルスクリーン状態を即時反映させる機能を追加
-// 1.5.0 2023/06/01 ElectronForMz.jsに対応
-// 1.4.0 2023/05/01 デフォルトでフルスクリーン起動できるパラメータを追加
-// 1.3.0 2022/09/09 ゲーム終了画面にもシャットダウン項目を追加できる機能を追加
-// 1.2.0 2021/12/30 イベントテスト実行時は全画面化を無効にするよう仕様変更
-// 1.1.0 2021/11/04 MZで動作するよう修正
-// 1.0.3 2019/01/14 1.0.3でコアスクリプトv1.6.1以前で逆に動作しなくなっていた問題を修正
-// 1.0.2 2019/01/14 コアスクリプトv1.6.1以降で正常に動作していなかった問題を修正
-// 1.0.1 2018/06/30 タイトルコマンドウィンドウのY座標整数になっていなかった問題を修正
-// 1.0.0 2016/03/06 初版
+// 1.6.1 2023/08/05 Added an annotation to define the order with ElectronForMz.js
+// 1.6.0 2023/07/23 Added feature to immediately reflect full screen state when changing options
+// 1.5.0 2023/06/01 Compatible with ElectronForMz.js
+// 1.4.0 2023/05/01 Added parameter to start in full screen by default
+// 1.3.0 2022/09/09 Added feature to add a shutdown item to the game end screen
+// 1.2.0 2021/12/30 Changed specification to disable full screen during event test execution
+// 1.1.0 2021/11/04 Modified to work in MZ
+// 1.0.3 2019/01/14 Fixed issue in 1.0.3 where it didn't work with core script v1.6.1 and earlier
+// 1.0.2 2019/01/14 Fixed issue where it wasn't working properly with core script v1.6.1 and later
+// 1.0.1 2018/06/30 Fixed issue where Y coordinate of title command window was not an integer
+// 1.0.0 2016/03/06 First edition
 // ----------------------------------------------------------------------------
 // [Blog]   : https://triacontane.blogspot.jp/
 // [Twitter]: https://twitter.com/triacontane/
@@ -24,63 +24,62 @@
 //=============================================================================
 
 /*:
- * @plugindesc フルスクリーンで起動プラグイン
+ * @plugindesc Full Screen Startup Plugin
  * @target MZ
  * @url https://github.com/triacontane/RPGMakerMV/tree/mz_master/StartUpFullScreen.js
  * @base PluginCommonBase
  * @orderAfter PluginCommonBase
  * @orderAfter ElectronForMz
- * @author トリアコンタン
+ * @author Triacontane
  *
  * @param Shutdown
- * @text シャットダウン
- * @desc タイトル画面に追加するシャットダウンの項目名です。
- * ローカル環境での実行時のみ表示されます。
- * @default シャットダウン
+ * @text Shutdown Text
+ * @desc The name of the shutdown item to be added to the title screen.
+ * Displayed only when executed in a local environment.
+ * @default Exit
  *
  * @param DefaultFullScreen
- * @text デフォルトでフルスクリーン
- * @desc 有効にするとデフォルトでフルスクリーン起動します。
- * @default false
+ * @text Default Full Screen
+ * @desc If enabled, the game will start in full screen by default.
+ * @default true
  * @type boolean
  *
  * @param Immediate
- * @text 即時反映
- * @desc 有効にするとオプションで起動オプションを変更したときに、その場でフルスクリーン状態が変更されます。
- * @default false
+ * @text Immediate Reflection
+ * @desc If enabled, changing the startup option in the menu immediately changes the full screen state.
+ * @default true
  * @type boolean
  *
  * @param StartUpFullScreen
- * @text フルスクリーンで起動
- * @desc オプション画面に追加する全画面で起動の項目名です。
- * ローカル環境での実行時のみ表示されます。
- * @default フルスクリーンで起動
+ * @text Full Screen
+ * @desc The name of the item 'Start in Full Screen' to be added to the options menu.
+ * Displayed only when executed in a local environment.
+ * @default Full Screen
  *
  * @param UseGameEnd
- * @text ゲーム終了画面に追加
- * @desc ゲーム終了画面にシャットダウンの項目を追加します。
+ * @text Add to Game End Screen
+ * @desc Adds the shutdown item to the game end screen.
  * @default true
  * @type boolean
  *
  * @help StartUpFullScreen.js
  *
- * オプション画面に「フルスクリーンで起動」を追加します。
- * 有効な場合、ゲームをフルスクリーンで起動します。
- * またタイトル画面にシャットダウンを追加します。
+ * Adds 'Start in Full Screen' to the options menu.
+ * When enabled, the game will start in full screen.
+ * Also adds a shutdown option to the title screen.
  *
- * このプラグインはローカル環境で実行した場合のみ有効です。
- * イベントテスト実行時はテンポを優先し全画面化は無効となります。
+ * This plugin is only effective when executed in a local environment.
+ * Full screen is disabled during event test execution for tempo priority.
  *
- * このプラグインの利用にはベースプラグイン『PluginCommonBase.js』が必要です。
- * 『PluginCommonBase.js』は、RPGツクールMZのインストールフォルダ配下の
- * 以下のフォルダに格納されています。
+ * This plugin requires the base plugin "PluginCommonBase.js".
+ * "PluginCommonBase.js" can be found in the following folder under the RPG Maker MZ installation directory:
  * dlc/BasicResources/plugins/official
  *
- * 利用規約：
- *  作者に無断で改変、再配布が可能で、利用形態（商用、18禁利用等）
- *  についても制限はありません。
- *  このプラグインはもうあなたのものです。
+ * Terms of Use:
+ *  Modification and redistribution are allowed without the author's permission, and there are no restrictions on the form of use (commercial, 18+ usage, etc.).
+ *  This plugin is now yours.
  */
+
 
 function Scene_Terminate() {
     this.initialize.apply(this, arguments);

@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_managers.js v1.6.1 (community-1.3b)
+// rpg_managers.js v1.6.2
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -387,6 +387,7 @@ DataManager.saveGameWithoutRescue = function(savefileId) {
 };
 
 DataManager.loadGameWithoutRescue = function(savefileId) {
+    var globalInfo = this.loadGlobalInfo();
     if (this.isThisGameFile(savefileId)) {
         var json = StorageManager.load(savefileId);
         this.createGameObjects();
@@ -1999,14 +2000,12 @@ SceneManager.terminate = function() {
 
 SceneManager.onError = function(e) {
     console.error(e.message);
-    if (e.filename || e.lineno) {
-        console.error(e.filename, e.lineno);
-        try {
-            this.stop();
-            Graphics.printError('Error', e.message);
-            AudioManager.stopAll();
-        } catch (e2) {
-        }
+    console.error(e.filename, e.lineno);
+    try {
+        this.stop();
+        Graphics.printError('Error', e.message);
+        AudioManager.stopAll();
+    } catch (e2) {
     }
 };
 

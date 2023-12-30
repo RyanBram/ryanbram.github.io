@@ -58,9 +58,6 @@
  *
  *
  * @help
- * Copyright (c) 2020 SRPG Team. All rights reserved.
- * Released under the MIT license.
- * ===================================================================
  * Draw an arrow to indicate the movement path in SRPG battles.
  * Images used for the paths go in the img/system/ folder.
  *

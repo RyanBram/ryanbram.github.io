@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_core.js v1.6.1 (community-1.3b)
+// rpg_core.js v1.6.2
 //=============================================================================
 
 function ProgressWatcher(){
@@ -1772,6 +1772,7 @@ Bitmap.prototype._requestImage = function(url){
         this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
     }
 
+    this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
 
@@ -2178,12 +2179,10 @@ Graphics.printLoadingError = function(url) {
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.addEventListener('touchstart', function(event) {
-            event.stopPropagation();
-        });
-        button.addEventListener('click', function(event) {
+        button.onmousedown = button.ontouchstart = function(event) {
             ResourceHandler.retry();
-        });
+            event.stopPropagation();
+        };
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
@@ -2768,17 +2767,17 @@ Graphics._formatEventInfo = function(error) {
 Graphics._formatEventCommandInfo = function(error) {
     switch (String(error.eventCommand)) {
     case "plugin_command":
-        return "◆Plugin Command: " + error.content;
+        return "?Plugin Command: " + error.content;
     case "script":
-        return "◆Script: " + error.content;
+        return "?Script: " + error.content;
     case "control_variables":
-        return "◆Control Variables: Script: " + error.content;
+        return "?Control Variables: Script: " + error.content;
     case "conditional_branch_script":
-        return "◆If: Script: " + error.content;
+        return "?If: Script: " + error.content;
     case "set_route_script":
-        return "◆Set Movement Route: ◇Script: " + error.content;
+        return "?Set Movement Route: ?Script: " + error.content;
     case "auto_route_script":
-        return "Autonomous Movement Custom Route: ◇Script: " + error.content;
+        return "Autonomous Movement Custom Route: ?Script: " + error.content;
     case "other":
     default:
         return "";
@@ -3232,9 +3231,9 @@ Graphics._switchStretchMode = function() {
  */
 Graphics._switchFullScreen = function() {
     if (this._isFullScreen()) {
-        this._cancelFullScreen();
-    } else {
         this._requestFullScreen();
+    } else {
+        this._cancelFullScreen();
     }
 };
 
@@ -3245,10 +3244,9 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return document.fullscreenElement ||
-           document.mozFullScreen || 
-           document.webkitFullscreenElement ||
-           document.msFullscreenElement;
+    return ((document.fullScreenElement && document.fullScreenElement !== null) ||
+            (!document.mozFullScreen && !document.webkitFullscreenElement &&
+             !document.msFullscreenElement));
 };
 
 /**
@@ -3258,8 +3256,8 @@ Graphics._isFullScreen = function() {
  */
 Graphics._requestFullScreen = function() {
     var element = document.body;
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
+    if (element.requestFullScreen) {
+        element.requestFullScreen();
     } else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
     } else if (element.webkitRequestFullScreen) {
@@ -3275,8 +3273,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.exitFullscreen) { 
-        document.exitFullscreen();
+    if (document.cancelFullScreen) {
+        document.cancelFullScreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
@@ -4626,37 +4624,35 @@ Sprite.prototype._executeTint = function(x, y, w, h) {
     context.globalCompositeOperation = 'copy';
     context.drawImage(this._bitmap.canvas, x, y, w, h, 0, 0, w, h);
 
-    if (tone[0] || tone[1] || tone[2] || tone[3]) {
-        if (Graphics.canUseSaturationBlend()) {
-            var gray = Math.max(0, tone[3]);
-            context.globalCompositeOperation = 'saturation';
-            context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
-            context.fillRect(0, 0, w, h);
-        }
+    if (Graphics.canUseSaturationBlend()) {
+        var gray = Math.max(0, tone[3]);
+        context.globalCompositeOperation = 'saturation';
+        context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
+        context.fillRect(0, 0, w, h);
+    }
 
-        var r1 = Math.max(0, tone[0]);
-        var g1 = Math.max(0, tone[1]);
-        var b1 = Math.max(0, tone[2]);
-        context.globalCompositeOperation = 'lighter';
-        context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
+    var r1 = Math.max(0, tone[0]);
+    var g1 = Math.max(0, tone[1]);
+    var b1 = Math.max(0, tone[2]);
+    context.globalCompositeOperation = 'lighter';
+    context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
+    context.fillRect(0, 0, w, h);
+
+    if (Graphics.canUseDifferenceBlend()) {
+        context.globalCompositeOperation = 'difference';
+        context.fillStyle = 'white';
         context.fillRect(0, 0, w, h);
 
-        if (Graphics.canUseDifferenceBlend()) {
-            context.globalCompositeOperation = 'difference';
-            context.fillStyle = 'white';
-            context.fillRect(0, 0, w, h);
+        var r2 = Math.max(0, -tone[0]);
+        var g2 = Math.max(0, -tone[1]);
+        var b2 = Math.max(0, -tone[2]);
+        context.globalCompositeOperation = 'lighter';
+        context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
+        context.fillRect(0, 0, w, h);
 
-            var r2 = Math.max(0, -tone[0]);
-            var g2 = Math.max(0, -tone[1]);
-            var b2 = Math.max(0, -tone[2]);
-            context.globalCompositeOperation = 'lighter';
-            context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
-            context.fillRect(0, 0, w, h);
-
-            context.globalCompositeOperation = 'difference';
-            context.fillStyle = 'white';
-            context.fillRect(0, 0, w, h);
-        }
+        context.globalCompositeOperation = 'difference';
+        context.fillStyle = 'white';
+        context.fillRect(0, 0, w, h);
     }
 
     var r3 = Math.max(0, color[0]);
@@ -6291,6 +6287,23 @@ TilingSprite.prototype._renderCanvas = function(renderer) {
     }
     if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
         this._renderCanvas_PIXI(renderer);
+    }
+};
+
+/**
+ * @method _renderWebGL
+ * @param {Object} renderer
+ * @private
+ */
+TilingSprite.prototype._renderWebGL = function(renderer) {
+    if (this._bitmap) {
+        this._bitmap.touch();
+    }
+    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
+        if (this._bitmap) {
+            this._bitmap.checkDirty();
+        }
+        this._renderWebGL_PIXI(renderer);
     }
 };
 

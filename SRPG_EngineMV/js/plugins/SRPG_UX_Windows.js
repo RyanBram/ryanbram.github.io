@@ -20,9 +20,6 @@
  * @default false
  *
  * @help
- * Copyright (c) 2020 SRPG Team. All rights reserved.
- * Released under the MIT license.
- * ===================================================================
  * Minor improvements to the behavior of windows
  * 
  * Options:
@@ -117,7 +114,6 @@
 	}
 
 	// cancel movement or target, plus quick targeting
-	/*
 	var _updateCallMenu = Scene_Map.prototype.updateCallMenu;
 	Scene_Map.prototype.updateCallMenu = function() {
 		if ($gameSystem.isSRPGMode() && !$gameSystem.srpgWaitMoving()) {
@@ -133,7 +129,6 @@
 		}
 		_updateCallMenu.call(this);
 	};
-	*/
 
 //====================================================================
 // correctly handle enabled / disabled options in the menu

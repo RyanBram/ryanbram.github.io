@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_scenes.js v1.6.1 (community-1.3b)
+// rpg_scenes.js v1.6.2
 //=============================================================================
 
 //=============================================================================
@@ -1206,13 +1206,12 @@ Scene_ItemBase.prototype.isItemEffectsValid = function() {
     }, this);
 };
 
-Scene_ItemBase.prototype.applyItem =function(){
-    var action = this.action();
-    var targets = this.itemTargetActors();
-    targets.forEach(function(battler) {
-        var repeats = action.numRepeats();
-        for (var i = 0; i < repeats; i++) {
-            action.apply(battler);                    
+Scene_ItemBase.prototype.applyItem = function() {
+    var action = new Game_Action(this.user());
+    action.setItemObject(this.item());
+    this.itemTargetActors().forEach(function(target) {
+        for (var i = 0; i < action.numRepeats(); i++) {
+            action.apply(target);
         }
     }, this);
     action.applyGlobal();
