@@ -5,8 +5,8 @@
 //=============================================================================
 
 /*:
- * @plugindesc SRPG area-of-effect skills
- * @author Dr. Q + アンチョビ, Edited by Shoukang
+ * @plugindesc SRPG area-of-effect skills, edited by OhisamaCraft
+ * @author Dr. Q + アンチョビ
  * 
  * @param AoE Color
  * @desc CSS Color for AoE squares
@@ -30,6 +30,9 @@
  *
  *
  * @help
+ * Copyright (c) 2020 SRPG Team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
  * Allows you to define an area of effect for attacks
  * Based on SRPG_AreaAttack.js by アンチョビ
  *
@@ -49,6 +52,8 @@
  * Note: .SRPGActionTimesAdd(X) will only work during the first target of a
  * skill if it has an AoE. If you want to modify action times manually, use
  * ._SRPGActionTimes += X instead.
+ * 
+ * AoE is ignored in the counter action (action by the defender). only fights against the attacker.
  * 
  * Skill / item notetags:
  * <srpgAreaRange:x>    creates an AoE of size x
@@ -162,6 +167,192 @@
  * Returns a list of actors/enemies/both near the specified event, supporting
  * the same AoE shapes listed above. If you use a directional AoE shape and no
  * direction is specified, it will point where your event is facing
+ * 
+ * Note / Modification by Ohisama Craft
+ * -Corrected cost consumption (changed from gameTemp to gameBattler to counter action)
+ * -Added allActor / allEnemy to AoE shape (targets all actors / enemies within range)
+ * -Supports Game_Player.prototype.triggerAction for SRPGgearMV
+ * -Japanese translation of help
+ * 
+ */
+
+
+/*:ja
+ * @plugindesc SRPG戦闘で範囲攻撃（スキル）を実装します(おひさまクラフトによる改変あり)
+ * @author Dr. Q + アンチョビ
+ * 
+ * @param AoE Color
+ * @desc 範囲表示のための CSS Color を設定します
+ * https://www.w3schools.com/cssref/css_colors.asp
+ * @type string
+ * @default DarkOrange
+ *
+ * @param Show One Square AoE
+ * @desc 単体（１マス）が対象の時も AoE の範囲表示を行うか
+ * @type boolean
+ * @on Show
+ * @off Hide
+ * @default false
+ *
+ * @param Refocus Camera
+ * @desc 効果が発動するとき、個々の対象が画面の中央になるように画面移動するか
+ * @type boolean
+ * @on Move
+ * @off Don't move
+ * @default false
+ *
+ *
+ * @help
+ * Copyright (c) 2020 SRPG Team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
+ * 範囲効果のあるスキル・アイテムを作成できるようにします
+ * アンチョビ氏による SRPG_AreaAttack.js をベースにしています
+ *
+ * 注：SRPG_AreaAttackとSRPG_AoEは、同じ機能の多くをさまざまな方法で定義しており、
+ * 両方を同時に使用しようとすることはできません。
+ * 
+ * AoEスキルを使用する場合、エリア内に少なくとも1つの有効なターゲットがある限り、
+ * 空のセルをターゲットにすることができます。
+ * AIユニット（自動行動アクターやエネミー）はこれを利用せず、常にユニットを直接ターゲットにしようとし、
+ * 偶然に他のターゲットを範囲内に巻き込みます（SRPG_AIControlを併用しない場合）。
+ * 
+ * デフォルトでは、AIユニットは、照準を合わせる方法がわからないため、
+ * 最小範囲が1以上のAoEエフェクトを使用しません。
+ * AIを改善する他のプラグインを作成する場合、次の行を用いることで有効にすることができます：
+ * Game_System.prototype.srpgAIUnderstandsAoE = true;
+ * 
+ * 注：.SRPGActionTimesAdd(X) は、AoEスキルの最初のターゲットにのみ機能します。 
+ * 行動回数を実際にターゲットに使用した回数だけ繰り返して増やしたい場合は、
+ * 代わりに._SRPGActionTimes +=X を使用してください。
+ * 
+ * 応戦（防御側による行動）では AoE が無視されます（攻撃者に対してのみ応戦します）。
+ * 
+ * スキル / アイテムのメモ:
+ * <srpgAreaRange:x>    : サイズxのAoEを作成します（下記も参照）
+ * <srpgAreaMinRange:x> : 最小AoEサイズを設定します。範囲の真ん中に穴を作成します。
+ * <srpgAreaTargets:x>  : スキルが発動するターゲットの最大数を設定します。
+ * <srpgAreaType:y>     : AoEの形状を変更します。
+ *                        特に指定しない場合、'circle'に設定されます。
+ *
+ * <srpgAreaOrder:near>   :AoEの中心に近い側のターゲットから行動を実行します（デフォルト）。
+ * <srpgAreaOrder:far>    :AoEの中心から遠い側のターゲットから行動を実行します。
+ * <srpgAreaOrder:random> :AoEの中のターゲットにランダムな順番で行動を実行します。
+ *
+ * <srpgAreaType:y>では、次の形状が設定できます。
+ * 0 がカーソルの位置、数字はそこからの距離になります（<srpgAreaRange:x>で設定）。
+ * 下記は、<srpgAreaRange:2>で例示しています。
+ *
+ * circle: ターゲットセルを中心に円形
+ *      2
+ *    2 1 2
+ *  2 1 0 1 2
+ *    2 1 2
+ *      2
+ *
+ * square - ターゲットセルを中心に四角形
+ *  2 2 2 2 2
+ *  2 1 1 1 2
+ *  2 1 0 1 2
+ *  2 1 1 1 2
+ *  2 2 2 2 2
+ *
+ * line - ターゲットセルから直線（例は使用者が下向きの場合）
+ *
+ *      0
+ *      1
+ *      2
+ *   (下向き)
+ *
+ * cone - ターゲットセルから扇状（例は使用者が下向きの場合）
+ *
+ *
+ *      0
+ *    1 1 1
+ *  2 2 2 2 2
+ *   (下向き)
+ *
+ * split - ターゲットセルからV字（例は使用者が下向きの場合）
+ *
+ *
+ *      0
+ *    1   1
+ *  2       2
+ *   (下向き)
+ *
+ * arc - ターゲットセルから円弧上（例は使用者が下向きの場合）
+ *  2       2
+ *    1   1
+ *      0
+ *
+ *
+ *   (下向き)
+ *
+ * side - ターゲットセルから横一列
+ *
+ *
+ *  2 1 0 1 2
+ *
+ *
+ *   (下向き)
+ *
+ * tee - ターゲットセルから下＋横一列（T字）
+ *
+ *
+ *  2 1 0 1 2
+ *      1
+ *      2
+ *   (下向き)
+ *
+ * plus - ターゲットセルから十字（＋型）
+ *      2
+ *      1
+ *  2 1 0 1 2
+ *      1
+ *      2
+ *
+ * cross - ターゲットセルから斜め（X型）
+ *  2       2
+ *    1   1
+ *      0
+ *    1   1
+ *  2       2
+ *
+ * star - ターゲットセルから十字＋斜め（星型）
+ *  2   2   2
+ *    1 1 1
+ *  2 1 0 1 2
+ *    1 1 1
+ *  2   2   2
+ *
+ * checker - ターゲットセルを中心に格子状
+ *  2   2   2
+ *    1   1
+ *  2   0   2
+ *    1   1
+ *  2   2   2
+ * 
+ * allActor - 射程範囲内のすべてのアクター
+ * <srpgAreaRange:x> は 1 以上に設定してください。
+ * 
+ * allEnemy - 射程範囲内のすべてのエネミー
+ * <srpgAreaRange:x> は 1 以上に設定してください。
+ * 
+ *
+ * 慣れた人向け　スクリプトで使用できるコマンド:
+ *  yourEvent.battlersNear(size, minSize, 'shape', [direction])
+ *  yourEvent.enemiesNear(size, minSize, 'shape', [direction])
+ *  yourEvent.actorsNear(size, minSize, 'shape', [direction])
+ *
+ * 指定したイベントを中心としたAoEの範囲内にいるアクター/エネミー/両方のリストを返します。
+ * 指向性のあるAoEを使用し、directionが指定されていない場合、イベントの向きをdirectionとします。
+ * 
+ * 注 / おひさまクラフトによる改変内容 ('modified by OhisamaCraft'で検索)
+ * ・コスト消費の修正（応戦に対応するためgameTempからgameBattlerに変更）
+ * ・<srpgAreaType:y> (AoE shape) に allActor, allEnemy を追加（射程範囲内のすべてのactor/enemyを対象とする）
+ * ・Game_Player.prototype.triggerActionをSRPGgearMVに対応
+ * ・ヘルプの和訳
+ * 
  */
 
 (function(){
@@ -178,9 +369,16 @@
 // Compatibility with plugins expecting SRPG_AreaAttack.js
 //====================================================================
 
-	Game_Temp.prototype.isFirstAction = function() {
-		return !!(this.shouldPayCost());
-	};
+    Game_Temp.prototype.isFirstAction = function(battler) {
+        if (battler !== undefined) {
+	        // modified by OhisamaCraft
+            return !!(battler.shouldPayCost());
+        } else {
+            // previous code
+            return !!(this.shouldPayCost());
+        }
+    };
+
 	Game_Temp.prototype.isLastAction = function() {
 		return !!(this.areaTargets().length < 1);
 	};
@@ -283,9 +481,21 @@
 	};
 
 	// check if an event is in the area of the current skill
+	// modified by OhisamaCraft
 	Game_Temp.prototype.inArea = function(event) {
 		if (!this._activeAoE || this._activeAoE.size <= 0) return false;
 
+		// all tiles in skill range
+		if ((event.isType() === 'actor' && this._activeAoE.shape === 'allactor') ||
+			(event.isType() === 'enemy' && this._activeAoE.shape === 'allenemy')) {
+			for (var i = 0; i < $gameTemp.rangeList().length; i++) {
+				var xy = $gameTemp.rangeList()[i];
+				if (xy[0] === event.posX() && xy[1] === event.posY()) return true;
+			}
+			return false;
+		}
+
+		// default AoE
 		var dx = event.posX() - this._activeAoE.x;
 		var dy = event.posY() - this._activeAoE.y;
 
@@ -313,21 +523,30 @@
 	};
 
 	// when repeating actions, the cost/item is only paid once
+	// modified by OhisamaCraft
+	
 	Game_Temp.prototype.setShouldPayCost = function(flag) {
 		this._shouldPaySkillCost = flag;
 	};
 	Game_Temp.prototype.shouldPayCost = function() {
 		return this._shouldPaySkillCost;
 	};
+	
+	Game_Battler.prototype.setShouldPayCost = function(flag) {
+		this._shouldPaySkillCost = flag;
+	};
+	Game_Battler.prototype.shouldPayCost = function() {
+		return this._shouldPaySkillCost;
+	};
 	var _useItem = Game_Battler.prototype.useItem;
 	Game_Battler.prototype.useItem = function(skill) {
-		if (!$gameSystem.isSRPGMode() || $gameTemp.shouldPayCost()) {
+		if (!$gameSystem.isSRPGMode() || this.shouldPayCost() || $gameTemp.shouldPayCost()) {
 			_useItem.call(this, skill);
 		}
 	};
 	var _actionTimesAdd = Game_Battler.prototype.SRPGActionTimesAdd;
 	Game_Battler.prototype.SRPGActionTimesAdd = function(num) {
-		if ($gameTemp.shouldPayCost()) {
+		if (this.shouldPayCost() || $gameTemp.shouldPayCost()) {
 			_actionTimesAdd.call(this, num);
 		}
 	};
@@ -358,8 +577,21 @@
 	};
 
 	// check if a character is within a specified AoE
+	// modified by OhisamaCraft
 	Game_Character.prototype.inArea = function(x, y, size, minSize, shape, dir) {
 		if (size <= 0) return false; // one-square AoEs don't count as AoEs
+
+		// all tiles in skill range
+		if ((this.isType() === 'actor' && shape === 'allactor') ||
+			(this.isType() === 'enemy' && shape === 'allenemy')) {
+			for (var i = 0; i < $gameTemp.rangeList().length; i++) {
+				var xy = $gameTemp.rangeList()[i];
+				if (xy[0] === this.posX() && xy[1] === this.posY()) return true;
+			}
+			return false;
+		}
+
+		// default AoE
 		var dx = this.posX() - x;
 		var dy = this.posY() - y;
 
@@ -475,7 +707,7 @@
 			if ($gameSystem.isSubBattlePhase() === 'actor_target' && $gameSystem.positionInRange(x, y)) {
 				$gameTemp.showArea(x, y);
 			} else if ($gameSystem.isSubBattlePhase() !== 'invoke_action' &&
-			$gameSystem.isSubBattlePhase() !== 'battle_window' && $gameSystem.isBattlePhase() == 'actor_phase') { //shoukang add && $gameSystem.isBattlePhase() == 'actor_phase'
+					   $gameSystem.isSubBattlePhase() !== 'battle_window' && $gameSystem.isBattlePhase() == 'actor_phase') { //shoukang add && $gameSystem.isBattlePhase() == 'actor_phase'
 				$gameTemp.clearArea();
 			}
 		}
@@ -544,10 +776,12 @@
 	};
 
 	// AoE skills can select empty cells
+	// modified by OhisamaCraft
 	var _triggerAction = Game_Player.prototype.triggerAction;
 	Game_Player.prototype.triggerAction = function() {
 		if ($gameSystem.isSRPGMode() && $gameSystem.isSubBattlePhase() === 'actor_target') {
 			if (Input.isTriggered('ok') || TouchInput.isTriggered()) {
+				
 				var userArray = $gameSystem.EventToUnit($gameTemp.activeEvent().eventId());
 				var skill = userArray[1].currentAction();
 
@@ -610,14 +844,14 @@
 		// identify targets
 		var targets = $gameMap.events().filter(function (event) {
 			if (event.isErased()) return false;
-			if ((event.isType() == friends && skill.isForFriend()) || 
-			(event.isType() == opponents && skill.isForOpponent())) {
+			if ((event.isType() === friends && skill.isForFriend()) || 
+			(event.isType() === opponents && skill.isForOpponent())) {
 				return $gameTemp.inArea(event);
 			}
 		});
 
 		// there are no targets!
-		if (targets.length == 0) return false;
+		if (targets.length === 0) return false;
 
 		// sort by distance
 		var sortFunction;
@@ -686,13 +920,22 @@
 		}
 	};
 
+	Scene_Map.prototype.allBattlerSetShouldPayCost = function(flag) {
+		$gameMap.events().forEach(function(event) {
+            if (event.isType() === 'actor' || event.isType() === 'enemy') {
+                var battler = $gameSystem.EventToUnit(event.eventId())[1];
+				battler.setShouldPayCost(flag);
+            }
+        });
+	};
+
 	// override this to allow the AI to use fancy AoEs
 	Game_System.prototype.srpgAIUnderstandsAoE = false;
 
 	// AoE skills can be used as long as you're in the targeted area
 	var _canUse = Game_BattlerBase.prototype.canUse;
 	Game_BattlerBase.prototype.canUse = function(item) {
-		if (item && $gameSystem.isSRPGMode() && this._srpgActionTiming != 1 &&
+		if (item && $gameSystem.isSRPGMode() && this._srpgActionTiming !== 1 &&
 		Number(item.meta.srpgAreaRange) > 0) {
 			// stop default AI from using AoEs with holes
 			if (!$gameSystem.srpgAIUnderstandsAoE &&
@@ -789,7 +1032,9 @@
 		bitmap.fillRect(x, y, tileWidth, tileHeight, _areaColor);
 	};
 
+	// modified by OhisamaCraft
 	Sprite_SrpgAoE.prototype.clearArea = function() {
+		$gameTemp.setSrpgAllTargetInRange(false);
 		this._posX = -1;
 		this._posY = -1;
 	};
@@ -806,6 +1051,22 @@
 		this._frameCount %= 40;
 		this.opacity = (40 - this._frameCount) * 3;
 	};
+	
+	// 表示するタイルをセットする
+    Sprite_SrpgMoveTile.prototype.setThisMoveTile = function(x, y, attackFlag) {
+        this._frameCount = 0;
+        this._posX = x;
+        this._posY = y;
+        if ($gameTemp.isSrpgAllTargetInRange() === true) {
+            this.bitmap.fillAll(_areaColor);
+        } else {
+            if (attackFlag === true) {
+                this.bitmap.fillAll('red');
+            } else {
+                this.bitmap.fillAll('blue');
+            }    
+        }
+    }
 
 //====================================================================
 // Spriteset_Map

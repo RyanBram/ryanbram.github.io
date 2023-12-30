@@ -4651,33 +4651,15 @@
             for (var i = 0; i < this.SrpgBattleEnemys().length; i++) {
                 var enemy = this.SrpgBattleEnemys()[i];
                 if ($gameSystem.isSideView()) {
-                    enemy.setScreenXy(Graphics.boxWidth / 4 + 240 * i + enemy.correctionX(), Graphics.boxHeight / 2 + 48 + enemy.correctionY());
+                    enemy.setScreenXy(Graphics.width / 4 + 240 * i + enemy.correctionX(), Graphics.height / 2 + 48 + enemy.correctionY());
                 } else {
-                    enemy.setScreenXy(Graphics.boxWidth / 2 + enemy.correctionX(), Graphics.boxHeight / 2 + 32 + 96 * i + enemy.correctionY());
+                    enemy.setScreenXy(Graphics.width / 2 + enemy.correctionX(), Graphics.height / 2 + 32 + 96 * i + enemy.correctionY());
                 }
                 this._enemies.push(enemy);
             }
             this.makeUniqueNames();
         } else {
             _SRPG_Game_Troop_setup.call(this, troopId);
-        }
-    };
-
-    // Overriding the startEntryMotion method of Sprite_Actor
-    Sprite_Actor.prototype.startEntryMotion = function() {
-        if ($gameSystem.isSRPGMode()) {
-            // Code to execute during SRPG mode
-            // Directly set the actor's position to their battle position
-            this.setHome(this._homeX, this._homeY);
-            this.moveToStartPosition();
-        }
-    };
-
-    // Override moveToStartPosition to prevent movement
-    Sprite_Actor.prototype.moveToStartPosition = function() {
-        if ($gameSystem.isSRPGMode()) {
-            // Code to execute during SRPG mode
-            // Overriding this method to prevent the actor from moving to start position
         }
     };
 
