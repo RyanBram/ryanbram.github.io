@@ -1,6 +1,6 @@
-﻿//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // SRPG_DynamicAction.js
-// Copyright (c) 2020 SRPG Team. All rights reserved.
+// Copyright (c) 2020 SRPG Team. All rights reserved. This is a Shoukang Fixed version
 // Released under the MIT license.
 // http://opensource.org/licenses/mit-license.php
 //=============================================================================
@@ -17,11 +17,14 @@
  *
  * @help Call DynamicAnimationMap and DynamicMotionMap
  * when SRPG_core.js map battle is executed.
+ *
+ * Shoukang's fix: when casting and on map AoE, counter attacks now show up correctly. Add battle log compatibility with AoE animation plugin
  * 
  * [Based on works by Takeshi Sunagawa (http://newrpg.seesaa.net/)]
  *
  * You need the following plugins to use it.
  * - SRPG_core.js
+ * - SRPG_AoE.js
  * - MRP_DynamicAnimation.js
  * - MRP_DynamicAnimationMap.js
  * 
@@ -234,36 +237,62 @@ Scene_Map.prototype.srpgInvokeMapSkill = function(data) {
     const item = action.item();
     const interpreter = $gameMap._interpreter;
     interpreter.dynamicNoWaitControl = undefined;
+    const user = data.user;
+    const target = data.target;
+    var animation = item.animationId;
+    //shoukang get animation id right
+    if (animation < 0) animation = (user.isActor() ? user.attackAnimationId1() : user.attackAnimationId());
+    if (!action.isDynamicAnimation(animation) && action.area() <= 0) {
 
-    // Not DynamicAnimation
-    if (!action.isDynamicAnimation(item.animationId)) {
+        //shoukang edit to show battle log
+        if (data.phase == 'start') {
+            if (!user.canMove() || !user.canUse(action.item()) || this.battlerDeadEndBattle()) {
+                data.phase = 'cancel';
+                this._srpgSkillList.unshift(data);
+                // Show the results
+                return srpgInvokeMapSkillResult(user, target);
+            }
+            if (!action._editedItem){
+                this._logWindow.show();
+                this._logWindow.displayAction(user, action.item());
+            }
+        }
+
         return _Scene_Map_srpgInvokeMapSkill.apply(this, arguments);
     }
 
-    const user = data.user;
-    const target = data.target;
-
     // start
     if (data.phase == 'start' && action.isBatchAction()) {
-        if (!user.canMove() || !user.canUse(action.item()) || !target.isAlive()) {
+        if (!user.canMove() || !user.canUse(action.item()) || this.battlerDeadEndBattle()) {
             data.phase = 'cancel';
             this._srpgSkillList.unshift(data);
             // Show the results
             return srpgInvokeMapSkillResult(user, target);
         }
-        user.useItem(action.item());
-        if (!$gameTemp.isFirstAction || $gameTemp.isFirstAction()) {
-            const areaTargets = $gameTemp.originalAreaTargets();
 
-            // Call NRP_DynamicAnimationMap.js
+        //shoukang edit to show battle log
+        user.useItem(action.item());
+        if (!action._editedItem){
+            this._logWindow.show();
+            this._logWindow.displayAction(user, action.item());
+        }
+
+        //shoukang add condition check
+        var targetsEventId = undefined;
+        //aoe
+        if (user.event() == $gameTemp.activeEvent() && !action.isHideAnimation()) {
+            targetsEventId = makeTargetsEventIdInArea($gameTemp.originalAreaTargets(), target, data.count);
+        } else if (!action.isHideAnimation()){ // not AoE
+            targetsEventId = [target.event().eventId()];
+        }
+
+        if (targetsEventId){
             interpreter.pluginCommand("nrp.animation.wait", []);
             interpreter.pluginCommand("nrp.animation.subject", [user.event().eventId()]);
             // A subject battler used to reference normal attacks, etc.
             interpreter.pluginCommand("nrp.animation.subjectBattler", [user]);
 
-            const targetsEventId = makeTargetsEventIdInArea(areaTargets, target, data.count);
             interpreter.pluginCommand("nrp.animation.target", [targetsEventId]);
-
             if (action.isItem()) {
                 interpreter.pluginCommand("nrp.animation.item", [item.id]);
             } else {
@@ -284,12 +313,6 @@ Scene_Map.prototype.srpgInvokeMapSkill = function(data) {
                 $gamePlayer.requestAnimation(Number(action.item().meta.targetAnimation));
                 castAnim = true;
             }
-            // // directional target animation
-            // if (action.item().meta.directionalAnimation) {
-            //     var dir = user.event().direction()/2 - 1;
-            //     $gamePlayer.requestAnimation(dir + Number(action.item().meta.directionalAnimation));
-            //     castAnim = true;
-            // }
         }
 
         // check for reflection
@@ -340,7 +363,6 @@ Scene_Map.prototype.srpgInvokeMapSkill = function(data) {
     // reflected magic
     } else if (data.phase == 'reflect') {
         target.performReflection();
-
         if (target.reflectAnimationId && !action.isBatchAction()) {
             // Call NRP_DynamicAnimationMap.js
             interpreter.pluginCommand("nrp.animation.wait", []);
@@ -714,6 +736,10 @@ function getGridInfo(mapX, mapY) {
     grid.x = $gameMap.mapToCanvasX(mapX);
     grid.y = $gameMap.mapToCanvasY(mapY) + grid.height / 2;
     return grid;
+}
+
+Game_Action.prototype.isHideAnimation = function(){
+    return this._hideAnimation;
 }
 
 })();

@@ -1,1 +1,0 @@
-start "" "C:\Program Files (x86)\Steam\steamapps\common\RPG Maker MZ\nwjs-win\nw.exe" --url "%~dp0."

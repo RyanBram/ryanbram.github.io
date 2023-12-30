@@ -1,13 +1,12 @@
 //-----------------------------------------------------------------------------
-// SRPG_AIControl.js
-// Copyright (c) 2020 SRPG Team. All rights reserved.
+// copyright 2020 Doktor_Q all rights reserved.
 // Released under the MIT license.
 // http://opensource.org/licenses/mit-license.php
 //=============================================================================
 
 /*:
  * @plugindesc SRPG advanced AI (v0.9)
- * @author Dr. Q
+ * @author Dr. Q, Edited by Shoukang
  * 
  * @param Target Formula
  * @desc Default formula for picking a target
@@ -427,6 +426,8 @@
 			} else {
 				$gameTemp.clearMoveTable();
 				user.onAllActionsEnd();
+				$gameTemp.clearAreaTargets(); //shoukang clear areas
+				$gameTemp.clearArea(); //shoukang clear areas
 				return false;
 			}
 		}
@@ -595,7 +596,7 @@
 			if ($gameTemp.areaTargets().length > 0) {
 				bestTarget = $gameTemp.areaTargets().shift().event;
 			}
-			$gameTemp.clearArea();
+			// shoukang delete $gameTemp.clearArea();
 		}
 		// set the optimal target and position
 		$gameTemp.setTargetEvent(bestTarget);

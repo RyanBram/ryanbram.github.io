@@ -1,13 +1,12 @@
 //-----------------------------------------------------------------------------
-// SRPG_SRPG_AoE.js
-// Copyright (c) 2020 SRPG Team. All rights reserved.
+// copyright 2020 Doktor_Q all rights reserved.
 // Released under the MIT license.
 // http://opensource.org/licenses/mit-license.php
 //=============================================================================
 
 /*:
  * @plugindesc SRPG area-of-effect skills
- * @author Dr. Q + アンチョビ
+ * @author Dr. Q + アンチョビ, Edited by Shoukang
  * 
  * @param AoE Color
  * @desc CSS Color for AoE squares
@@ -476,7 +475,7 @@
 			if ($gameSystem.isSubBattlePhase() === 'actor_target' && $gameSystem.positionInRange(x, y)) {
 				$gameTemp.showArea(x, y);
 			} else if ($gameSystem.isSubBattlePhase() !== 'invoke_action' &&
-			$gameSystem.isSubBattlePhase() !== 'battle_window') {
+			$gameSystem.isSubBattlePhase() !== 'battle_window' && $gameSystem.isBattlePhase() == 'actor_phase') { //shoukang add && $gameSystem.isBattlePhase() == 'actor_phase'
 				$gameTemp.clearArea();
 			}
 		}
@@ -671,6 +670,7 @@
 			actionArray[1].action(0).setItemObject(nextaction.item);
 			var targetArray = $gameSystem.EventToUnit(nextaction.event.eventId());
 			$gameTemp.setTargetEvent(nextaction.event);
+			$gameTemp.setSrpgDistance($gameSystem.unitDistance($gameTemp.activeEvent(), nextaction.event));//shoukang refresh distance
 			if (_refocus) {
 				$gameTemp.setAutoMoveDestinationValid(true);
 				$gameTemp.setAutoMoveDestination($gameTemp.targetEvent().posX(), $gameTemp.targetEvent().posY());
@@ -705,7 +705,7 @@
 			$gameSystem.isSubBattlePhase() === 'auto_actor_action' ||
 			$gameSystem.isSubBattlePhase() === 'enemy_action' ||
 			$gameSystem.isSubBattlePhase() === 'battle_window') {
-				return $gameTemp.inArea($gameTemp.targetEvent());
+				return $gameTemp.inArea($gameTemp.targetEvent()) || item.meta.cellTarget; //shoukang edit: check cellTarget tag
 			}
 		}
 		return _canUse.call(this, item);
