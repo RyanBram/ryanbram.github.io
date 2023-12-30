@@ -6,7 +6,7 @@
 //=============================================================================
 
 /*:
- * @plugindesc SRPG advanced AI (v0.9)
+ * @plugindesc SRPG advanced AI (v0.9), edited by OhisamaCraft
  * @author Dr. Q
  * 
  * @param Target Formula
@@ -19,6 +19,9 @@
  * @default nearestOpponent
  * 
  * @help
+ * Copyright (c) 2020 SRPG Team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
  * This plugin is a work in progress!
  *
  * Requires SRPG_RangeControl, place this plugin below it.
@@ -315,30 +318,36 @@
 	};
 
 	// enemy movement
+	// modified by OhisamaCraft
 	Scene_Map.prototype.srpgInvokeEnemyMove = function() {
 		if (!$gamePlayer.isStopping()) return;
 
 		// path to destination
 		var pos = $gameTemp.AIPos();
 		if (pos) {
+			var enemy = $gameSystem.EventToUnit($gameTemp.activeEvent().eventId())[1];
 			var route = $gameTemp.MoveTable(pos.x, pos.y)[1];
 			$gameSystem.setSrpgWaitMoving(true);
 			$gameTemp.activeEvent().srpgMoveRouteForce(route);
+			enemy.setMovedStep(route.length - 1);
 		}
 		$gameSystem.setSubBattlePhase('enemy_action');
 	};
 
 	// auto-actor movement
+	// modified by OhisamaCraft
 	Scene_Map.prototype.srpgInvokeAutoActorMove = function() {
 		if (!$gamePlayer.isStopping()) return;
 
 		// path to destination
 		var pos = $gameTemp.AIPos();
 		if (pos) {
+			var actor = $gameSystem.EventToUnit($gameTemp.activeEvent().eventId())[1];
 			var route = $gameTemp.MoveTable(pos.x, pos.y)[1];
 			if (route) {
 				$gameSystem.setSrpgWaitMoving(true);
 				$gameTemp.activeEvent().srpgMoveRouteForce(route);
+				actor.setMovedStep(route.length - 1);
 			}
 		}
 		$gameSystem.setSubBattlePhase('auto_actor_action');
@@ -399,16 +408,25 @@
 	};
 
 	// decide a unit's action, target, and movement
+	// modified by OhisamaCraft
 	Scene_Map.prototype.srpgAICommand = function() {
 		var event = $gameTemp.activeEvent();
+		var type = $gameSystem.EventToUnit(event.eventId())[0];
 		var user = $gameSystem.EventToUnit(event.eventId())[1];
 		if (!event || !user) return false;
 
 		// choose action and target
 		var target = null;
+		$gameTemp.setSrpgMoveTileInvisible(true);
 		while (true) { // dangerous! limit loops to # of skills the user has?
 			user.makeSrpgActions();
 			$gameSystem.srpgMakeMoveTable(event);
+			// simple AI との競合回避（skillのみ再設定する）
+			if (user.currentAction().item()) {
+				var targetType = this.makeTargetType(user, type);
+				var canAttackTargets = this.srpgMakeCanAttackTargets(user, targetType); 
+				this.checkAlternativeSkill(event, type, user, targetType, canAttackTargets);	
+			}
 			$gameTemp.clearAIPos();
 			$gameTemp.clearAITargetPos();
 			target = this.srpgAITarget(user, event, user.action(0));
@@ -418,6 +436,7 @@
 			$gameTemp.setNoTarget(item.id);
 		}
 		$gameTemp.clearNoTarget();
+		$gameTemp.setSrpgMoveTileInvisible(false);
 
 		// standing units skip their turn entirely
 		var user = $gameSystem.EventToUnit(event.eventId())[1];

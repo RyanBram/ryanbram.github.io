@@ -5,9 +5,9 @@
 // http://opensource.org/licenses/mit-license.php
 //=============================================================================
 /*:
-@plugindesc SRPG mouse operation improvements
+@plugindesc SRPG mouse operation improvements, modified by OhisamaCraft
 @author SRPG Team
-@target MZ
+@target MV
 
 @param borderMoveSettings
 @text Border Scroll Settings
@@ -15,7 +15,7 @@
 @param borderSwitch
 @text Border Scroll Switch
 @desc Switch that need to turn on to activate the border scroll feature OUTSIDE SRPG Mode. set to 0 to ONLY active at SRPG Mode.
-@type Number
+@type switch
 @parent borderMoveSettings
 @default 0
 
@@ -60,7 +60,7 @@
 @param dragSwitch
 @text Drag Scroll Switch
 @desc Switch that need to turn on to make the drag map with middle click feature ON. set to 0 to DISABLE THIS FEATURE.
-@type Number
+@type switch
 @parent dragScrollSettings
 @default 0
 
@@ -80,13 +80,6 @@
 @type boolean
 @parent cursorFollowMouse
 @default true
-
-@param cursorFollowDelay
-@text Cursor Follow Delay
-@desc Delay for the cursor following mouse movement...
-@type Number
-@parent cursorFollowMouse
-@default 0
 
 @param useCenteringFeature
 @text Center Move / Target
@@ -122,10 +115,13 @@
 @default true
 
 @help
+ * Copyright (c) 2020 SRPG team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
  ■ Information      ╒══════════════════════════╛
  SRPG Mouse Operation
- Version: 1.0
- By SRPG Team
+ Version: 1.1
+ By SRPG Team, Ohisama Craft
 
  ■ Introduction     ╒══════════════════════════╛
  This plugin is Mouse Operation for SRPG 
@@ -137,16 +133,18 @@
  - Use mouse wheel to select remaining actors
 
   ■ Changelog       ╒══════════════════════════╛
+ v1.1 2023.8.17            modified by OhisamaCraft
  v1.0 2020.11.09           Finish the plugin
 
  ■ Plugin Download ╒══════════════════════════╛
- https://www.dropbox.com/s/4uep2mwnwnxwd2c/SRPG_Mouse_Operation.js?dl=0
+ v1.0 https://www.dropbox.com/s/4uep2mwnwnxwd2c/SRPG_Mouse_Operation.js?dl=0
+ v1.1 https://github.com/Ohisama-Craft
 
  ■ Screenshots ╒══════════════════════════╛
  Coming Soon
   
  ■ Demo ╒══════════════════════════╛
- None
+ https://ohisamacraft.nyanta.jp/index.html
 
  ■ How to use       ╒══════════════════════════╛
  1. Place this plugin with this order:
@@ -208,8 +206,25 @@ var EST = EST || {};
 EST.SRPGMouseOperation = EST.SRPGMouseOperation || {};
 EST.SRPGMouseOperation.pluginName="SRPG_MouseOperation";
 
-(function($){
+// マウスの表示・非表示の切り替え modified by OhisamaCraft
+// 参考：トリアコンタン様のMousePointerExtend.js
+//=============================================================================
+// Graphics
+//=============================================================================
+    Graphics._PointerType   = 'auto';
+    Graphics._hiddenPointer = false;
+
+    Graphics.setHiddenPointer = function(value) {
+        this._hiddenPointer = !!value;
+        this.updateMousePointer();
+    };
+
+    Graphics.updateMousePointer = function() {
+      document.body.style.cursor = this._hiddenPointer ? 'none' : this._PointerType;
+    };
+
 /// est strategy mouse cam plugin code part ///
+(function($){
 //grabbing plugin parameter
 $.Parameters = PluginManager.parameters($.pluginName);
 $.Parameters.borderDistance1 = Number($.Parameters.borderDistance1);
@@ -298,11 +313,25 @@ Game_Map.prototype.scrollDownRight = function(distance) {
     this.scrollRight(distance);
 };
 
+//=============================================================================
+// Input
+//=============================================================================
+var _MO_Input_update = Input.update;
+Input.update = function() {
+    var oldDate = this.date;
+    _MO_Input_update.apply(this, arguments);
+    if (this.date !== oldDate) Graphics.setHiddenPointer(true);
+};
+
+//=============================================================================
+// TouchInput
+//=============================================================================
 $.TouchInput_onMouseMove = TouchInput._onMouseMove;
 TouchInput._onMouseMove = function(event) {
   $.TouchInput_onMouseMove.call(this,event);
   this._mouseX = Graphics.pageToCanvasX(event.pageX);
   this._mouseY = Graphics.pageToCanvasY(event.pageY);
+  Graphics.setHiddenPointer(false);
 };
 
 TouchInput.atLeftBorder = function(){
@@ -379,7 +408,7 @@ Game_Map.prototype.updateScrollAtDrag = function() {
 //grabbing plugin parameter
 $.Parameters = PluginManager.parameters($.pluginName);
 $.Parameters.isCursorFollowMouse = JSON.parse($.Parameters.isCursorFollowMouse);
-$.Parameters.cursorFollowDelay = Number($.Parameters.cursorFollowDelay);
+//$.Parameters.cursorFollowDelay = Number($.Parameters.cursorFollowDelay);
 $.Parameters.centerCameraDelay = Number($.Parameters.centerCameraDelay);
 $.Parameters.useCenteringFeature = JSON.parse($.Parameters.useCenteringFeature);
 $.Parameters.isWheelPrevNext = JSON.parse($.Parameters.isWheelPrevNext);
@@ -391,6 +420,8 @@ Game_System.prototype.isPlayerFollowMouse = function() {
 
 // SRPG PATCH
 // player follow mouse (emulate cursor)
+// modified by OhisamaCraft
+/*
 $.Game_Map_updateScroll_followMouse = Game_Map.prototype.updateScroll;
 Game_Map.prototype.updateScroll = function() {
   $.Game_Map_updateScroll_followMouse.call(this);
@@ -426,11 +457,35 @@ Game_Map.prototype.updatePlayerFollowMouse = function() {
   if(!$gameTemp.activeEvent()) return;
   if($gameSystem.isSubBattlePhase() === 'actor_move') $gameTemp.showRoute(x, y);
 };
+*/
+
+  var _SRPG_MO_Game_Player_moveByInput = Game_Player.prototype.moveByInput;
+  Game_Player.prototype.moveByInput = function() { 
+    if ($gameSystem.isSRPGMode() === true && $gameSystem.isPlayerFollowMouse() &&
+        !this.isMoving() && this.canMove() && !Graphics._hiddenPointer) {
+          var x = $gameMap.canvasToMapX(TouchInput._mouseX);
+          var y = $gameMap.canvasToMapY(TouchInput._mouseY);
+          if ($gamePlayer.x !== x || $gamePlayer.y !== y) {
+            $gamePlayer.setPosition(x, y);
+            //patch for show path dan AOE
+            if ($gameSystem.isSubBattlePhase() === 'actor_target' && $gameSystem.positionInRange(x, y)) {
+              $gameTemp.showArea(x, y);
+            } else if ($gameSystem.isSubBattlePhase() !== 'invoke_action' &&
+                       $gameSystem.isSubBattlePhase() !== 'battle_window' && $gameSystem.isBattlePhase() == 'actor_phase') {
+              $gameTemp.clearArea();
+            }
+            if(!$gameTemp.activeEvent()) return;
+            if($gameSystem.isSubBattlePhase() === 'actor_move') $gameTemp.showRoute(x, y);
+          }
+    }
+    _SRPG_MO_Game_Player_moveByInput.call(this);
+  };
 
 $.Game_Player_updateScroll = Game_Player.prototype.updateScroll;
 Game_Player.prototype.updateScroll = function(lastScrolledX, lastScrolledY) {
-  if ($gameSystem.isPlayerFollowMouse() && $gameSystem._isBattlePhase == 'actor_phase' &&
-                       !$gameMap._interpreter.isRunning() && !Graphics._hiddenPointer) return;
+  if ($gameSystem.isPlayerFollowMouse() && 
+      ($gameSystem._isBattlePhase == 'actor_phase' || $gameSystem.isBattlePhase() === 'battle_prepare') &&
+      !$gameMap._interpreter.isRunning() && !Graphics._hiddenPointer) return;
   $.Game_Player_updateScroll.call(this, lastScrolledX, lastScrolledY);
 };
 

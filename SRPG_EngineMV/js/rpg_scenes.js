@@ -1152,7 +1152,9 @@ Scene_ItemBase.prototype.action=function(){
 };
 
 Scene_ItemBase.prototype.determineItem = function() {
-    var action = this.action();
+    var action = new Game_Action(this.user());
+    var item = this.item();
+    action.setItemObject(item);
     if (action.isForFriend()) {
         this.showSubWindow(this._actorWindow);
         this._actorWindow.selectForItem(this.item());
@@ -1176,8 +1178,9 @@ Scene_ItemBase.prototype.activateItemWindow = function() {
     this._itemWindow.activate();
 };
 
-Scene_ItemBase.prototype.itemTargetActors =function(){
-    var action = this.action();
+Scene_ItemBase.prototype.itemTargetActors = function() {
+    var action = new Game_Action(this.user());
+    action.setItemObject(this.item());
     if (!action.isForFriend()) {
         return [];
     } else if (action.isForAll()) {
@@ -1196,7 +1199,8 @@ Scene_ItemBase.prototype.canUse = function() {
 };
 
 Scene_ItemBase.prototype.isItemEffectsValid = function() {
-    var action = this.action();
+    var action = new Game_Action(this.user());
+    action.setItemObject(this.item());
     return this.itemTargetActors().some(function(target) {
         return action.testApply(target);
     }, this);
@@ -1210,7 +1214,7 @@ Scene_ItemBase.prototype.applyItem =function(){
         for (var i = 0; i < repeats; i++) {
             action.apply(battler);                    
         }
-    });
+    }, this);
     action.applyGlobal();
 };
 

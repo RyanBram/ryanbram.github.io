@@ -6,7 +6,7 @@
 //=============================================================================
 
 /*:
- * @plugindesc SRPG line of sight, passability, variable range, and more
+ * @plugindesc SRPG line of sight, passability, variable range, and more, edited by OhisamaCraft.
  * @author Dr. Q
  *
  *
@@ -174,11 +174,18 @@
  *
  *
  * @help
+ * Copyright (c) 2020 SRPG Team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
  * Adds line of sight, modifiable ranges, passability options, zone of control,
  * and terrain-based movement costs for SRPG combat
  *
+ * Zone of control (ZoC) in this plugin is the ability to prevent opponent units 
+ * from passing through the 4 squares around the unit that has ZoC
+ * (It is possible to be adjacent).
  * If an enemy unit's ZoC is higher than your Through ZoC, you are forced to stop
- * when you try to move past them. ZoC and Through ZoC cannot go below 0.
+ * when you try to move past them. ZoC can be disabled with a larger value Through ZoC.
+ * ZoC and Through ZoC cannot go below 0.
  *
  * Use plugin parameters to set the default line-of-sight rules.
  *
@@ -217,6 +224,242 @@
  * <srpgTerrainXCost:Y>          # sets the movement cost of terrain X to Y
  *                               X can be any number between 0 and 7
  *                               Y can be any decimal number > 1
+ * 
+ * Note / Modification by Ohisama Craft
+ * -Supports specialRange: allActor, allEnemy
+ * -Compatible with <srpgWRangePlus>
+ * -Japanese translation of help
+ *
+ */
+
+/*:ja
+ * @plugindesc SRPG戦闘での射線（攻撃範囲の制限）、移動、射程の変更などを実装する(おひさまクラフトによる改変あり)
+ * @author Dr. Q
+ *
+ *
+ * @param Range
+ *
+ * @param Default Range
+ * @desc 指定が無い場合のデフォルトの武器・スキルの射程
+ * @parent Range
+ * @type number
+ * @min 0
+ * @default 1
+ *
+ * @param Default Min Range
+ * @desc 指定が無い場合のデフォルトの武器・スキルの最低射程
+ * @parent Range
+ * @type number
+ * @min 0
+ * @default 0
+ *
+ *
+ * @param Line of Sight
+ *
+ * @param Through Objects
+ * @desc true（ON）にすると、objectユニットが射線（攻撃範囲）を遮らなくなる
+ * @parent Line of Sight
+ * @type boolean
+ * @default false
+ *
+ * @param Through Opponents
+ * @desc true（ON）にすると、エネミーユニットが射線（攻撃範囲）を遮らなくなる
+ * @parent Line of Sight
+ * @type boolean
+ * @default false
+ *
+ * @param Through Friends
+ * @desc true（ON）にすると、アクターユニットが射線（攻撃範囲）を遮らなくなる
+ * @parent Line of Sight
+ * @type boolean
+ * @default true
+ *
+ * @param Through Events
+ * @desc true（ON）にすると、プレイヤーイベントが射線（射程）を遮らなくなる
+ * @parent Line of Sight
+ * @type boolean
+ * @default false
+ *
+ * @param Through Terrain
+ * @desc 設定した数値以上のIDの地形タグは射線（攻撃範囲）を遮るようになる
+ * -1に設定すると、使用者の移動力と同じ設定になる
+ * @parent Line of Sight
+ * @type number
+ * @min -1
+ * @max 7
+ * @default 0
+ *
+ *
+ * @param Unit Passability
+ *
+ * @param Block Friends
+ * @desc true（ON）にすると、味方のユニットを通過して移動できなくなる
+ * @parent Unit Passability
+ * @type boolean
+ * @default false
+ *
+ * @param Block Opponents
+ * @desc true（ON）にすると、敵のユニットを通過して移動できなくなる
+ * @parent Unit Passability
+ * @type boolean
+ * @default true
+ *
+ *
+ * @param Event Passability
+ *
+ * @param Block Units
+ * @desc true（ON）にすると、プレイヤーイベントを通過して移動できなくなる
+ * @parent Event Passability
+ * @type boolean
+ * @default false
+ *
+ *
+ * @param Zone of Control
+ *
+ * @param Base ZoC
+ * @desc すべてのユニットにおける、ZoC値の初期値を設定する
+ * Modified by srpgZoC tags
+ * @parent Zone of Control
+ * @type number
+ * @min 0
+ * @default 0
+ *
+ * @param Base Through ZoC
+ * @desc すべてのユニットにおける、ZoCを通過できる値の初期値を設定する
+ * Modified by srpgThroughZoC tags
+ * @parent Zone of Control
+ * @type number
+ * @min 0
+ * @default 0
+ *
+ *
+ * @param Terrain Cost
+ *
+ * @param Terrain 0 Cost
+ * @desc 地形タグ 0 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 1 Cost
+ * @desc 地形タグ 1 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 2 Cost
+ * @desc 地形タグ 2 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 3 Cost
+ * @desc 地形タグ 3 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 4 Cost
+ * @desc 地形タグ 4 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 5 Cost
+ * @desc 地形タグ 5 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 6 Cost
+ * @desc 地形タグ 6 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ * @param Terrain 7 Cost
+ * @desc 地形タグ 7 の移動コスト（1.00が通常）
+ * @parent Terrain Cost
+ * @type number
+ * @min 1.00
+ * @decimals 2
+ * @default 1.00
+ *
+ *
+ * @help
+ * Copyright (c) 2020 SRPG Team. All rights reserved.
+ * Released under the MIT license.
+ * ===================================================================
+ * SRPG戦闘において、射線（攻撃範囲の制限）、射程の変更、通行オプション、zone of control(ZoC)、
+ * 地形タグによる移動コストの機能を追加する。
+ * 
+ * このプラグインにおける zone of control (ZoC) とは、設定されたユニットの周囲４マスを
+ * 対立するユニットが通過できなくする能力です（隣接することは可能です）。
+ * もしあるエネミーユニットの ZoC が行動中のアクターユニットの Through ZoC より高い場合、
+ * そのアクターはエネミーの横を通り抜けて、先へ進むことが出来なくなります。
+ * ZoC は、より大きい値の Through ZoC により無効化できます。
+ * ZoC と Through ZoC の値は、0を下回ることは出来ません。
+ * 
+ * プラグインパラメータを利用して、デフォルトの射線（攻撃範囲の制限）を設定します。
+ * たとえば、攻撃などの射程が敵のユニットを通過できなくしたりします。
+ * 
+ * おひさまクラフトによる改変
+ * 和訳を追加、srpgWRangePlusに対応
+ *
+ * 新しいアクターと職業のメモ:
+ * <srpgWeaponRange:X>           # 武器を装備していない場合の攻撃射程を指定します
+ * <srpgWeaponMinRange:X>        # 武器を装備していない場合の最低攻撃射程を指定します
+ * <srpgWeaponSkill:X>           # 武器を装備していない場合の通常攻撃のスキルIDを指定します
+ *
+ * 新しいアクター、職業、エネミー、武器、防具、ステート、スキルのメモ:
+ * <srpgZoC:X>                   # X の値だけそのユニットのZoCを増加させる
+ * <srpgThroughZoC:X>            # X の値だけそのユニットのthrough ZoCを増加させる
+ * <blockFriends:true/false>     # trueにすると、味方のユニットはそのユニットを通過できなくなる
+ * <blockOpponents:true/false>   # trueにすると、敵のユニットはそのユニットを通過できなくなる
+ * <srpgRangePlus:X>             # <srpgVariableRange>が設定されたスキルの射程を X の値だけ増減します
+ * <srpgMovePlus:X>              # 移動力を X の値だけ増減します
+ * <passFriends>                 # そのユニットは、すべての味方のユニットを通過して移動できるようになります
+ * <passOpponents>               # そのユニットは、すべての敵のユニットを通過して移動できるようになります
+ * <passEvents>                  # そのユニットは、すべてのプレイヤーイベントを通過して移動できるようになります
+ * <passObjects>                 # そのユニットは、すべてのobjectを通過して移動できるようになります
+ *
+ * *blockFriends と blockOpponents が複数ある場合、最も優先度の高いメモの設定が用いられます:
+ * ステート > 装備 > スキル > エネミー > 職業 > アクター > プラグインのデフォルト
+ * passFriends と passOpponents の設定は、blockよりも優先されます
+ *
+ * 新しいスキル、アイテムのメモ:
+ * <srpgVariableRange>           # <srpgRangePlus:X>の影響を受けるようになります
+ * <srpgLoS>                     # 射線（攻撃範囲の制限）の影響を受けるようになります
+ * <throughObject:true/false>    # trueにすると、objectによって射線を遮られなくなります
+ * <throughFriend:true/false>    # trueにすると、味方のユニットによって射線を遮られなくなります
+ * <throughOpponent:true/false>  # trueにすると、敵のユニットによって射線を遮られなくなります
+ * <throughEvent:true/false>     # trueにすると、プレイヤーイベントによって射線を遮られなくなります
+ * <throughTerrain:X>            # X より上のIDの地形タグによって射線を遮られなくなります
+ *                               -1 にすると、代わりに使用者のsrpgThroughTagを利用します
+ *
+ * 新しいタイルセット、マップのメモ:
+ * <srpgTerrainXCost:Y>          # 地形タグ X の移動コストを Y にします。
+ *                                 Xには、0 ~ 7 の数値を設定できます
+ *                                 Yには、1 より大きな自然数を設定できます
+ * 
+ * 注 / おひさまクラフトによる改変内容 ('modified by OhisamaCraft'で検索)
+ * ・specialRange:allActor, allEnemyに対応
+ * ・<srpgWRangePlus>に対応
+ * ・ヘルプの和訳
  *
  */
 
@@ -241,6 +484,7 @@
 
 	var coreParameters = PluginManager.parameters('SRPG_core');
 	var _defaultMove = Number(coreParameters['defaultMove'] || 4);
+	var _srpgBestSearchRouteSize = Number(coreParameters['srpgBestSearchRouteSize'] || 25);
 
 //====================================================================
 // utility functions
@@ -357,7 +601,7 @@
 				var dx = $gameMap.roundXWithDirection(cell[0], d);
 				var dy = $gameMap.roundYWithDirection(cell[1], d);
 				if ($gameTemp.MoveTable(dx, dy)[0] >= 0) continue;
-				var dmove = Math.max(cell[2] - $gameMap.srpgMoveCost(dx, dy), 0);
+				var dmove = Math.max(cell[2] - $gameMap.srpgMoveCost(dx, dy, tag), 0);
 
 				var route = cell[3].concat(d);
 				$gameTemp.setMoveTable(dx, dy, dmove, route);
@@ -373,8 +617,12 @@
 	}
 
 	// get the cost of moving through a given space
-	Game_Map.prototype.srpgMoveCost = function(x, y) {
+	// modefied by OhisamaCraft
+	Game_Map.prototype.srpgMoveCost = function(x, y, tag) {
 		var terrain = this.terrainTag(x, y);
+
+		// tag
+		if (terrain <= tag) return 1;
 
 		// map tags
 		if ($dataMap.meta["srpgTerrain"+terrain+"Cost"]) {
@@ -391,11 +639,19 @@
 	};
 
 	// breadth-first search for range
+	// modified by OhisamaCraft
 	Game_CharacterBase.prototype.makeRangeTable = function(x, y, range, unused, oriX, oriY, skill) {
 		var user = $gameSystem.EventToUnit(this.eventId())[1];
 		if (!skill || !user) return;
 		var minRange = user.srpgSkillMinRange(skill);
 
+		// all actor or enemy
+		if (skill.meta.specialRange === 'allActor' || skill.meta.specialRange === 'allEnemy') {
+			this.makeAllRangeTableAndList(skill, x, y);
+			return;
+		}
+
+		// normal range
 		var edges = [];
 		if (range > 0) edges = [[x, y, range, [0], []]];
 		if (minRange <= 0 && $gameTemp.RangeTable(x, y)[0] < 0) {
@@ -404,7 +660,7 @@
 			$gameTemp.addRangeMoveTable(x, y, x, y);
 		}
 		$gameMap.makeSrpgLoSTable(this);
-
+		
 		for (var i = 0; i < edges.length; i++) {
 			var cell = edges[i];
 			var drange = cell[2] - 1;
@@ -440,6 +696,25 @@
 		return true;
 	}
 
+	// 全体射程の射程範囲を作成する
+	// modified by OhisamaCraft
+	Game_CharacterBase.prototype.makeAllRangeTableAndList = function(skill, x, y) {
+		$gameMap.events().forEach(function(event) {
+            if ((skill.meta.specialRange === 'allActor' && 
+				 event.isType() === 'actor' && !event.isErased()) ||
+				(skill.meta.specialRange === 'allEnemy' && 
+				 event.isType() === 'enemy' && !event.isErased()) ) {
+				var dx = event.posX();
+				var dy = event.posY();
+				if ($gameTemp.RangeTable(dx, dy)[0] < 0) {
+					$gameTemp.setRangeTable(dx, dy, 0, []);
+					if ($gameTemp.MoveTable(dx, dy)[0] < 0) $gameTemp.pushRangeList([dx, dy, true]);
+				}
+				$gameTemp.addRangeMoveTable(dx, dy, x, y);
+            }
+        });
+	}
+
 	// Build the move+range table more efficiently
 	Game_System.prototype.srpgMakeMoveTable = function(event) {
 		var user = $gameSystem.EventToUnit(event.eventId())[1];
@@ -448,7 +723,11 @@
 		else item = $dataSkills[user.attackSkillId()];
 
 		$gameTemp.clearMoveTable();
-		event.makeMoveTable(event.posX(), event.posY(), user.srpgMove(), null, user.srpgThroughTag());
+		if ($gameTemp.isSrpgSearchLongDistance() === true) {
+			event.makeMoveTable(event.posX(), event.posY(), _srpgBestSearchRouteSize, null, user.srpgThroughTag());
+		} else {
+			event.makeMoveTable(event.posX(), event.posY(), user.srpgMove(), null, user.srpgThroughTag());
+		}
 		if (item.meta.notUseAfterMove) { // cannot move before attacking
 			var x = event.posX();
 			var y = event.posY();
@@ -736,11 +1015,16 @@
 
 //====================================================================
 // modifiable ranges
+// modified by OhisamaCraft
 //====================================================================
 
 	// check range bonuses
 	Game_BattlerBase.prototype.srpgRangePlus = function() {
 		return this.tagValue("srpgRangePlus");
+	};
+
+	Game_BattlerBase.prototype.srpgWRangePlus = function() {
+		return this.tagValue("srpgWRangePlus");
 	};
 
 	// re-define minimum range to work with adjustable maximum range
@@ -750,7 +1034,7 @@
 		if (skill.meta.srpgRange == -1) {
 			if (!this.hasNoWeapons()) {
 				var weapon = this.weapons()[0];
-				if (weapon.meta.weaponMinRange) return Number(weapon.meta.weaponMinRange);
+				if (weapon && weapon.meta.weaponMinRange) return Number(weapon.meta.weaponMinRange);
 			} else if (this.currentClass().meta.weaponMinRange) {
 				return Number(this.currentClass().meta.weaponMinRange);
 			} else if (this.actor().meta.weaponMinRange) {
@@ -769,7 +1053,7 @@
 		if (skill.meta.srpgRange == -1) {
 			if (!this.hasNoWeapons()) {
 				var weapon = $dataWeapons[this.enemy().meta.srpgWeapon];
-				if (weapon.meta.weaponMinRange) return Number(weapon.meta.weaponMinRange);
+				if (weapon && weapon.meta.weaponMinRange) return Number(weapon.meta.weaponMinRange);
 			} else if (this.enemy().meta.weaponMinRange) {
 				return Number(this.enemy().meta.weaponMinRange);
 			}
@@ -782,8 +1066,12 @@
 	// apply the bonuses to the maximum range
 	Game_Actor.prototype.srpgSkillRange = function(skill) {
 		var range = _defaultRange;
+		if (skill && skill.meta.srpgRange) {
+            var range = Number(skill.meta.srpgRange);
+        }
+        var rangeWeapon = (range === -1) ? true : false;
 
-		if (skill && skill.meta.srpgRange == -1) {
+		if (rangeWeapon) {
 			if (!this.hasNoWeapons()) {
 				var weapon = this.weapons()[0];
 				if (weapon.meta.weaponRange) range = Number(weapon.meta.weaponRange);
@@ -792,10 +1080,13 @@
 			} else if (this.actor().meta.weaponRange) {
 				range = Number(this.actor().meta.weaponRange);
 			}
-		} else if (skill && skill.meta.srpgRange) {
-			range = Number(skill.meta.srpgRange);
 		}
 
+		if (range === -1) range = 1;
+        if (rangeWeapon) {
+			var wRangeMod = this.srpgWRangePlus();
+            range += wRangeMod;
+        }
 		var minRange = this.srpgSkillMinRange(skill);
 		var rangeMod = this.srpgRangePlus();
 		if (skill.meta.srpgVariableRange) {
@@ -805,17 +1096,29 @@
 	};
 	Game_Enemy.prototype.srpgSkillRange = function(skill) {
 		var range = _defaultRange;
+		if (skill && skill.meta.srpgRange) {
+            var range = Number(skill.meta.srpgRange);
+        }
+        var rangeWeapon = (range === -1) ? true : false;
 
-		if (skill && skill.meta.srpgRange == -1) {
+		if (rangeWeapon) {
 			if (!this.hasNoWeapons()) {
 				var weapon = $dataWeapons[this.enemy().meta.srpgWeapon];
-				if (weapon.meta.weaponRange) range = Number(weapon.meta.weaponRange);
+				if (weapon && weapon.meta.weaponRange) {
+                    range = Number(weapon.meta.weaponRange);
+                } else if (this.enemy().meta.weaponRange) {
+                    range = Number(this.enemy().meta.weaponRange);
+                }
 			} else if (this.enemy().meta.weaponRange) {
 				range = Number(this.enemy().meta.weaponRange);
 			}
-		} else if (skill && skill.meta.srpgRange) {
-			range = Number(skill.meta.srpgRange);
 		}
+
+		if (range === -1) range = 1;
+        if (rangeWeapon) {
+            var wRangeMod = this.srpgWRangePlus();
+            range += wRangeMod;
+        }
 
 		var minRange = this.srpgSkillMinRange(skill);
 		var rangeMod = this.srpgRangePlus();
