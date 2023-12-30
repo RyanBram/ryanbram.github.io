@@ -270,12 +270,21 @@ function Scene_Terminate() {
     //=============================================================================
     // Adjusting Screen and UI Area size
     //=============================================================================
+
+    Graphics._defaultStretchMode = function() {
+        return true;
+    };
+    
     var aspectRatio = window.innerWidth / window.innerHeight;
-    var screenWidth = screenWidthTo; 
+
+        
+    var screenWidth;
     var screenHeight = screenHeightTo;
     
-    if (!keepAspect){
-        screenWidth = Math.round(screenHeight * aspectRatio);            
+    if(keepAspect){
+        screenWidth = screenWidthTo;
+    } else {
+        screenWidth = Math.round(screenHeight * aspectRatio);        
     }
 
     var windowWidth;
@@ -292,10 +301,6 @@ function Scene_Terminate() {
     }else if(screenHeight !== SceneManager._screenHeight){
         windowHeight = screenHeight;
     }
-
-    Graphics._defaultStretchMode = function() {
-        return true;
-    };
 
     SceneManager._screenWidth = screenWidth;
     SceneManager._screenHeight = screenHeight;
@@ -537,7 +542,12 @@ function Scene_Terminate() {
             document.msFullscreenElement;
     };
 
-
+    Graphics.requestFillScreen = function() {
+        SceneManager._screenWidth = screenWidth;
+        SceneManager._screenHeight = screenHeight;
+        SceneManager._boxWidth = windowWidth;
+        SceneManager._boxHeight = windowHeight;
+    };
     //=============================================================================
     // TouchInput
     //  Overriding the original processing to always record the mouse position when the pointer is moved.
@@ -647,7 +657,7 @@ function Scene_Terminate() {
 
     //=============================================================================
     // Scene_Boot
-    //  Adds processing to start in full-screen mode.
+    //  Add processing to start in full-screen mode.
     //=============================================================================
 
     var _Scene_Boot_start = Scene_Boot.prototype.start;
@@ -655,6 +665,7 @@ function Scene_Terminate() {
         _Scene_Boot_start.apply(this, arguments);
         if (ConfigManager.startUpFullScreen && !DataManager.isEventTest()) {
             Graphics.requestFullScreen();
+//            Graphics.requestFillScreen();
         }
     };
     //-----------------------------------------------------------------------------
@@ -702,7 +713,7 @@ function Scene_Terminate() {
         this._commandWindow.close();
         this.fadeOutAll();
         if (Utils.isMobileDevice()) {
-            SceneManager.goto(Scene_Title);
+            SceneManager.goto(Scene_Boot);
         } else {
             SceneManager.goto(Scene_Terminate);
         }
@@ -758,7 +769,7 @@ function Scene_Terminate() {
     var _Window_GameEnd_makeCommandList = Window_GameEnd.prototype.makeCommandList;
     Window_GameEnd.prototype.makeCommandList = function() {
         _Window_GameEnd_makeCommandList.apply(this, arguments);
-        if (showinGameEnd) {
+        if (showinGameEnd && Utils.isNwjs()) {
             this.addCommand(shutdownText, 'shutdown');
             this._list.splice(1, 0, this._list.pop());
         }
@@ -784,7 +795,9 @@ function Scene_Terminate() {
     Window_Options.prototype.addGeneralOptions = function() {
         _Window_Options_addGeneralOptions.apply(this, arguments);
         console.log(fullScreenOptionText);
-        this.addCommand(fullScreenOptionText, 'startUpFullScreen');
+        if (Utils.isNwjs()){
+            this.addCommand(fullScreenOptionText, 'startUpFullScreen');
+        }
     };
     //-----------------------------------------------------------------------------
 
