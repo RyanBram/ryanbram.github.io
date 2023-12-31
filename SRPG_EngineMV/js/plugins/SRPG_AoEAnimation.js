@@ -31,7 +31,7 @@
  * @param allow surrounding
  * @desc if disabled skill user will never be surrounded by targets. See help for detail
  * @type boolean
- * @default true
+ * @default false
  *
  * @param counterattack Mode
  * @desc what targets in the AoE can do counterattack
