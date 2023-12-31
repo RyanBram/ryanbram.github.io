@@ -225,6 +225,11 @@ EST.SRPGMouseOperation.pluginName="SRPG_MouseOperation";
 
 /// est strategy mouse cam plugin code part ///
 (function($){
+
+    if (Utils.isMobileDevice()) {
+        return;
+    }
+
 //grabbing plugin parameter
 $.Parameters = PluginManager.parameters($.pluginName);
 $.Parameters.borderDistance1 = Number($.Parameters.borderDistance1);
