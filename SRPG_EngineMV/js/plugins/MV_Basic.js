@@ -152,6 +152,12 @@
  * @desc The maximum value of rendering frame per seconds (0: unlimited)
  * @default 0
  *
+ *
+ * @param Always Full Screen
+ * @desc Start the game in Fullscreen by default
+ * @default false
+ * @type boolean
+ *
  * @param Fullscreen Option Text
  * @type string
  * @desc Command name for full screen option.
@@ -250,6 +256,7 @@ function Scene_Terminate() {
 //    var enableProgressBar = parameters['Enable Progress Bar'] === 'true';
     var enableProgressBar = true
     var touchUIEnabled = parameters['Use Touch UI'] === 'true';
+    var alwaysFullScreen = parameters['Always Full Screen'] === 'true';
     var fullScreenOptionText = parameters['Fullscreen Option Text'];
     var shutdownText = parameters['Shutdown Text'];
     var showinTitle = true
@@ -541,13 +548,6 @@ function Scene_Terminate() {
             document.webkitFullscreenElement ||
             document.msFullscreenElement;
     };
-
-    Graphics.requestFillScreen = function() {
-        SceneManager._screenWidth = screenWidth;
-        SceneManager._screenHeight = screenHeight;
-        SceneManager._boxWidth = windowWidth;
-        SceneManager._boxHeight = windowHeight;
-    };
     //=============================================================================
     // TouchInput
     //  Overriding the original processing to always record the mouse position when the pointer is moved.
@@ -665,7 +665,6 @@ function Scene_Terminate() {
         _Scene_Boot_start.apply(this, arguments);
         if (ConfigManager.startUpFullScreen && !DataManager.isEventTest()) {
             Graphics.requestFullScreen();
-//            Graphics.requestFillScreen();
         }
     };
     //-----------------------------------------------------------------------------
@@ -808,7 +807,7 @@ function Scene_Terminate() {
     //=============================================================================
 
 
-    ConfigManager._startUpFullScreen = false;
+    ConfigManager._startUpFullScreen = alwaysFullScreen; 
 
     Object.defineProperty(ConfigManager, 'startUpFullScreen', {
         get: function() {
