@@ -3,10 +3,11 @@
  * @plugindesc Adjusts screen width based on device aspect ratio with an optional specified screen height.
  * @author RPG Maker Coder
  *
- * @param Base Height
- * @type number
- * @desc Set the constant screen height (630 is the best), leave blank to disable screen adjustment.
- * @default 
+ * @param Dynamic Screen Ratio
+ * @type boolean
+ * @desc Make screen adaptable with device aspect ratio
+ * @default true
+ *
  *
  * @help
  * This plugin adjusts the game's screen width based on the device's aspect ratio using an optional specified screen height. 
@@ -16,8 +17,7 @@
 (() => {
     const pluginName = 'DynamicScreen';
     const parameters = PluginManager.parameters(pluginName);
-    const screenHeightParam = parameters['Base Height'];
-    const screenHeight = parseInt(screenHeightParam, 10);
+    const dynamicRatio = parameters['Dynamic Screen Ratio'] === 'true';
     
     // Make sure always stretch in any supported platform
     Graphics._defaultStretchMode = function() {
@@ -33,11 +33,19 @@
 	    }
     };
 
-    function adjustScreenWidth() {
-        if (!SceneManager._scene || isNaN(screenHeight)) return;
+    function adjustRatio() {
+        if (!dynamicRatio) return;
 
         const aspectRatio = window.innerWidth / window.innerHeight;
-        const screenWidth = Math.round(screenHeight * aspectRatio);
+        const minAspectRatio = $dataSystem.advanced.uiAreaWidth / $dataSystem.advanced.uiAreaHeight;
+
+        const screenHeight = $dataSystem.advanced.screenHeight;
+        let screenWidth = Math.round(screenHeight * aspectRatio);
+
+        
+        if (screenWidth / screenHeight < minAspectRatio) {
+            screenWidth = Math.round(screenHeight * minAspectRatio);
+        }
 
         // Adjusting automatic screen ratio
         Graphics.width = screenWidth;
@@ -45,28 +53,24 @@
         Graphics.resize(screenWidth, screenHeight);
         Graphics._updateAllElements();
 
-        // Adjusting scene size
-//        SceneManager._screenWidth = screenWidth;
-//        SceneManager._screenHeight = screenHeight;
-
-        // Refreshing title screen whenever screen ratio is changed
         if (SceneManager._scene instanceof Scene_Title) {
             SceneManager.goto(Scene_Title);
         }
+
     }
 
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() {
         _Scene_Boot_start.call(this);
-        if (screenHeightParam !== undefined && screenHeightParam !== '') {
-            adjustScreenWidth();
+        if (dynamicRatio) {
+            adjustRatio();
         }
     };
 
     // Handling change in window size
     window.addEventListener('resize', () => {
-        if (screenHeightParam !== undefined && screenHeightParam !== '') {
-            adjustScreenWidth();
+        if (dynamicRatio) {
+            adjustRatio();
         }
     });
 })();
