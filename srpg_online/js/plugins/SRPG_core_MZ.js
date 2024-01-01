@@ -2962,6 +2962,28 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
     var _expSe = parameters['expSound'] || 'Up4';
 
 //====================================================================
+// ●Plugin Command MV
+//====================================================================
+    var _Game_Interpreter_pluginCommand =
+            Game_Interpreter.prototype.pluginCommand;
+    Game_Interpreter.prototype.pluginCommand = function(command, args) {
+        _Game_Interpreter_pluginCommand.call(this, command, args);
+        if (command === 'SRPGBattle') {
+            switch (args[0]) {
+            case 'Start':
+                // SRPG戦闘の開始
+                $gameSystem.startSRPG();
+                break;
+            case 'End':
+                // SRPG戦闘の終了
+                $gameSystem.endSRPG();
+                break;
+            }
+        }
+    };
+
+
+//====================================================================
 // ●Plugin Command
 //====================================================================
     PluginManager.registerCommand(pluginName, "StartEnd", function(args) {

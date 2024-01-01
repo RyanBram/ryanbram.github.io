@@ -7,35 +7,46 @@
 */
 
 (() => {
+    Window_Selectable.prototype.isExcludedFromSingleTouch = function() {
+        return this instanceof Window_SkillList || 
+               this instanceof Window_ItemList || 
+               this instanceof Window_EquipItem;
+    };
     const _Window_Selectable_processTouch = Window_Selectable.prototype.processTouch;
     Window_Selectable.prototype.processTouch = function() {
-        if (this.isOpenAndActive()) {
-            if (TouchInput.isTriggered() && this.isTouchedInsideFrame()) {
-                // Check if the input is from touch screen and not from the mouse
-                if (TouchInput.isPressed() && !TouchInput._mousePressed) {
-                    this._touchStartX = TouchInput.x;
-                    this._touchStartY = TouchInput.y;
-                    this._touching = true;
+        if (this.isExcludedFromSingleTouch()) {
+            _Window_Selectable_processTouch.call(this)
+        } else{
+            if (this.isOpenAndActive()) {
+                if (TouchInput.isTriggered() && this.isTouchedInsideFrame()) {
+                    // Check if the input is from touch screen and not from the mouse
+                    //if (TouchInput.isPressed() && !TouchInput._mousePressed) {
+                    if (TouchInput._onTouchStart) {
+                        this._touchStartX = TouchInput.x;
+                        this._touchStartY = TouchInput.y;
+                        this._touching = true;
+                    } else {
+                        // Process normal mouse behavior
+                        _Window_Selectable_processTouch.call(this);
+                    }
+                } else if (TouchInput.isCancelled()) {
+                    if (this.isCancelEnabled()) {
+                        this.processCancel();
+                    }
+                } else if (this._touching && TouchInput.isReleased()) {
+                    const swipeThreshold = 10; // Minimum distance to consider as a swipe
+                    let dx = TouchInput.x - this._touchStartX;
+                    let dy = TouchInput.y - this._touchStartY;
+                    if (Math.abs(dx) < swipeThreshold && Math.abs(dy) < swipeThreshold) {
+                        this.onSingleTouch();
+                    }
+                    this._touching = false;
                 } else {
-                    // Process normal mouse behavior
                     _Window_Selectable_processTouch.call(this);
                 }
-            } else if (TouchInput.isCancelled()) {
-                if (this.isCancelEnabled()) {
-                    this.processCancel();
-                }
-            } else if (this._touching && TouchInput.isReleased()) {
-                const swipeThreshold = 10; // Minimum distance to consider as a swipe
-                let dx = TouchInput.x - this._touchStartX;
-                let dy = TouchInput.y - this._touchStartY;
-                if (Math.abs(dx) < swipeThreshold && Math.abs(dy) < swipeThreshold) {
-                    this.onSingleTouch();
-                }
-                this._touching = false;
-            } else {
-                _Window_Selectable_processTouch.call(this);
             }
         }
+
     };
 
     Window_Selectable.prototype.onSingleTouch = function() {
