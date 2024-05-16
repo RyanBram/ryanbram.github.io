@@ -649,15 +649,19 @@ $TouchInput_onWheel = TouchInput._onWheel;
 TouchInput._onWheel = function(event) {
   $TouchInput_onWheel.call(this, event);
   if (!$.Parameters.isWheelPrevNext) return;
-  if ($gameSystem.isSubBattlePhase() !== 'normal') return;
+  if ($gameSystem.isSubBattlePhase() !== 'normal' && $gameSystem.isSubBattlePhase() !== 'actor_move' && $gameSystem.isSubBattlePhase() !== 'actor_target') return;
   if ($gamePlayer && $gamePlayer.isMoving()) return;
   if(this._newState.wheelY > 0){
     SoundManager.playCursor();
-    $gameSystem.getNextRActor();
+    if ($gameSystem.isSubBattlePhase() === 'actor_target'){
+        $gameSystem.getNextRTarget();}
+    else {$gameSystem.getNextRActor();}
   }; 
   if(this._newState.wheelY < 0) {
     SoundManager.playCursor();
-    $gameSystem.getNextLActor();
+    if ($gameSystem.isSubBattlePhase() === 'actor_target'){
+      $gameSystem.getNextLTarget();}
+    else {$gameSystem.getNextLActor();}
   };
 };
 

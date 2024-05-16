@@ -26,7 +26,7 @@
 
     // Disable window margin in Mobile device
     Graphics._stretchHeight = function() {
-	    if (Utils.isMobileDevice()) {
+	    if (Utils.isMobileDevice()){//&& !window.cordova) {
 		    return document.documentElement.clientHeight;
 	    } else {
 		    return window.innerHeight;
@@ -36,10 +36,16 @@
     function adjustRatio() {
         if (!dynamicRatio) return;
 
+        // Check if $dataSystem or $dataSystem.advanced is null
+        if (!$dataSystem || !$dataSystem.advanced) return;
+
+        // Detecting device aspect ratio
         const aspectRatio = window.innerWidth / window.innerHeight;
+        // Calculating UI aspect ratio
         const minAspectRatio = $dataSystem.advanced.uiAreaWidth / $dataSystem.advanced.uiAreaHeight;
 
         const screenHeight = $dataSystem.advanced.screenHeight;
+        // Calculating screen width based on aspect ratio
         let screenWidth = Math.round(screenHeight * aspectRatio);
 
         
@@ -57,11 +63,24 @@
             SceneManager.goto(Scene_Title);
         }
 
+        // Refresh the map scene if the current scene is a map
+        if (SceneManager._scene instanceof Scene_Map) {
+            $gameScreen.clearZoom();
+        }
+
     }
 
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() {
         _Scene_Boot_start.call(this);
+        if (dynamicRatio) {
+            adjustRatio();
+        }
+    };
+
+    const _Scene_Map_update = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update.call(this);
         if (dynamicRatio) {
             adjustRatio();
         }

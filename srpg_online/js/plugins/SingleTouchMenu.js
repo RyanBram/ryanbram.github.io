@@ -1,7 +1,7 @@
 /*:
 * @target MZ
 * @plugindesc Enables single touch selection for menu items in RPG Maker MZ while preserving swipe scrolling and mouse functionality.
-* @author RPG Maker Coder
+* @author RyanBram
 * @help
 * This plugin allows menu items to be selected with a single touch and preserves swipe scrolling and mouse functionality.
 */

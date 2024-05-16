@@ -9026,6 +9026,7 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
         if (ConfigManager.touchUI) {
             this.createMenuButton();
             this.createCancelButton();
+            this.createPageButtons();
         }
     };
 
@@ -9045,6 +9046,20 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
         this.addWindow(this._cancelButton);
    };
     
+   Scene_Map.prototype.createPageButtons = function() {
+        this._pageupButton = new Sprite_Button("pageup");
+        this._pageupButton.x = 4;
+        this._pageupButton.y = this.buttonY();
+        this._pageupButton.visible = false;
+        const pageupRight = this._pageupButton.x + this._pageupButton.width;
+
+        this._pagedownButton = new Sprite_Button("pagedown");
+        this._pagedownButton.x = pageupRight + 4;
+        this._pagedownButton.y = this.buttonY();
+        this.addWindow(this._pageupButton);
+        this.addWindow(this._pagedownButton);
+        this._pagedownButton.visible = false;
+    }; 
 
     // ステータスウィンドウを作る
     Scene_Map.prototype.createSrpgStatusWindow = function() {
@@ -9262,6 +9277,17 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
         }
     };
 
+    // Allow Page Buttons
+    Scene_Map.prototype.isPageButtonsEnabled = function() {
+        if ($gameSystem.isSubBattlePhase() === 'actor_move' ||
+            $gameSystem.isSubBattlePhase() === 'actor_command_window' ||
+            $gameSystem.isSubBattlePhase() === 'actor_target') {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     // タッチした場所にキャンセルボタンが存在するかの判定
     // 仕様上、マップの一番右上にはタッチで移動できなくなる
     Scene_Map.prototype.touchOnCancelButton = function() {
@@ -9270,10 +9296,21 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
                (TouchInput.x >= this._cancelButton.x && TouchInput.y <= this._cancelButton.y * 2 + this._cancelButton.height);
     };
 
-    // キャンセルボタンの位置にはカーソルを移動しない
+    // Determines if Page Buttons exists at the touched location
+    // The top left corner of the map cannot be moved by touch due to specifications.
+    Scene_Map.prototype.touchOnPageButtons = function() {
+        if (!ConfigManager.touchUI) return false;
+        return $gameSystem.isSRPGMode() && this.isPageButtonsEnabled() &&
+               (TouchInput.x >= this._pageupButton.x && TouchInput.y <= this._pageupButton.y * 2 + this._pageupButton.height) &&
+               (TouchInput.x >= this._pagedownButton.x && TouchInput.y <= this._pagedownButton.y * 2 + this._pagedownButton.height);
+    };
+
+
+    // Cursor is not moved to the position of any buttons.
     const _SRPG_SceneMap_onMapTouch = Scene_Map.prototype.onMapTouch;
     Scene_Map.prototype.onMapTouch = function() {
         if (this.touchOnCancelButton()) return;
+        if (this.touchOnPageButtons()) return;
         _SRPG_SceneMap_onMapTouch.call(this);
     };
 
@@ -9288,6 +9325,28 @@ Sprite_SrpgMoveTile.prototype.constructor = Sprite_SrpgMoveTile;
                     this._cancelButton.visible = this._cancelButtonEnabled;
                 } else {
                     this._cancelButtonEnabled = cancelButtonEnabled;
+                }
+            }
+        }
+    };
+
+    // Hide or show of the PageButtons
+//    const _SRPG_SceneMap_updatePageButtons = Scene_Map.prototype.updatePageButtons;
+    Scene_Map.prototype.updatePageButtons = function() {
+//        _SRPG_SceneMap_updatePageButtons.call(this);
+        if ($gameSystem.isSRPGMode() === true) {
+            if (this._pageupButton && this._pagedownButton) {
+                const pageupButtonEnabled = this.isPageButtonsEnabled();
+                const pagedownButtonEnabled = this.isPageButtonsEnabled();
+                if (pageupButtonEnabled === this._pageupButtonEnabled) {
+                    this._pageupButton.visible = this._pageupButtonEnabled;
+                } else {
+                    this._pageupButtonEnabled = pageupButtonEnabled;
+                }
+                if (pagedownButtonEnabled === this._pagedownButtonEnabled) {
+                    this._pagedownButton.visible = this._pagedownButtonEnabled;
+                } else {
+                    this._pagedownButtonEnabled = pagedownButtonEnabled;
                 }
             }
         }
