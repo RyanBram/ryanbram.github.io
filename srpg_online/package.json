@@ -3,9 +3,9 @@
     "main": "index.html",
     "chromium-args": "--force-color-profile=srgb",
     "window": {
-        "title": "SRPG Gear MZ Demo",
-        "width": 816,
-        "height": 624,
+        "title": "SRPGgearMZ Sample Game",
+        "width": 1120,
+        "height": 630,
         "position": "center",
         "icon": "icon/icon.png"
     }

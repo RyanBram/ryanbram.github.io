@@ -9,7 +9,8 @@
  * @target MZ
  * @plugindesc SRPG move path indicator, edited by OhisamaCraft.
  * @author Dr. Q
- * 
+ * @base SRPG_core_MZ
+ * @orderAfter SRPG_core_MZ
  *
  * @param Path Blend Mode
  * @desc Blend mode for the move path
@@ -71,7 +72,8 @@
  * @target MZ
  * @plugindesc SRPG戦闘でアクターの移動経路を表示します。おひさまクラフトによる改変あり。
  * @author Dr. Q
- * 
+ * @base SRPG_core_MZ
+ * @orderAfter SRPG_core_MZ
  *
  * @param Path Blend Mode
  * @desc 移動経路の画像のブレンドモード
@@ -158,6 +160,7 @@ Sprite_SrpgMovePath.prototype.constructor = Sprite_SrpgMovePath;
 	Game_Temp.prototype.showRoute = function(destX, destY) {
 		this._activeRoute = [];
 		if (destX == undefined || destY == undefined) return;
+		if (destX < 0 || destX >= $gameMap.width() || destY < 0 || destY >= $gameMap.height()) return;
 		var moveTable = $gameTemp.MoveTable(destX, destY);
 		var list = $gameTemp.moveList();
 		if (!moveTable || !list || !list[0]) return;
@@ -202,13 +205,11 @@ Sprite_SrpgMovePath.prototype.constructor = Sprite_SrpgMovePath;
 	}
 
 	// clear the route/AoE when you cancel movement/targeting
-	var _updateCallMenu = Scene_Map.prototype.updateCallMenu;
-	Scene_Map.prototype.updateCallMenu = function() {
-		_updateCallMenu.call(this);
-		if ($gameSystem.isSRPGMode() && (Input.isTriggered('cancel') || TouchInput.isCancelled())) {
-			if ($gameSystem.isSubBattlePhase() === 'normal') $gameTemp.clearRoute();
-		}
-	};
+	const _srpg_showPath_srpgCancelActorMove = Scene_Map.prototype.srpgCancelActorMove;
+	Scene_Map.prototype.srpgCancelActorMove = function(){
+		_srpg_showPath_srpgCancelActorMove.call(this);
+		$gameTemp.clearRoute();
+    }
 
 	// restore the route when you cancel the actor command
 	var _selectPreviousActorCommand = Scene_Map.prototype.selectPreviousActorCommand;

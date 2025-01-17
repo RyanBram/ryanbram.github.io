@@ -1,5 +1,5 @@
 //=============================================================================
-// rmmz_core.js v1.8.0
+// rmmz_core.js v1.8.1
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ Utils.RPGMAKER_NAME = "MZ";
  * @type string
  * @constant
  */
-Utils.RPGMAKER_VERSION = "1.8.0";
+Utils.RPGMAKER_VERSION = "1.8.1";
 
 /**
  * Checks whether the current RPG Maker version is greater than or equal to
@@ -960,11 +960,6 @@ Graphics._onWindowResize = function() {
 Graphics._onKeyDown = function(event) {
     if (!event.ctrlKey && !event.altKey) {
         switch (event.keyCode) {
-            case 112: // F1
-                event.preventDefault();
-                // Call your function here
-                SceneManager.push(Scene_Options);
-                break;
             case 113: // F2
                 event.preventDefault();
                 this._switchFPSCounter();

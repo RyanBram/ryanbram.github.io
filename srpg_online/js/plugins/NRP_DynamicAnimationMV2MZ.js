@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc v1.052 It makes MV animations correspond to DynamicAnimationMZ.
+ * @plugindesc v1.063 It makes MV animations correspond to DynamicAnimationMZ.
  * @author Takeshi Sunagawa (http://newrpg.seesaa.net/)
  * @base NRP_DynamicAnimationMZ
  * @orderAfter NRP_DynamicAnimationMZ
@@ -104,7 +104,7 @@
 
 /*:ja
  * @target MZ
- * @plugindesc v1.052 ＭＶ用アニメーションをDynamicAnimationMZに対応させます。
+ * @plugindesc v1.063 ＭＶ用アニメーションをDynamicAnimationMZに対応させます。
  * @author 砂川赳（http://newrpg.seesaa.net/）
  * @base NRP_DynamicAnimationMZ
  * @orderAfter NRP_DynamicAnimationMZ
@@ -506,23 +506,21 @@ Sprite_AnimationMV.prototype.updateDynamicAnimation = function() {
 
     // 初期フレームは透明の場合
     if (t == 0 && firstInvisible) {
-        this.opacity = 0;
+        opacity = 0;
     // 不透明度
     } else if (opacity != undefined) {
         opacity = eval(opacity);
-        if (opacity != undefined) {
-            this.opacity = opacity;
-        }
     // それ以外は255
     } else {
-        this.opacity = 255;
+        opacity = 255;
     }
+    if (opacity == undefined) {
+        opacity = 255;
+    }
+    this.opacity = opacity;
 
     // 残像の不透明度計算
     if (da.isAfterimage) {
-        if (opacity == undefined) {
-            opacity = 255;
-        }
         this.opacity = opacity * da.opacityRate;
     }
 
@@ -530,19 +528,30 @@ Sprite_AnimationMV.prototype.updateDynamicAnimation = function() {
     if (scale != undefined || scaleX != undefined || scaleY != undefined) {
         let setScaleX = 1;
         let setScaleY = 1;
+
         // 全体
         if (scale != undefined) {
-            setScaleX = eval(scale);
-            setScaleY = eval(scale);
+            const evalScale = eval(scale);
+            if (evalScale != null) {
+                setScaleX = evalScale;
+                setScaleY = evalScale;
+            }
         }
         // Ｘ方向
         if (scaleX != undefined) {
-            setScaleX = eval(scaleX);
+            const evalScaleX = eval(scaleX);
+            if (evalScaleX != null) {
+                setScaleX = evalScaleX;
+            }
         }
         // Ｙ方向
         if (scaleY != undefined) {
-            setScaleY = eval(scaleY);
+            const evalScaleY = eval(scaleY);
+            if (evalScaleY != null) {
+                setScaleY = evalScaleY;
+            }
         }
+
         this.scale = new PIXI.Point(setScaleX, setScaleY);
     }
 
@@ -656,12 +665,15 @@ Sprite_AnimationMV.prototype.processTimingData = function(timing) {
 /**
  * ●対象のフラッシュ
  */
-var _Sprite_AnimationMV_startFlash = Sprite_AnimationMV.prototype.startFlash;
+const _Sprite_AnimationMV_startFlash = Sprite_AnimationMV.prototype.startFlash;
 Sprite_AnimationMV.prototype.startFlash = function(color, duration) {
     // フラッシュ制限フラグが立っているなら処理終了
     if (this.dynamicAnimation && this.dynamicAnimation.isLimitFlash) {
         return;
     }
+
+    // 終了処理を実行するフラグ
+    this._useOnEnd = true;
 
     // 元処理実行
     _Sprite_AnimationMV_startFlash.call(this, color, duration);
@@ -670,19 +682,22 @@ Sprite_AnimationMV.prototype.startFlash = function(color, duration) {
 /**
  * ●対象非表示
  */
-var _Sprite_AnimationMV_startHiding = Sprite_AnimationMV.prototype.startHiding;
+const _Sprite_AnimationMV_startHiding = Sprite_AnimationMV.prototype.startHiding;
 Sprite_AnimationMV.prototype.startHiding = function(duration) {
     // フラッシュ制限フラグが立っているなら処理終了
     if (this.dynamicAnimation && this.dynamicAnimation.isLimitFlash) {
         return;
     }
 
+    // 終了処理を実行するフラグ
+    this._useOnEnd = true;
+
     // 元処理実行
     _Sprite_AnimationMV_startHiding.call(this, duration);
 };
 
 /**
- * アニメーションの削除
+ * ●アニメーションの削除
  */
 Sprite_AnimationMV.prototype.remove = function() {
     if (this.dynamicAnimation && this.parent) {
@@ -695,26 +710,37 @@ Sprite_AnimationMV.prototype.remove = function() {
  */
 const _Sprite_AnimationMV_onEnd = Sprite_AnimationMV.prototype.onEnd;
 Sprite_AnimationMV.prototype.onEnd = function() {
-    // 最終リピートの場合のみ戻し処理を実行
-    if (this.dynamicAnimation && this.dynamicAnimation.isLastRepeat) {
-        // アニメーションの削除時に色調＆表示状態を戻す
+    // フラッシュや対象消去を実行していないなら終了処理を行わない。
+    // ※バトラーのチラつきの原因となるため。
+    if (!this._useOnEnd) {
+        // ただし、DynamicAnimationの最終リピートかつlimitFlash指定時は終了処理を行う。
+        // ※途中がlimitFlashによって飛ばされている場合、他のリピートで色変更されている可能性を考慮
+        if (this.dynamicAnimation && this.dynamicAnimation.isLastRepeat
+                && this.dynamicAnimation.baseAnimation.limitFlash > 1) {
+            _Sprite_AnimationMV_onEnd.apply(this, arguments);
+            return;
+        }
         this._flashDuration = 0;
         this._screenFlashDuration = 0;
         this._hidingDuration = 0;
-        for (const target of this._targets) {
-            target.setBlendColor([0, 0, 0, 0]);
-            target.show();
-        }
         return;
     }
 
+    // DynamicAnimationから呼び出された場合
+    // 最終リピート以外は終了処理を行わない。
+    if (this.dynamicAnimation && !this.dynamicAnimation.isLastRepeat) {
+        this._flashDuration = 0;
+        this._screenFlashDuration = 0;
+        this._hidingDuration = 0;
+        return;
+    }
     _Sprite_AnimationMV_onEnd.apply(this, arguments);
 };
 
 /**
  * ●画面のフラッシュ
  */
-var _Sprite_AnimationMV_startScreenFlash = Sprite_AnimationMV.prototype.startScreenFlash;
+const _Sprite_AnimationMV_startScreenFlash = Sprite_AnimationMV.prototype.startScreenFlash;
 Sprite_AnimationMV.prototype.startScreenFlash = function(color, duration) {
     // フラッシュ制限フラグが立っているなら処理終了
     if (this.dynamicAnimation && this.dynamicAnimation.isLimitFlash) {

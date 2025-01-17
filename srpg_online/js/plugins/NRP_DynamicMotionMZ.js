@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc v1.22 When executing skills, call motion freely.
+ * @plugindesc v1.256 When executing skills, call motion freely.
  * @author Takeshi Sunagawa (http://newrpg.seesaa.net/)
  * @base NRP_DynamicAnimationMZ
  * @orderAfter NRP_DynamicAnimationMZ
@@ -561,7 +561,7 @@
 
 /*:ja
  * @target MZ
- * @plugindesc v1.22 スキル実行時、自在にモーションを呼び出す。
+ * @plugindesc v1.256 スキル実行時、自在にモーションを呼び出す。
  * @author 砂川赳（http://newrpg.seesaa.net/）
  * @base NRP_DynamicAnimationMZ
  * @orderAfter NRP_DynamicAnimationMZ
@@ -1269,17 +1269,17 @@ const parameters = PluginManager.parameters("NRP_DynamicMotionMZ");
 const pTemplateList = parseStruct2(parameters["templateList"]);
 const pMapTemplateList = parseStruct2(parameters["mapTemplateList"]);
 
-var pSetStartMotion = parameters["setStartMotion"];
-var pSetStepForward = parameters["setStepForward"];
-var pJumpShadow = toBoolean(parameters["jumpShadow"]);
-var pShortTagName = parameters["shortTagName"];
-var pShortSettingTagName = parameters["shortSettingTagName"];
-var pDefaultDuration = toNumber(parameters["defaultDuration"], 12);
-var pDefaultEnemyMotionDuration = toNumber(parameters["defaultEnemyMotionDuration"], 12);
-var pImmortalState = toNumber(parameters["immortalState"]);
-var pUsePriority = toBoolean(parameters["usePriority"], true);
-var pBattlerZ = toNumber(parameters["battlerZ"], 3);
-var pOpponentSideZ = toNumber(parameters["opponentSideZ"]);
+const pSetStartMotion = parameters["setStartMotion"];
+const pSetStepForward = parameters["setStepForward"];
+const pJumpShadow = toBoolean(parameters["jumpShadow"]);
+const pShortTagName = parameters["shortTagName"];
+const pShortSettingTagName = parameters["shortSettingTagName"];
+const pDefaultDuration = toNumber(parameters["defaultDuration"], 12);
+const pDefaultEnemyMotionDuration = toNumber(parameters["defaultEnemyMotionDuration"], 12);
+const pImmortalState = toNumber(parameters["immortalState"]);
+const pUsePriority = toBoolean(parameters["usePriority"], true);
+const pBattlerZ = toNumber(parameters["battlerZ"], 3);
+const pOpponentSideZ = toNumber(parameters["opponentSideZ"]);
 
 const animatinParameters = PluginManager.parameters("NRP_DynamicAnimationMZ");
 const pNoMirrorForFriend = toBoolean(animatinParameters["noMirrorForFriend"], true);
@@ -1718,6 +1718,33 @@ BaseMotion.prototype.evalTimingStr = function (arg) {
 };
 
 /**
+ * ●ターン処理
+ */
+const _BattleManager_processTurn = BattleManager.processTurn;
+BattleManager.processTurn = function() {
+    const subject = this._subject;
+    const action = subject.currentAction();
+
+    // startAction()より前に実行
+    // ※startAction()内に書くと、NRP_ChainSkill.jsと競合するのでここでやる。
+    if (action) {
+        // アクター位置の自動設定を禁止解除
+        this._noUpdateTargetPosition = false;
+    }
+    _BattleManager_processTurn.apply(this, arguments);
+}
+
+/**
+ * ●逃げる
+ */
+const _BattleManager_processEscape = BattleManager.processEscape;
+BattleManager.processEscape = function() {
+    // アクター位置の自動設定を禁止解除
+    this._noUpdateTargetPosition = false;
+    return _BattleManager_processEscape.apply(this, arguments);
+};
+
+/**
  * ●モーションの生成開始
  * ※NRP_DynamicAnimation.jsより呼び出し
  */
@@ -1882,7 +1909,7 @@ BaseMotion.prototype.makeRepeatMotion = function (dynamicMotionList) {
         if (isEvery) {
             this.targets.forEach(function (target, index) {
                 // Sprite_Battlerへと引き渡すパラメータを作成
-                dynamicMotion = this.createDynamicMotion(performer, target, targetDelay);
+                dynamicMotion = this.createDynamicMotion(performer, target, targetDelay, index);
                 dynamicMotion.performerNo = performerIndex;
                 dynamicMotion.targetNo = index;
 
@@ -1968,8 +1995,8 @@ BaseMotion.prototype.makeRepeatMotion = function (dynamicMotionList) {
 /**
  * ●動的モーションデータを生成する。
  */
-BaseMotion.prototype.createDynamicMotion = function(performer, target, delay) {
-    const dynamicMotion = new DynamicMotion(this, performer, target);
+BaseMotion.prototype.createDynamicMotion = function(performer, target, delay, index) {
+    const dynamicMotion = new DynamicMotion(this, performer, target, index);
     dynamicMotion.targetDelay = delay;
 
     return dynamicMotion;
@@ -2023,7 +2050,12 @@ BaseMotion.prototype.getScreenY = function (b) {
 /**
  * ●非ループモーションのカウント数
  */
-BaseMotion.prototype.motionPatternCount = function () {
+BaseMotion.prototype.motionPatternCount = function (sprite) {
+    const weaponSprite = sprite._weaponSprite;
+    // NRP_WeaponSetting.jsでの設定があれば取得
+    if (weaponSprite && weaponSprite.weaponPatternCount) {
+        return weaponSprite.weaponPatternCount(this.weaponIndex, this.weaponKey);
+    }
     return 3;
 };
 
@@ -2113,12 +2145,13 @@ BaseMotion.prototype.getReferenceSubject = function () {
 /**
  * ●初期化処理
  */
-DynamicMotion.prototype.initialize = function (baseMotion, performer, target) {
+DynamicMotion.prototype.initialize = function (baseMotion, performer, target, index) {
     const r = baseMotion.r;
 
     // eval参照用
     const a = getReferenceBattler(performer);
     const spriteA = getBattlerSprite(performer);
+    const targetNo = index ?? 0;
     // モーションの対象ではなく、スキルの対象を取得
     const b = getReferenceBattler(target);
     const bm = baseMotion;
@@ -2247,7 +2280,7 @@ DynamicMotion.prototype.initialize = function (baseMotion, performer, target) {
                 || (Sprite_Actor.MOTIONS[this.motion] && !Sprite_Actor.MOTIONS[this.motion].loop))) {
         // 合計モーション時間を計算
         // ※モーション時間は３パターンを想定し、*3して計算
-        this.motionDurationTotal = nvl(this.motionDuration) * baseMotion.motionPatternCount();
+        this.motionDurationTotal = nvl(this.motionDuration) * baseMotion.motionPatternCount(spriteA);
         // 移動よりモーション時間が長い場合はそちらの時間まで確保
         this.maxDuration = Math.max(this.maxDuration, this.motionDurationTotal);
     }
@@ -2280,6 +2313,7 @@ DynamicMotion.prototype.initialize = function (baseMotion, performer, target) {
     this.weaponType = baseMotion.weaponType;
     this.weaponImage = baseMotion.weaponImage;
     this.weaponIndex = baseMotion.weaponIndex;
+    this.weaponKey = baseMotion.weaponKey;
     this.arcX = baseMotion.arcX;
     this.arcY = baseMotion.arcY;
     this.addX = baseMotion.addX;
@@ -2403,7 +2437,7 @@ DynamicMotion.prototype.getDefaultY = function (a, b, screenY) {
  * ●武器を使うかどうか？
  */
 DynamicMotion.prototype.isUseWeapon = function() {
-    return this.motion == "attack" || this.weaponId || this.weaponType || this.weaponImage  || this.weaponIndex;
+    return this.motion == "attack" || this.weaponId || this.weaponType || this.weaponImage || this.weaponIndex || this.weaponKey;
 }
 
 /**
@@ -2418,10 +2452,20 @@ Game_Battler.prototype.initMembers = function() {
     this._motions = [];
 };
 
+/*
+ * Game_Actor側の関数が未定義の場合は事前に定義
+ * ※これをしておかないと以後のGame_Battler側への追記が反映されない。
+ */
+if (Game_Actor.prototype.onBattleEnd == Game_Battler.prototype.onBattleEnd) {
+    Game_Actor.prototype.onBattleEnd = function() {
+        return Game_Battler.prototype.onBattleEnd.apply(this, arguments);
+    }
+}
+
 /**
  * ●戦闘終了時
  */
-var _Game_Actor_onBattleEnd = Game_Actor.prototype.onBattleEnd;
+const _Game_Actor_onBattleEnd = Game_Actor.prototype.onBattleEnd;
 Game_Actor.prototype.onBattleEnd = function() {
     _Game_Actor_onBattleEnd.apply(this, arguments);
 
@@ -2505,8 +2549,13 @@ Sprite_Battler.prototype.updateDynamicMotion = function() {
         this._dynamicMotionDuration--;
     }
     
+    const spriteset = BattleManager._spriteset;
+    // spritesetが設定されてないなら終了
+    if (!spriteset) {
+        return;
+    }
     // DynamicAnimationと同タイミングで実行するため、準備完了まで待つ。
-    if (!BattleManager._spriteset || !BattleManager._spriteset._isDynamicAnimationReady) {
+    if (spriteset._requestDynamicAnimation && !spriteset._isDynamicAnimationReady) {
         return;
     }
 
@@ -2604,6 +2653,7 @@ Sprite.prototype.startDynamicMotion = function(dynamicMotion) {
     motion._referenceTarget = b;
     const repeat = dm.repeat;
     const r = dm.r;
+    motion._r = r;
     const position = dm.position;
     const screenX = dm.screenX;
     const screenY = dm.screenY;
@@ -2802,6 +2852,11 @@ Sprite.prototype.startDynamicMotion = function(dynamicMotion) {
         // 現在地を初期値に設定
         let sx = this.x;
         let sy = this.y - this.rollAirY(); // 空中座標は除外
+
+        // NRP_ShadowAndLevitate.js併用時の振幅は除外
+        if (this.floatSwing != null) {
+            sy -= this.floatSwing;
+        }
 
         // 指定があれば始点座標を設定
         if (dm.sx != undefined) {
@@ -3060,6 +3115,9 @@ Sprite_Actor.prototype.updateMotionCount = function() {
                 this._pattern = (this._pattern + 1) % 4;
             } else if (this._pattern < 2) {
                 this._pattern++;
+            // NRP_WeaponSetting.jsで制御中はredreshしない。
+            } else if (this._weaponSprite._isChangeWeaponPattern) {
+                this._pattern++;
             } else {
                 this.refreshMotion();
             }
@@ -3185,6 +3243,7 @@ Sprite_Weapon.prototype.setWeaponImage = function(weaponImage) {
 
 /**
  * 【独自】武器画像インデックスの設定
+ * ※NRP_WeaponSetting.js用
  */
 Sprite_Weapon.prototype.setWeaponIndex = function(weaponIndex) {
     this._weaponIndex = weaponIndex;
@@ -3210,6 +3269,10 @@ Sprite_Weapon.prototype.setup = function(weaponImageId) {
     if (dm) {
         this.setWeaponImage(dm.weaponImage);
         this.setWeaponIndex(dm.weaponIndex);
+        // NRP_WeaponSetting.jsの関数
+        if (this.setWeaponKey) {
+            this.setWeaponKey(dm.weaponKey);
+        }
     }
 
     // 開始モーションの指定がある場合
@@ -3249,7 +3312,14 @@ Sprite_Weapon.prototype.animationWait = function() {
 /**
  * 【上書】武器のモーションパターン
  */
+const _Sprite_Weapon_updatePattern = Sprite_Weapon.prototype.updatePattern;
 Sprite_Weapon.prototype.updatePattern = function() {
+    // NRP_WeaponSetting.jsにて動作を変更している場合は処理しない。
+    if (this._isChangeWeaponPattern) {
+        _Sprite_Weapon_updatePattern.apply(this, arguments);
+        return;
+    }
+
     // アクターのパターンに同期する。
     this._pattern = this.parent._pattern;
 
@@ -3310,10 +3380,10 @@ Sprite_Battler.prototype.updateMove = function() {
  * ※当プラグインの描画更新系もここで行う
  */
 Sprite.prototype.updateDynamicMove = function() {
-    var motion = this._setDynamicMotion;
+    const motion = this._setDynamicMotion;
 
     if (motion && this._movementDuration > 0) {
-        const dm = this.dynamicMotion;
+        const dm = motion;
         const t = this.getDynamicMotionTime(); // 現在の経過時間
         const et = this.getDynamicMotionEndTime(); // 終了時間
 
@@ -3324,6 +3394,7 @@ Sprite.prototype.updateDynamicMove = function() {
         var screenY = motion._screenY;
         var defaultX = motion._defaultX;
         var defaultY = motion._defaultY;
+        const r = motion._r;
         const sx = motion._sx;
         const sy = motion._sy;
         const ex = motion._ex;
@@ -3563,21 +3634,17 @@ Sprite.prototype.updateDynamicPosition = function() {
 /**
  * ●アクターのアクション開始
  */
-var _Game_Actor_performAction = Game_Actor.prototype.performAction;
+const _Game_Actor_performAction = Game_Actor.prototype.performAction;
 Game_Actor.prototype.performAction = function(action) {
     // 開始モーションの有無
-    if (pSetStartMotion) {
-        // やや冗長だけど競合を減らすため、
-        // Game_Battler.prototype.performActionを呼び出す。
+    // 1:常に無
+    if (pSetStartMotion == 1) {
         Game_Battler.prototype.performAction.call(this, action);
-
-        // 1:常に無
-        if (pSetStartMotion == 1) {
-            return;
-        // 2:モーション指定時のみ無
-        } else if (pSetStartMotion == 2 && action.isDynamicMotion()) {
-            return;
-        }
+        return;
+    // 2:モーション指定時のみ無
+    } else if (pSetStartMotion == 2 && action.isDynamicMotion()) {
+        Game_Battler.prototype.performAction.call(this, action);
+        return;
     }
 
     // 元処理実行
@@ -3959,6 +4026,18 @@ Sprite.prototype.getDynamicMotionEndTime = function() {
 
 if (pUsePriority) {
     /**
+     * ●ダメージスプライトの初期化
+     */
+    const _Sprite_Damage_initialize = Sprite_Damage.prototype.initialize;
+    Sprite_Damage.prototype.initialize = function() {
+        _Sprite_Damage_initialize.apply(this, arguments);
+
+        // 適当にＺ座標を設定
+        // 後発の画像（spriteIdが大きい）を優先表示するように調整
+        this.z = 9 + (this.spriteId / 999999999999999);
+    };
+
+    /**
      * ●更新処理
      */
     const _Spriteset_Battle_update = Spriteset_Battle.prototype.update;
@@ -4162,6 +4241,9 @@ Sprite.prototype.hasSvMotion = function() {
 // 　不死身設定だけがこちらの担当のままになっています。
 //-------------------------------------------------------------
 
+// 不死身モードの判定フラグ
+let mImmortalMode = false;
+
 /**
  * ●ダメージ更新処理など
  */
@@ -4170,6 +4252,7 @@ BattleManager.invokeAction = function(subject, target) {
     // 不死身設定の場合、対象を不死身化
     if (this._action && this._action.existDynamicSetting("Immortal")) {
         target.addState(pImmortalState);
+        mImmortalMode = true;
     }
 
     _BattleManager_invokeAction.apply(this, arguments);
@@ -4180,32 +4263,35 @@ BattleManager.invokeAction = function(subject, target) {
  */
 const _BattleManager_endAction = BattleManager.endAction;
 BattleManager.endAction = function() {
-    // 不死身設定の場合、全員の不死身化解除
-    if (this._action && this._action.existDynamicSetting("Immortal")) {
-        for (const battler of this.allBattleMembers()) {
-            // 不死身状態なら解除
-            if (battler.isStateAffected(pImmortalState)) {
+    // 不死身設定が使用されている場合
+    if (mImmortalMode && pImmortalState) {
+        const immortalBattlers = this.allBattleMembers().filter(m => m.isStateAffected(pImmortalState));
+        if (immortalBattlers.length > 0) {
+            for (const battler of immortalBattlers) {
+                // 不死身を解除
                 battler.removeState(pImmortalState);
                 // 既に死んでいる場合は演出実行
                 if (battler.isStateAffected(battler.deathStateId())) {
                     this._logWindow.displayAddedStates(battler);
                 }
             }
-        }
 
-        // ステータス表示を更新するため、スプライトを取得
-        // ※ＨＰの色表示などを正しく更新させるため
-        const additionalSprites = SceneManager._scene._statusWindow._additionalSprites;
-        // 保有する属性名でループ
-        for (const statusName in additionalSprites) {
-            // 属性名を元に各スプライトを取得
-            const statusSprite = additionalSprites[statusName];
-            // redraw関数を持っている場合（Sprite_Gaugeを想定）のみ再描画
-            if (statusSprite.redraw) {
-                statusSprite.redraw();
+            // ステータス表示を更新するため、スプライトを取得
+            // ※ＨＰの色表示などを正しく更新させるため
+            const additionalSprites = SceneManager._scene._statusWindow._additionalSprites;
+            // 保有する属性名でループ
+            for (const statusName in additionalSprites) {
+                // 属性名を元に各スプライトを取得
+                const statusSprite = additionalSprites[statusName];
+                // redraw関数を持っている場合（Sprite_Gaugeを想定）のみ再描画
+                if (statusSprite.redraw) {
+                    statusSprite.redraw();
+                }
             }
         }
     }
+
+    mImmortalMode = false;
 
     _BattleManager_endAction.apply(this, arguments);
 };

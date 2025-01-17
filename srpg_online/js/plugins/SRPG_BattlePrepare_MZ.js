@@ -11,6 +11,8 @@
  * @target MZ
  * @plugindesc Add battle Prepare phase at the beginning of SRPG battle, edited by OhisamaCraft.
  * @author Shoukang
+ * @base SRPG_core_MZ
+ * @orderAfter SRPG_core_MZ
  *
  * @param disable actor prepare command
  * @desc Can only add or remove actor from formation command if disabled.
@@ -107,6 +109,108 @@
  * Replace the old Battle UI plugin with the modified one in my github page. https://github.com/ShoukangHong/Shoukang_SRPG_plugin
  */
 
+/*:ja
+ * @target MZ
+ * @plugindesc SRPG戦闘開始前に戦闘準備フェイズを追加します（おひさまクラフトによる改変）。
+ * @author Shoukang
+ * @base SRPG_core_MZ
+ * @orderAfter SRPG_core_MZ
+ *
+ * @param disable actor prepare command
+ * @desc 無効にした場合、ユニット選択コマンドからのみアクターを追加/削除できるようになります。
+ * @type boolean
+ * @default true
+ *
+ * @param auto open menu
+ * @desc 戦闘開始後に自動的にメニューを開きます。
+ * @type boolean
+ * @default true
+ *
+ * @param textBattlerNumber
+ * @desc バトラー数の名前。メニューウィンドウ上に表示されます。
+ * @default 参加人数
+ *
+ * @param textFinishPrepare
+ * @desc 準備完了の名前。メニューウィンドウ上に表示されます。
+ * @default 戦闘開始
+ *
+ * @param textFormation
+ * @desc ユニット選択の名前。メニューウィンドウ上に表示されます。
+ * @default ユニット選択
+ *
+ * @param textPosition
+ * @desc 初期配置の名前。メニューウィンドウ上に表示されます。
+ * @default 初期配置
+ *
+ * @param textPrepareEvent
+ * @desc 準備イベントの名前。メニューウィンドウ上に表示されます。
+ * @default 準備
+ *
+ *
+ * @param textExchange
+ * @desc アクターの位置交換の名前です。アクターコマンドウィンドウ上に表示されます。
+ * @default 位置交換
+ *
+ * @param textStatus
+ * @desc アクターのステータスの名前。アクターコマンドウィンドウ上に表示されます。
+ * @default ステータス
+ *
+ * @param textRemove
+ * @desc アクターの削除の名前。アクターコマンドウィンドウ上に表示されます。
+ * @default 外す
+ *
+ * @param lockIconIndex
+ * @desc ロックアイコンのインデックス。
+ * @default 195
+ * 
+ * @command Enable
+ * @text 戦闘準備有効化
+ * @desc 戦闘準備シーンを有効にします。
+ * 
+ * @command Disable
+ * @text 戦闘準備無効化
+ * @desc 戦闘準備シーンを無効にします。
+ *
+ * @help
+ * copyright 2020  Shoukang. all rights reserved.
+ * Released under the MIT license.
+ * ============================================================================
+ * 本プラグインは戦闘開始前の準備を可能にします。戦闘準備フェイズにて装備変更や敵のステータスの確認、アクターの追加や削除、
+ * アクターの位置交換を行えるようになります。
+ * <type:actor><id:0>を設定したイベントは動かすことができます。今回の新しいバージョンでは、自動戦闘メンバーも動かすことが可能になりました。
+ * 新しい手順：battleStart---battlePrepare---actorturn---.......
+ * ========================================================================================================================
+ * イベントメモ:
+ * <type:afterPrepare>  # 準備が完了したとき、このイベントが起動します。
+ * <type:prepare>       # メインメニュー上で準備コマンドがトリガーされたとき、このイベントが起動します。ショップ等の起動したいイベントに使用することができます。
+ *==========================================================================================================================
+ * プラグインコマンド
+ * DisableSRPGPrepare       戦闘準備を有効化します。
+ * EnableSRPGPrepare        戦闘準備を無効化します。
+ * =========================================================================================================================
+ * スクリプト呼び出し:
+ *
+ * $gameParty.setMaxActor(n) 戦闘中のアクターの最大数を設定します。デフォルトは<type:actor>イベントの数と等しいです。
+ * $gameParty.setMinActor(n) 戦闘中のアクターの最小数を設定します。デフォルトは1です。
+ *
+ * 特定のアクター数にする必要がある場合、'SRPGBattle Start'プラグインコマンドの後でこれらのスクリプトを実行してください。
+ * これらの最大最小数は次の戦闘には引き継がれません。
+ *==========================================================================================================================
+ * V1.07 戦闘不能アクターの選択を無効にしました。これを機能させるにはSRPG_Core内の'var array = $gameParty.allMembers()'を検索し、
+ *'var array = $gameParty.allMembers().filter(function(actor){return actor.isAlive()})'で置換してください。
+ * V1.06 最少アクター数のバグおよびセーブファイルのバグを修正しました。
+ * V1.05 SRPG_AdvancedInteractionをサポート
+ * V1.04 微小な不具合を修正
+ * V1.03 新しい外観と機能を実装
+ * v1.02 複雑な制御フローを再構成。削除が無効化されているとき、アクターコマンドを非表示に
+ * v1.01 微小なバグを修正、パラメータ説明を変更
+ * v1.00 リリース
+ * =========================================================================================================================
+ * 互換性:
+ * 本プラグインはSRPG_Coreを大幅に変更します。SRPG_Coreより下の、できる限り上方に配置してください。
+ * 古いBattle UIプラグインを導入している場合、作者のGitHubページにある修正版に置き換えてください。https://github.com/ShoukangHong/Shoukang_SRPG_plugin
+ */
+
 //====================================================================
 // ●Function Declaration
 //====================================================================
@@ -197,7 +301,7 @@ const pluginName = "SRPG_BattlePrepare_MZ";
         if (actor_unit && event) {
             actor_unit.initTp(); 
             actor_unit.setSrpgEventId(event.eventId()); // バトラー情報にイベントIDを入れておく
-            var bitmap = ImageManager.loadFace(actor_unit.faceName()); 
+            ImageManager.loadFace(actor_unit.faceName()); 
             $gameSystem.setEventToUnit(event.eventId(), 'actor', actor_unit.actorId());
             event.setType('actor');
             var xy = event.makeAppearPoint(event, event.posX(), event.posY(), actor_unit.srpgThroughTag());
@@ -408,7 +512,7 @@ const pluginName = "SRPG_BattlePrepare_MZ";
             }
             this.drawActorFace(actor, rect.x + 1, rect.y + 1, width, height);
             if ($gameParty.inLockedActorList(actor.actorId())){
-                this.drawIcon(_lockIconIndex, ImageManager.faceWidth - ImageManager.iconHeight - 1, rect.y + rect.height - ImageManager.iconHeight - 1)             
+                this.drawIcon(_lockIconIndex, width - ImageManager.iconHeight, rect.y + height - ImageManager.iconHeight)             
             }
             this.changePaintOpacity(true);
         } else {
@@ -531,34 +635,51 @@ const pluginName = "SRPG_BattlePrepare_MZ";
 
     // modified by OhisamaCraft
     Scene_Map.prototype.srpgCanNotUpdateCallMenu = function(){
-        return ($gameSystem.isSubBattlePhase() === 'invoke_action' ||
-        $gameSystem.srpgWaitMoving() == true ||
-        $gameTemp.isAutoMoveDestinationValid() == true ||
-        //$gameSystem.isSubBattlePhase() === 'status_window' ||
-        $gameSystem.isSubBattlePhase() === 'actor_command_window' ||
-        $gameSystem.isSubBattlePhase() === 'battle_window' ||
-        $gameSystem.isSubBattlePhase() === 'prepare_command' || //shoukang add new condition: $gameSystem.isSubBattlePhase() === 'prepare_command'
-        ($gameSystem.isBattlePhase() != 'actor_phase' &&
-        $gameSystem.isBattlePhase() != 'battle_prepare')) //shoukang add new condition: $gameSystem.isBattlePhase() != 'battle_prepare'
+        if ($gameSystem.srpgWaitMoving() === true) return true;
+        if ($gameTemp.isAutoMoveDestinationValid() === true) return true;
+        if ($gameSystem.isBattlePhase() !== 'actor_phase' && 
+            $gameSystem.isBattlePhase() !== 'battle_prepare') return true;
+        if ($gameSystem.isSubBattlePhase() === 'actor_command_window') return true;
+        if ($gameSystem.isSubBattlePhase() === 'battle_window') return true;
+        if ($gameSystem.isSubBattlePhase() === 'invoke_action') return true;
+        if ($gameSystem.isSubBattlePhase() === 'after_battle') return true;
+        if ($gameSystem.isSubBattlePhase() === 'prepare_command') return true;
+        return false;
     }
 
-    Scene_Map.prototype.srpgCancelActorMove = function(){
-        SoundManager.playCancel();
-        $gameSystem.setSubBattlePhase('normal');
-        $gameSystem.clearSrpgActorCommandStatusWindowNeedRefresh();
-        $gameParty.clearSrpgBattleActors();
-        $gameTemp.clearActiveEvent();
-        $gameTemp.clearMoveTable();
+    // ステータスウィンドウを閉じる処理
+    const _SRPG_BattlePrepare_closeStatusWindowInUpdateCallMenu = Scene_Map.prototype.closeStatusWindowInUpdateCallMenu;
+    Scene_Map.prototype.closeStatusWindowInUpdateCallMenu = function(){
+        if ($gameSystem.isSubBattlePhase() === 'status_window' && this.isMenuCalled()) {
+            _SRPG_BattlePrepare_closeStatusWindowInUpdateCallMenu.call(this);
+            if ($gameSystem.isBattlePhase() === 'battle_prepare') {
+                $gameTemp.setResetMoveList(true);
+                $gameTemp.srpgMakePrepareTable();
+            }
+            return true;
+        }
+        return false;
     }
 
-    // modified by OhisamaCraft
-    Scene_Map.prototype.srpgCancelActorTarget = function(){
-        SoundManager.playCancel();
-        this.reSetMoveRangeTable();
-        $gameSystem.setSubBattlePhase('actor_command_window');
+    // 追加の処理
+    const _SRPG_BattlePrepare_addFunctionInUpdateCallMenu = Scene_Map.prototype.addFunctionInUpdateCallMenu;
+    Scene_Map.prototype.addFunctionInUpdateCallMenu = function(){
+        //shoukang add exchange position condition
+        if ($gameSystem.isSubBattlePhase() === 'exchange_position') {
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                this.srpgCancelExchangePosition();
+                return true;
+            }
+        }
+        if ($gameSystem.isSrpgPreparePhaseOpenMenu() && !$gameMap.isEventRunning()) {
+            this.callMenu();
+            $gameSystem.setSrpgPreparePhaseOpenMenu(false);
+            return true;
+        }
+        return _SRPG_BattlePrepare_addFunctionInUpdateCallMenu.call(this);
     }
 
-//This is the new condition I add.
+    //This is the new condition I add.
     Scene_Map.prototype.srpgCancelExchangePosition = function() {
         SoundManager.playCancel();
         $gameSystem.clearSrpgPrepareWindowNeedRefresh();
@@ -570,20 +691,6 @@ const pluginName = "SRPG_BattlePrepare_MZ";
         $gameTemp.clearMoveTable();
         $gameTemp.srpgMakePrepareTable();
     }
-
-//drag the origingal updatecallmenu method here so I can rewrite, I can't find any better way.
-    Scene_Map.prototype.updateCallMenu = function() {
-        if (this.isMenuEnabled()) {
-            if (this.isMenuCalled()) {
-                this.menuCalling = true;
-            }
-            if (this.menuCalling && !$gamePlayer.isMoving()) {
-                this.callMenu();
-            }
-        } else {
-            this.menuCalling = false;
-        }
-    };
 
     // メニューの呼び出し許可
     const _SRPG_SceneMap_isMenuEnabled = Scene_Map.prototype.isMenuEnabled;
@@ -605,64 +712,11 @@ const pluginName = "SRPG_BattlePrepare_MZ";
         return _SRPG_SceneMap_isCancelButtonEnabled.call(this);
     };
 
-//This part is too complicated, I reconstruct and add my conditions
-// modified by OhisamaCraft
-    var _SRPG_SceneMap_updateCallMenu = Scene_Map.prototype.updateCallMenu;
-    Scene_Map.prototype.updateCallMenu = function() {
-        if ($gameSystem.isSRPGMode() == true) {
-            if (this.srpgCanNotUpdateCallMenu()) {
-                this.menuCalling = false;
-                return;
-            }
-            if ($gameSystem.isSubBattlePhase() === 'normal') {
-                if (Input.isTriggered('pageup')) {
-                    SoundManager.playCursor();
-                    $gameSystem.getNextLActor();
-                } else if (Input.isTriggered('pagedown')) {
-                    SoundManager.playCursor();
-                    $gameSystem.getNextRActor();
-                }
-            }
-            if ($gameSystem.isSubBattlePhase() === 'actor_move') {
-                if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                    this.srpgCancelActorMove();
-                }
-            } else if ($gameSystem.isSubBattlePhase() === 'actor_target' || $gameSystem.isSubBattlePhase() === 'actor_Interaction') {
-                if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                    this.srpgCancelActorTarget();
-                }
-            } else if ($gameSystem.isSubBattlePhase() === 'exchange_position'){
-            //shoukang add exchange position condition
-                if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                    this.srpgCancelExchangePosition();
-                }
-            } else if ($gameSystem.isSubBattlePhase() === 'status_window' && this.isMenuCalled()) {
-            // ステータスウィンドウの表示時
-                $gameSystem.clearSrpgStatusWindowNeedRefresh();
-                SoundManager.playCancel();
-                $gameTemp.clearActiveEvent();
-                $gameSystem.setSubBattlePhase('normal');
-                $gameTemp.clearMoveTable();
-                if ($gameSystem.isBattlePhase() === 'battle_prepare') {
-                    $gameTemp.setResetMoveList(true);
-                    $gameTemp.srpgMakePrepareTable();
-                }
-            } else if ($gameSystem.isSrpgPreparePhaseOpenMenu() && !$gameMap.isEventRunning()){
-                this.callMenu();
-                $gameSystem.setSrpgPreparePhaseOpenMenu(false);
-            } else _SRPG_SceneMap_updateCallMenu.call(this);
-        } else {
-            _SRPG_SceneMap_updateCallMenu.call(this);
-        }
-    };
-
-
-
-//update prepare command window
-    var _SRPG_MB_SceneMap_update = Scene_Map.prototype.update;
-    Scene_Map.prototype.update = function() {
-        _SRPG_MB_SceneMap_update.call(this);
-        if ($gameSystem.isSRPGMode() && $gameSystem.isBattlePhase() === 'battle_prepare') {
+    //update prepare command window
+    const _SRPG_MB_srpgWindowOpenClose = Scene_Map.prototype.srpgWindowOpenClose;
+    Scene_Map.prototype.srpgWindowOpenClose = function() {
+        _SRPG_MB_srpgWindowOpenClose.call(this);
+        if ($gameSystem.isBattlePhase() === 'battle_prepare') {
             if ($gameTemp.moveList().length === 0 && !$gameMap.isEventRunning()) $gameTemp.srpgMakePrepareTable();
             var flag = $gameSystem.srpgPrepareWindowNeedRefresh();
             if (flag && flag[0]) {
@@ -693,16 +747,19 @@ const pluginName = "SRPG_BattlePrepare_MZ";
 
 //Rewrite startSRPG to run srpgStartBattlePrepare instead of actor turn when SRPG battle start
     Game_System.prototype.startSRPG = function() {
-        this._SRPGMode = true;
-        $gameSwitches.setValue(_srpgBattleSwitchID, true);
+        $gamePlayer.storeOriginalData(); // プレイヤーの透明度などのdataを保存する
+        this._SRPGMode = true; // SRPG戦闘中のフラグをオンにする
+        $gameSwitches.setValue(_srpgBattleSwitchID, true);// SRPG戦闘中のフラグはスイッチにも代入する
         this._isBattlePhase = 'initialize';
         this._isSubBattlePhase = 'initialize';
+        $gamePlayer.setSrpgPlayerData(); // プレイヤーの透明度などのdataをSRPG用（カーソル用）に変更する
         $gamePlayer.refresh();
         $gameTemp.clearActiveEvent();
         this.clearData(); //データの初期化
         this.setAllEventType(); //イベントタイプの設定
         this.setSrpgActors(); //アクターデータの作成
         this.setSrpgEnemys(); //エネミーデータの作成
+        this.setSrpgGuestActors(); // ゲストアクターデータの作成
         $gameMap.setEventImages();   // ユニットデータに合わせてイベントのグラフィックを変更する
         this.runBattleStartEvent(); // ゲーム開始時の自動イベントを実行する
         $gameVariables.setValue(_turnVarID, 1); //ターン数を初期化する
@@ -848,8 +905,10 @@ const pluginName = "SRPG_BattlePrepare_MZ";
                 $gameTemp.pushSrpgEventList(event);
             }
             if (event.isType() === 'actor' && !event.isErased()) {
-                var actor = $gameSystem.EventToUnit(event.eventId());
-                if (actor[1]) $gameSystem.pushSrpgAllActors(event.eventId()); //refresh SrpgAllActors list
+                if (event.event().meta.type !== 'guest') {
+                    var actor = $gameSystem.EventToUnit(event.eventId());
+                    if (actor[1]) $gameSystem.pushSrpgAllActors(event.eventId()); //refresh SrpgAllActors list
+                }
             } else if (event.isType() === 'actor' && event.isErased()) event.setType('');
         });
         $gameTemp.clearMoveTable();

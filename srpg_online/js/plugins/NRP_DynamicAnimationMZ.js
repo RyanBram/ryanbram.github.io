@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc v1.203 Automate & super-enhance battle animations.
+ * @plugindesc v1.223 Automate & super-enhance battle animations.
  * @author Takeshi Sunagawa (http://newrpg.seesaa.net/)
  * @url http://newrpg.seesaa.net/article/477190310.html
  *
@@ -209,7 +209,11 @@
  * @text MV Animation Flag
  * @type boolean
  * @desc The animation for RPG Maker MV is used.
- * This feature is not yet implemented.
+ * 
+ * @param damageSet
+ * @type boolean
+ * @desc Damage will be done at the end of the animation.
+ * If a numeric value is specified, process at that timing.
  * 
  * @param <Repeat>
  * @desc Basic settings that are processed for each repeat.
@@ -531,7 +535,7 @@
 
 /*:ja
  * @target MZ
- * @plugindesc v1.203 戦闘アニメーションを自動化＆超強化します。
+ * @plugindesc v1.223 戦闘アニメーションを自動化＆超強化します。
  * @author 砂川赳（http://newrpg.seesaa.net/）
  * @url http://newrpg.seesaa.net/article/477190310.html
  *
@@ -765,7 +769,12 @@
  * @text MVアニメーションフラグ
  * @type boolean
  * @desc ツクールMV用アニメーションを使用します。
- * この機能は未実装です。
+ * 
+ * @param damageSet
+ * @text ダメージ処理（セット）
+ * @type boolean
+ * @desc アニメーションの終了に合わせてダメージ処理を行います。
+ * また数値を指定すれば、そのタイミングで処理を行います。
  * 
  * @param <Repeat>
  * @text ＜リピート＞
@@ -1199,11 +1208,11 @@ function setDefault(str, def) {
     return str ? str : def;
 }
 
-var parameters = PluginManager.parameters("NRP_DynamicAnimationMZ");
-var pTemplateList = parseStruct2(parameters["templateList"]);
-var pShortTagName = parameters["shortTagName"];
-var pReferenceBattler = 1; // 1固定に変更
-var pCalculationRate = toNumber(parameters["calculationRate"], 4);
+const parameters = PluginManager.parameters("NRP_DynamicAnimationMZ");
+const pTemplateList = parseStruct2(parameters["templateList"]);
+const pShortTagName = parameters["shortTagName"];
+const pReferenceBattler = 1; // 1固定に変更
+const pCalculationRate = toNumber(parameters["calculationRate"], 4);
 // アニメーション位置
 var pScreenX = setDefault(parameters["screenX"], "($gameSystem.isSideView() ? Graphics.boxWidth / 4 + 48 : Graphics.boxWidth / 2)");
 var pScreenY = setDefault(parameters["screenY"], "($gameSystem.isSideView() ? Graphics.boxHeight / 3 + 24 : Graphics.boxHeight / 2)");
@@ -2025,8 +2034,15 @@ BaseAnimation.prototype.makeAnimation = function (dataA, mirror, dynamicAnimatio
 
     // リピート回数だけ実行（r = 現在のリピート回数）
     for (let r = 0; r < this.repeat; r++) {
-        // リピートごとにevalする。
-        const id = eval(this.id);
+        let id;
+        try {
+            // リピートごとにevalする。
+            id = eval(this.id);
+        // エラーならば次へ
+        // ※conditionを満たさない場合を想定
+        } catch (e) {
+            continue;
+        }
         // アニメーションを取得
         const animation = this.getAnimation(id);
 
@@ -2255,6 +2271,7 @@ BaseAnimation.prototype.makeRepeatAnimation = function(dynamicAnimationList, ani
             // 非表示、フラッシュなし、効果音なし、ダメージなし、最終リピートではない
             // 全てを満たす場合は意味がないので不要
             if (dynamicAnimation.isNoMake()) {
+                index++;
                 continue;
             }
 
@@ -2339,6 +2356,13 @@ BaseAnimation.prototype.isAnimationDisp = function(target, targets) {
             if (target == BattleManager._mainTarget) {
                 return true;
             }
+            // 稀に主対象を対象に含まないケースがあるので、
+            // その場合は最初の一人にアニメを表示する。
+            if (!targets.includes(BattleManager._mainTarget)) {
+                if (target == targets[0]) {
+                    return true;
+                }
+            }
             return false;
         }
     }
@@ -2372,7 +2396,7 @@ BaseAnimation.prototype.createDynamicAnimation = function (target, delay, dynami
     // ダメージ用データの作成
     dynamicAnimation.makeDamageData(this, dynamicAnimationList, delay);
     // 残像の作成
-    dynamicAnimation.makeAfterimage(this, dynamicAnimationList);
+    dynamicAnimation.makeAfterimage(this, dynamicAnimationList, index);
 
     // 最終リピートの場合
     if (this.r == this.repeat - 1) {
@@ -2569,7 +2593,7 @@ DynamicAnimation.prototype.initialize = function(baseAnimation, target, index) {
     this.no = no;
 
     // 対象番号を保持しておく
-    this.targetNo = index;
+    this.targetNo = index ?? 0;
 
     // 親情報への参照設定
     this.baseAnimation = baseAnimation;
@@ -2591,6 +2615,7 @@ DynamicAnimation.prototype.initialize = function(baseAnimation, target, index) {
 
     // eval参照用
     const da = this;
+    const targetNo = this.targetNo;
 
     /*
      * 以下はリピートごとに変化する項目
@@ -2640,6 +2665,7 @@ DynamicAnimation.prototype.initialize = function(baseAnimation, target, index) {
     // ダメージ
     this.damage = eval(baseAnimation.damage);
     this.damageAll = eval(baseAnimation.damageAll);
+    this.damageSet = eval(baseAnimation.damageSet);
 
     // NRP_DynamicAnimationMapMZ用の情報
     const mapAnimation = baseAnimation.mapAnimation;
@@ -2668,6 +2694,7 @@ DynamicAnimation.prototype.isNoMake = function () {
         && this.isLimitSound
         && (this.damage == undefined || this.damage === false)
         && (this.damageAll == undefined || this.damageAll === false)
+        && (this.damageSet == undefined || this.damageSet === false)
         && !this.isLastRepeat) {
         return true;
     }
@@ -2730,6 +2757,10 @@ DynamicAnimation.prototype.evaluate = function (spriteAnimation) {
     var ex;
     var ey;
 
+    // 放物線
+    var arcX = eval(baseAnimation.arcX);
+    var arcY = eval(baseAnimation.arcY);
+
     // 残像の場合：親の情報をコピー
     if (this.isAfterimage) {
         // 親情報を取得
@@ -2747,6 +2778,10 @@ DynamicAnimation.prototype.evaluate = function (spriteAnimation) {
             ex += parentDA.diffScreenX();
             ey += parentDA.diffScreenY();
         }
+
+        // 放物線
+        arcX = parentDA.arcX;
+        arcY = parentDA.arcY;
 
     // 通常時
     } else {
@@ -2827,16 +2862,16 @@ DynamicAnimation.prototype.evaluate = function (spriteAnimation) {
             var eyRandom = eval(baseAnimation.eyRandom);
             ey = ey - eyRandom + bestRandom2.y * (eyRandom * 2 + 1);
         }
+
+        // 放物線
+        arcX = eval(baseAnimation.arcX);
+        arcY = eval(baseAnimation.arcY);
     }
 
     this.sx = sx;
     this.sy = sy;
     this.ex = ex;
     this.ey = ey;
-    
-    // 放物線
-    var arcX = eval(baseAnimation.arcX);
-    var arcY = eval(baseAnimation.arcY);
     this.arcX = arcX;
     this.arcY = arcY;
 
@@ -2941,7 +2976,7 @@ DynamicAnimation.prototype.evaluate = function (spriteAnimation) {
 
         // 途中から開始する場合
         if (mapAnimation.startTiming) {
-            const startDuration = mapAnimation.startTiming * baseAnimation.basicRate;
+            const startDuration = mapAnimation.startTiming * pCalculationRate;
 
             // 通常開始タイミング（targetDelay）が、途中開始タイミング（startDuration）以内の場合
             if (this.targetDelay < startDuration) {
@@ -3095,13 +3130,13 @@ DynamicAnimation.prototype.setLimitEffect = function (baseAnimation) {
 /**
  * ●残像の作成
  */
-DynamicAnimation.prototype.makeAfterimage = function (baseAnimation, dynamicAnimationList) {
+DynamicAnimation.prototype.makeAfterimage = function (baseAnimation, dynamicAnimationList, index) {
     // 残像の作成
     const afterimage = this.afterimage;
     // 設定数分ループ
     for (var i = 0; i < afterimage; i++) {
         // DynamicAnimationを作成（値はほぼ空で問題ない）
-        const afterimageData = new DynamicAnimation(baseAnimation, this.target);
+        const afterimageData = new DynamicAnimation(baseAnimation, this.target, index);
         // 本体をコピー
         afterimageData.setProperties(this);
         // 親への参照
@@ -3128,18 +3163,43 @@ DynamicAnimation.prototype.makeAfterimage = function (baseAnimation, dynamicAnim
  * ●ダメージ処理用データの作成
  */
 DynamicAnimation.prototype.makeDamageData = function (baseAnimation, dynamicAnimationList, delay) {
-    // 単体ダメージか全体ダメージのいずれか
-    if (this.damage === undefined && this.damageAll === undefined) {
-        return;
-    // 全体時は初回以外は処理しない
-    } else if (this.damageAll != undefined && this.r > 0) {
+    let damageTiming = null;
+
+    if (this.damage != undefined) {
+        damageTiming = this.damage;
+    } else if (this.damageAll != undefined) {
+        damageTiming = this.damageAll;
+    } else if (this.damageSet != undefined) {
+        damageTiming = this.damageSet;
+    }
+
+    // ダメージ処理ではない場合
+    if (damageTiming === null) {
         return;
     }
 
-    const spriteAnimation = baseAnimation.spriteAnimation;
+    // 全体時の場合
+    if (this.damageAll != undefined) {
+        // 初回以外は処理しない
+        if (this.r > 0) {
+            return;
+        }
+    }
 
+    // ダメージセットの場合
+    if (this.damageSet != undefined) {
+        // trueなら最終リピートのみ
+        if (this.damageSet === true && this.r < this.repeat - 1) {
+            return;
+        // 数値指定なら初回リピートのみ
+        } else if (this.damageSet !== true && this.r > 0) {
+            return;
+        }
+    }
+
+    const spriteAnimation = baseAnimation.spriteAnimation;
     // ダメージ用のDynamicAnimationを作成（値はほぼ空で問題ない）
-    var damageData = new DynamicAnimation(baseAnimation, this.target);
+    const damageData = new DynamicAnimation(baseAnimation, this.target);
     // ダメージ表示フラグをオン
     damageData.afterDamage = true;
     // 各種演出を行わない。
@@ -3148,14 +3208,11 @@ DynamicAnimation.prototype.makeDamageData = function (baseAnimation, dynamicAnim
     damageData.id = 0;
 
     // trueならアニメーション終了に時間を合わせる
-    if (this.damage === true || this.damageAll == true) {
+    if (damageTiming == true) {
         damageData.targetDelay = delay + spriteAnimation._duration;
-    // 数値なら指定のフレーム数で（全体）
-    } else if (this.damageAll != undefined) {
-        damageData.targetDelay = delay + this.damageAll * this.rate;
-    // 数値なら指定のフレーム数で（１回ずつ）
-    } else if (this.damage != undefined) {
-        damageData.targetDelay = delay + this.damage * this.rate;
+    // 数値なら指定のフレーム数で
+    } else {
+        damageData.targetDelay = delay + damageTiming * this.rate;
     }
 
     // 戦闘アニメーション実行リストに追加
@@ -3705,12 +3762,22 @@ Game_Battler.prototype.onBattleStart = function(advantageous) {
     _Game_Battler_onBattleStart.apply(this, arguments);
 };
 
+/*
+ * Game_Actor側の関数が未定義の場合は事前に定義
+ * ※これをしておかないと以後のGame_Battler側への追記が反映されない。
+ */
+if (Game_Actor.prototype.onBattleEnd == Game_Battler.prototype.onBattleEnd) {
+    Game_Actor.prototype.onBattleEnd = function() {
+        return Game_Battler.prototype.onBattleEnd.apply(this, arguments);
+    }
+}
+
 /**
  * ●戦闘終了時
  */
-const _Game_Battler_onBattleEnd = Game_Battler.prototype.onBattleEnd;
-Game_Battler.prototype.onBattleEnd = function() {
-    _Game_Battler_onBattleEnd.apply(this, arguments);
+const _Game_Actor_onBattleEnd = Game_Actor.prototype.onBattleEnd;
+Game_Actor.prototype.onBattleEnd = function() {
+    _Game_Actor_onBattleEnd.apply(this, arguments);
 
     // 不要変数の初期化
     // ※マップ版では消化されず残ってしまうため
@@ -4544,6 +4611,9 @@ BattleManager.dynamicDamageControl = function(dynamicAction) {
     // ダメージ処理の実行（一回ずつ）
     } else if (dynamicAction.damage != null) {
         this.isDynamicCallDamage(dynamicAction);
+    // ダメージ処理の実行（セット）
+    } else if (dynamicAction.damageSet != null) {
+        this.isDynamicCallDamage(dynamicAction);
     }
 };
 
@@ -4594,6 +4664,9 @@ BattleManager.updateDynamicDamage = function() {
     }
 };
 
+// 結果クリア制御用
+let mNoClearResult = false;
+
 /**
  * 【独自】ダメージ処理の実行
  */
@@ -4619,6 +4692,12 @@ BattleManager.isDynamicCallDamage = function(dynamicAction) {
     // 重複ターゲットを削除して再作成
     const distinctTargets = Array.from(new Set(targets));
 
+    // 行動主体の結果クリア
+    subject.clearResult();
+    // 行動主体の結果クリアを一時的に禁止する。
+    // ※行動主体の数値表示が消えてしまうため。
+    mNoClearResult = true;
+
     // 対象の人数分実行
     for (const target of distinctTargets) {
         // 処理した要素を削除
@@ -4633,6 +4712,21 @@ BattleManager.isDynamicCallDamage = function(dynamicAction) {
         // ダメージ処理実行
         this.invokeAction(subject, target);
     }
+
+    // 結果クリアの禁止解除
+    mNoClearResult = false;
+};
+
+/**
+ * ●結果クリア
+ */
+const _Game_Battler_clearResult = Game_Battler.prototype.clearResult;
+Game_Battler.prototype.clearResult = function() {
+    // 一括処理中はクリアしない。
+    if (mNoClearResult) {
+        return;
+    }
+    _Game_Battler_clearResult.apply(this, arguments);
 };
 
 })();

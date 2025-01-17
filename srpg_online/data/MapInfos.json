@@ -1,12 +1,13 @@
 [
 null,
-{"id":1,"expanded":true,"name":"Summon Map","order":1,"parentId":0,"scrollX":825.3333333333334,"scrollY":470},
-{"id":2,"expanded":true,"name":"Adventurer's Guild","order":3,"parentId":0,"scrollX":557.3333333333334,"scrollY":384.44444444444446},
-{"id":3,"expanded":true,"name":"Chapter 1 - Looking for medicinal herbs","order":4,"parentId":2,"scrollX":743.1111111111111,"scrollY":422.6666666666667},
-{"id":4,"expanded":false,"name":"Chapter 2 - The Infinity Burrow","order":5,"parentId":2,"scrollX":557.3333333333334,"scrollY":466.22222222222223},
-{"id":5,"expanded":false,"name":"Chapter 3 - Resurrection of the Evil God","order":6,"parentId":2,"scrollX":825.3333333333334,"scrollY":1302},
-{"id":6,"expanded":true,"name":"for initializing","order":2,"parentId":0,"scrollX":1092,"scrollY":604},
-{"id":7,"expanded":true,"name":"for ending","order":7,"parentId":0,"scrollX":825.3333333333334,"scrollY":470},
-{"id":8,"expanded":true,"name":"for ending 2","order":8,"parentId":7,"scrollX":619,"scrollY":352},
-{"id":9,"expanded":false,"name":"for ending 3","order":9,"parentId":8,"scrollX":459,"scrollY":322}
+{"id":1,"expanded":true,"name":"for Summon","order":1,"parentId":0,"scrollX":709.3333333333334,"scrollY":416},
+{"id":2,"expanded":true,"name":"Adventurer's Guild","order":3,"parentId":0,"scrollX":619,"scrollY":352.5},
+{"id":3,"expanded":true,"name":"stage1 - Looking for Herb -","order":4,"parentId":2,"scrollX":813,"scrollY":490.5},
+{"id":4,"expanded":false,"name":"stage2 - Undead Cave -","order":5,"parentId":2,"scrollX":931.7142857142857,"scrollY":527.1428571428571},
+{"id":5,"expanded":true,"name":"stage3 - Evil God Resurrects -","order":6,"parentId":2,"scrollX":917.9999999999999,"scrollY":520.2857142857142},
+{"id":6,"expanded":true,"name":"Opening","order":2,"parentId":0,"scrollX":917.9999999999999,"scrollY":520.2857142857142},
+{"id":7,"expanded":true,"name":"Ending 1","order":8,"parentId":0,"scrollX":917.9999999999999,"scrollY":520.2857142857142},
+{"id":8,"expanded":true,"name":"Ending 2","order":9,"parentId":7,"scrollX":619,"scrollY":352},
+{"id":9,"expanded":false,"name":"Ending 3","order":10,"parentId":8,"scrollX":459,"scrollY":322},
+{"id":10,"expanded":true,"name":"Ex1 - Transport the Treasure! -","order":7,"parentId":2,"scrollX":917.9999999999999,"scrollY":794.5714285714286}
 ]

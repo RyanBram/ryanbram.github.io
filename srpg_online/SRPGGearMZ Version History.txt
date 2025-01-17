@@ -1,0 +1,170 @@
+============================================================================
+Version History
+============================================================================
+2024/11/22 Ver.1.22Q :
+- Added a sample trap skill to the sample game (Ellen's skill "Pitfall").
+- Added a new quest to the sample game, "Ex1: Transport the Treasure!" to experience terrain effects.
+- Added a feature to SRPG_core plugin parameters to modify sprite settings.
+- Fixed a bug in SRPG_TerrainEffectPlus where terrain effects were not reapplied after removing the "State Nullification" trait.
+- Fixed an issue where the script command 'this.unitDie()' was not functioning correctly.
+
+2024/11/15 Ver.1.21Q :
+- Added the SRPG_TerrainEffectPlus plugin to enhance terrain effects.
+- Added a feature to SRPG_UX_Windows to display a status bar when the cursor is on a unit.
+- Improved SRPG_UX_Windows to allow different status bar colors for allies and enemies.
+- Enhanced the update mechanism for auras in SRPG_Aura.
+- Improved the script command "this.isEventIdXy()" (Plugin Command "Retrieve Event ID at Specified Coordinates") to obtain IDs of non-unit events (e.g., actors, enemies, guests).
+- Fixed a bug where state effects were not correctly applied to enemies using actor IDs.
+
+2024/10/2 Version 1.20Q :
+- Added tags <unitEventForActor>, <unitEventForEnemy>, and <unitEventForAll> to events for unit-based triggers.
+  <unitEvent> and <unitEventForActor>: Executes when an actor steps on it.
+  <unitEventForEnemy>: Executes when an enemy steps on it.
+  <unitEventForAll>: Executes when either an actor or enemy steps on it.
+  Note: This is technically determined by BattlePhase rather than the unit type that steps on it.
+- Made summoning processes in SRPG_Summon_MZ into plugin commands.
+- Improved SRPG_Summon to allow the summoning of guest actors.
+- Enhanced the plugin command "Retrieve Unit HP/MP/TP" to retrieve all parameters.
+- Improved the script/plugin command unitGainHp (HP change for units) to display damage/recovery values when executed.
+- Improved the game to play sound effects when a unit becomes incapacitated due to slip damage or plugin commands.
+- Improved the reward screen so that money is not displayed when the amount gained is 0.
+- Fixed a bug where values represented as percentages (like evasion rate) were not accurately stored in variables when using the script/plugin command "Retrieve Unit Parameters" (now correctly stored by multiplying decimal values by 100 and converting them to integers).
+- Fixed a bug where the distance between events based on actor ID (e.g., this.actorActorDistance()) would return incorrect values when there was a acting/target event involved (such as during <type:afterAction> execution).
+
+2024/9/18 Ver.1.19Q :
+- The process for calling the menu screen using the cancel key has been improved to reduce the likelihood of conflicts.
+- Fixed a bug where the script command this.EventDistance() was not functioning correctly.
+- Modified the script command for retrieving the distance between actors/events to return -1 to the specified variable if a non-existent actor/event is specified.
+- Corrected an issue where the lock icon ID set in SRPG_BattlePrepare_MZ was not being applied when using SRPG_BattleUI_MZ.
+
+2024/9/7 Ver.1.18Q :
+[Specification Changes]
+- Changes to AoE Mechanics:
+  - The details on how to create AoE skills have been updated in the SRPG_AoE.js help file.
+  - Area Attacks:
+    - Removed the functionality of directly setting the skill's range as the AoE range with <srpgAreaType:allActor> and <srpgAreaType:allEnemy>.
+    - When creating a skill that targets the area around the user, change it to an AoE skill with a range of 0.
+    - To ensure that enemies and auto-controlled actors use area attacks correctly, SRPG_AIControl.js is required.
+  - Global Attacks:
+    - Added <srpgAreaType:allFriend> and <srpgAreaType:allOpponent> tags to specify allied or opposing factions for global attack skills.
+    - You can create a global skill that targets everyone by combining <srpgAreaRange:X> (set to 1 or higher) with <srpgAreaType:allFriend>, <srpgAreaType:allOpponent>, <srpgAreaType:allActor>, or <srpgAreaType:allEnemy>. The <specialRange:X> tag is no longer necessary.
+
+[Improvements & Fixes]
+- Added a "Guest Actor" feature (allows the same ID actor to be copied and participate in battle). Adding <type:guest><id:X> in the event's memo will create a guest actor.
+- Added functionality in SRPG_BattleUI to adjust the number of displayed actors and their graphics in the menu screen (configurable via plugin parameters).
+- Added the <srpgUseActorParamId:X> tag for enemies, allowing them to copy the parameters, equipment, and traits of a specified actor ID, creating an enemy identical to that actor.
+- Added the <hideHpMp:true> tag to SRPG_UX_Windows, which allows HP, MP, and TP to be displayed as "???". A state tag <showHpMp:true> has also been added to disable <hideHpMp:true>.
+- Improved the <noRewards:true> tag so it can now be used with actors and classes to prevent receiving rewards (experience, money, items).
+- Improved the <mapBattle:true> and <mapBattle:false> tags, making them usable with actors and enemies to set map battles.
+- Enhanced to show damage/healing from HP regeneration traits on the map.
+- "After Action Processing" (<type:afterAction>) and "Unit Events" (<type:unitEvent>) now retain the "Event ID during action" (default stored in variable 4) and the "Target Event ID" (stored in variable 5).
+- Improved script/plugin commands that specify an event ID to allow input of "Event ID during action" and "Target Event ID" (with event ID 0 referencing the event ID during action and -1 referencing the target event ID).
+- Optimized the rendering of AoE range display sprites.
+- Fixed a bug where SRPG battles would freeze upon ending if resumed from save data created with versions before Ver.1.16Q.
+- Fixed an issue where the Counterattack Skill with skill ID 1 (default is "Attack") would use normal attacks to counter, even if normal attacks had been replaced with other skills via traits or tags.
+- Fixed a bug where the script command this.unitAddState() would not properly apply the death state.
+- Corrected a bug where the cursor would move during "After Action Processing" (<type:afterAction>) and "Unit Events" (<type:unitEvent>) if the plugin command "Start On Next Actor" was set to true in SRPG_UX_Cursor.
+- Fixed an issue where level-up notifications could appear on the reward window even for units that had reached their level cap.
+- Corrected a bug where defeating an enemy during a counterattack in scene battles could trigger victory processing multiple times.
+
+2024/6/15　Ver.1.17Q :
+- Added a feature to SRPG_PositionEffects to set regions that cannot be selected by <cellTarget> skills.
+- (MZ) Modified to allow toggling the display of the arrow button in the upper-left corner of the screen via plugin parameters.
+- (MZ) Fixed a bug where touch UI buttons did not display correctly at the start of battles when not using 'BattlePrepare.js'.
+
+2024/6/13 Ver.1.16Q:
+- Added <userActionIs:tag> to the tags (notes) for skills and items, allowing conditions based on the opponent's skills when used in counterattacks (stricter counterattack conditions enable more appropriate actions. Example: a counterattack that triggers only when receiving a physical attack from the enemy).
+- Added the script command this.removeUnit(eventId); to remove actors/enemies from battle. Unlike incapacitation, this completely removes them from SRPG battle. If it’s an actor, they will also leave the party. (MZ)This will also be added to plugin commands.
+- Added the ability to change the status window colors for actors/enemies in SRPG_UX_Windows (changeable via plugin parameters).
+- Added the <noRewards> tag to skills, which prevents receiving rewards (experience points, money, drop items) when set with <noRewards:true>.
+- Improved two-attack (follow-up attack) based on agility difference, allowing judgment based on the absolute value of the difference instead of the ratio (changeable via plugin parameters).
+- Improved two-attack (follow-up attack) based on agility difference to allow changing whether attacks occur based on probability if the set ratio/value is not met (changeable via plugin parameters). Setting it to OFF will disable two-attacks if the set value is not met.
+- Corrected the judgment of whether skills/items can be used in two-attacks (follow-up attacks) based on agility.
+- Improved the "Change Actor Image" event command so that changes in walking graphics are reflected on the map units.
+- Improved behavior for mouse operations (especially when the cursor follows the mouse) (MouseOperation.js).
+- Fixed an issue where some description texts were overflowing from windows in the English version sample game.
+- Fixed the cellTarget issue in SRPG_PositionEffects.js (unable to select on bridges, or selectable on non-movable objects).
+- Fixed an error in SRPG_AuraSkill when trying to make a target unable to act with an aura (state) within the aura’s range.
+- Improved the application timing of aura skills to better respond to auras that change movement power.
+- Improved the display position (Z-coordinate) of actor sprites in battle scenes.
+- Fixed an issue where the number of activations increased excessively when using multi-activation skills in map battles.
+- Added a touch button for switching actors to the top left of the screen (MZ).
+- Improved to allow using Time Progress Battle in non-SRPG battles (SRPG battles remain turn-based) (MZ).
+- Fixed an issue where the display position of the actor command window would shift if the screen size and UI size were different (MZ).
+- Fixed an issue where the display of actors and backgrounds would shift in battle scenes when using AoE skills if the screen size and UI size were different (MZ).
+- Fixed an issue where the state change log window would be displayed repeatedly in battle scenes (changed to perform clearResult after an action) (MZ).
+
+5/12/2024　Ver.1.15Q :
+- Supported both Japanese and English plugin helps. (Special Thanks to: Gotcha Gotcha Games)
+- Integrated AoE_Animation.js.
+　→In the older versions, AoE skills were executed for each target with battle scenes repeated as many times. Since this version, they bring just a battle scene with the user against multiple targets.
+- In conjunction with AoE_Animation.js integration, the processes of map battles are now the same as those of scene battles.
+- Added a metatag <srpgAllFriendReaction:true> which enables a counterattack by all friends within the area.
+- State, buff and debuff changes are now displayed on the map battles.
+- Improved the direction adjustment of characters at the battle starts.
+- Moves, ranges and AoE areas are now initialized at the battle ends. (battle end calls, such as common events, are now supported.)
+- The player display, such as invisibility or follower display, is now recorded before the battle starts and restored after the battle ends.
+- SRPG UX Windows_MZ.js can now show how long the result window is displayed.
+- Fixed an issue that the value of the EXP shown at the end of the battle was unintentionally offset.
+- Fixed an issue that units were unintentionally able to pop at unpassable tiles when their coordinates were the same as those of other units.
+- The positions of units at the battle scene are now adjusted with the UI size.
+- Fixed an issue that if the app window size was extended and there was an area outside of the game display, it crashed if it used SRPG_ShowPath_MZ.js and players moved the cursor outside of the game area.
+- Fixed an issue that for SRPG_MouseOperation_MZ.js, if the screen size and the UI area size were different, cursor movement was could be uncontrollable.
+- Improved some touch operations.
+　*It is reported that it does not work well on some tablets. If it won't work, try making SRPG_MouseOperation_MZ.js OFF.
+
+11/24/2023   Ver. 1.11Q : 
+- Implemented "battler.srpgWeaponId()" for Script event command to get an equipped weapon ID.
+- Fixed an issue that for SRPG_MouseOperation.js, when touch operations are used, they were unintentionally traced by the mouse cursor.
+
+9/13/2023   Ver. 1.10Q : 
+- Added a functionality to display the turn-count window to SRPG_BattleUI.
+- Improved the performance at the start of actor turns and enemy turns.
+
+9/4/2023    Ver. 1.09Q : 
+- Fixed the display of the EXP when the actor's level is max.
+- Fixed an error which happened when the number of the events was more than that of the party members which was set to the actor0 without the battle preparation.
+- Fixed an issue that it crashed if OK button was pressed with no actor selected on the menu screen. This could happen particularly when actors other than party members were selected.
+- Fixed some defects and errata of the sample game.
+
+9/1/2023    Ver. 1.08Q : 
+- Fixed an error that it crashed when a non-SRPG battle was fought.
+- It now executes battle end processes, such as removal of buffs/debuffs, at the end of the SRPG battle.
+- It now initializes the list of active units at the end of the SRPG battle.
+- It now initializes the target window for skills/items which resurrect dead battlers.
+
+8/22/2023   Ver. 1.07Q : 
+- The player now does not move when SubBattlePhase is "after_battle".
+
+8/21/2023   Ver. 1.06Q : 
+- Added a plugin "SRPG_MouseOperation" which improves mouse operations.
+- Fixed an issue that the message window was not displayed when it was invoked from the common event as an effect of skills during the map battle.
+- Fixed an issue that animations converted from RPG Maker MV were not correctly displayed on the map battles.
+
+8/12/2023   Ver. 1.05Q : 
+- Fixed some errata of the scripts.
+
+8/10/2023   Ver. 1.04Q : 
+- Renewed the title screen and the logo.
+- Added "MIT License" states to the top of the plugin helps.
+- Added plugin command descriptions in the help of SRPG_core_MZ.js.
+- It now executes the knockout processes when the HP of a unit is reduced to 0 by slip or floor damages.
+- Changed the file name of "SRPG_set.png" to "!SRPG_set_type1.png".
+- Added an image "!SRPG_set_type2.png", whose cursor shape is different.
+- Fixed an issue that if the game files are encrypted, "SRPG showPath MZ" could correctly load the images.
+ (the image of srpgPath is now specified by "SRPG core MZ.js")
+- It now correctly executes "Process After Unit Action End" event before the turn end of actors.
+
+6/21/2023   Ver. 1.03Q : 
+- Fixed an issue that if there were too many actor commands, they were not displayed correctly.
+- Fixed an issue that when an option "Touch UI" was OFF, an error happened by touch operations.
+- The status window can now be closed by Cancel key without SRPG_UX_Window.js.
+ (the codes related to the behavior in SRPG_UX_Window.js are now commented out.)
+- Changed the terrain tags of map tiles which are regarded as "wall" to "7".
+- The "Turn End" command can now be used if the party is absent.
+
+5/25/2023   Ver. 1.02Q : 
+- Fixed an issue that when an item was used on the map, an error happened.
+
+12/28/2022  Ver. 1.00Q : 
+- Released
