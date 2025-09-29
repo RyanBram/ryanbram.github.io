@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SRPGMaker</title>
+    </head>
+    <body>
+        <table style="border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto; width: 98%">
+            <tbody>
+                <tr style="background-color: #1a1a1a; border: 0px">
+                    <td
+                        colspan="3"
+                        style="border-collapse: collapse; border: 0px; padding-bottom: 56.25%; position: relative"
+                    >
+                        <iframe
+                            allowfullscreen="true"
+                            id="gameFrame"
+                            sandbox="allow-same-origin allow-scripts"
+                            scrolling="no"
+                            src="https://ryanbram.github.io/srpg_online/cover.html"
+                            style="
+                                border-collapse: collapse;
+                                border: 0px;
+                                height: 100%;
+                                left: 0;
+                                position: absolute;
+                                top: 0;
+                                width: 100%;
+                            "
+                        ></iframe>
+                    </td>
+                </tr>
+                <tr style="background-color: #1a1a1a; border-collapse: collapse; border: 0px">
+                    <td style="border-collapse: collapse; border: 0px; text-align: left">
+                        <input
+                            onclick="gameFrame.src='https://ryanbram.github.io/srpg_online'; gameFrame.focus();"
+                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjM4yEw-EOLueXGxAUNtq5LzBYxsFyOgB1mQj2LQQR8dLaMjvTsGxs36h8oSf4OhxtWnM6YqUbNXP0RQLvR0S1XhAfRxdFh9LfzWAirnAezRseJZ_0JeMyRy40K6QgTKkOc-_HTC72wZvmo/s1600/Play.png"
+                            style="height: 24px; margin: 0px"
+                            type="image"
+                        />
+                        <input
+                            onclick="gameFrame.src='https://ryanbram.github.io/srpg_online/cover.html';"
+                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEicvoJL2Xz_UV5Cbm4OU8NUyubMJe1JPPvRwAT6T_7FCCtkOtnhVyq_A37SKmxvV41qvWjwmxy4WYggB8QAwGoEZDvxYQS4dxohSBt_NnU021vDDeS1AkiULEjJO2ABU6uplMJFWC0pVwXn/s1600/Stop.png"
+                            style="height: 24px; margin: 0px"
+                            type="image"
+                        />
+                    </td>
+                    <td style="border-collapse: collapse; border: 0px; text-align: center">
+                        <div style="color: white"><span style="user-select: none">SRPGMaker.com</span></div>
+                    </td>
+                    <td style="border-collapse: collapse; border: 0px; text-align: right">
+                        <input
+                            onclick="openFullscreen();"
+                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5155x6tjn6g1sutaB6sG_EGdjh9MFlgkU6-n0QGsiYQHsctbp3gse2n3JvypvpOdyJbQsRkq16_b8IY2KFk29bcNQYLUaIFH_Mm5XbUHYF_4XRE361K2Xys2R8wW52ihn6MXIywowaxND/s1600/Fullscreen.png"
+                            style="height: 24px; margin: 0px"
+                            type="image"
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <script>
+            var elem = document.getElementById("gameFrame");
+            function openFullscreen() {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    /* Firefox */
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    /* Chrome, Safari & Opera */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock("landscape").catch(function (error) {
+                        console.warn("Cannot force landscape: ", error);
+                    });
+                }
+            }
+        </script>
+    </body>
+</html>

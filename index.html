@@ -1,87 +1,662 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SRPGMaker</title>
-    </head>
-    <body>
-        <table style="border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto; width: 98%">
-            <tbody>
-                <tr style="background-color: #1a1a1a; border: 0px">
-                    <td
-                        colspan="3"
-                        style="border-collapse: collapse; border: 0px; padding-bottom: 56.25%; position: relative"
-                    >
-                        <iframe
-                            allowfullscreen="true"
-                            id="gameFrame"
-                            sandbox="allow-same-origin allow-scripts"
-                            scrolling="no"
-                            src="https://ryanbram.github.io/srpg_online/cover.html"
-                            style="
-                                border-collapse: collapse;
-                                border: 0px;
-                                height: 100%;
-                                left: 0;
-                                position: absolute;
-                                top: 0;
-                                width: 100%;
-                            "
-                        ></iframe>
-                    </td>
-                </tr>
-                <tr style="background-color: #1a1a1a; border-collapse: collapse; border: 0px">
-                    <td style="border-collapse: collapse; border: 0px; text-align: left">
-                        <input
-                            onclick="gameFrame.src='https://ryanbram.github.io/srpg_online'; gameFrame.focus();"
-                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjM4yEw-EOLueXGxAUNtq5LzBYxsFyOgB1mQj2LQQR8dLaMjvTsGxs36h8oSf4OhxtWnM6YqUbNXP0RQLvR0S1XhAfRxdFh9LfzWAirnAezRseJZ_0JeMyRy40K6QgTKkOc-_HTC72wZvmo/s1600/Play.png"
-                            style="height: 24px; margin: 0px"
-                            type="image"
-                        />
-                        <input
-                            onclick="gameFrame.src='https://ryanbram.github.io/srpg_online/cover.html';"
-                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEicvoJL2Xz_UV5Cbm4OU8NUyubMJe1JPPvRwAT6T_7FCCtkOtnhVyq_A37SKmxvV41qvWjwmxy4WYggB8QAwGoEZDvxYQS4dxohSBt_NnU021vDDeS1AkiULEjJO2ABU6uplMJFWC0pVwXn/s1600/Stop.png"
-                            style="height: 24px; margin: 0px"
-                            type="image"
-                        />
-                    </td>
-                    <td style="border-collapse: collapse; border: 0px; text-align: center">
-                        <div style="color: white"><span style="user-select: none">SRPGMaker.com</span></div>
-                    </td>
-                    <td style="border-collapse: collapse; border: 0px; text-align: right">
-                        <input
-                            onclick="openFullscreen();"
-                            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5155x6tjn6g1sutaB6sG_EGdjh9MFlgkU6-n0QGsiYQHsctbp3gse2n3JvypvpOdyJbQsRkq16_b8IY2KFk29bcNQYLUaIFH_Mm5XbUHYF_4XRE361K2Xys2R8wW52ihn6MXIywowaxND/s1600/Fullscreen.png"
-                            style="height: 24px; margin: 0px"
-                            type="image"
-                        />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <script>
-            var elem = document.getElementById("gameFrame");
-            function openFullscreen() {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.mozRequestFullScreen) {
-                    /* Firefox */
-                    elem.mozRequestFullScreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    /* Chrome, Safari & Opera */
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) {
-                    /* IE/Edge */
-                    elem.msRequestFullscreen();
-                }
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Game Player - index.html</title>
+        <style>
+            :root {
+                --bg: #0f1724;
+                --panel: #0b1220;
+                --accent: #06b6d4;
+                --muted: #9aa6b2;
+            }
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+            }
+            body {
+                background: linear-gradient(180deg, #071026 0%, #071428 100%);
+                color: #e6eef6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 18px;
+            }
+            .player {
+                width: 100%;
+                max-width: 1100px;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.15));
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
+                display: flex;
+                flex-direction: column;
+                height: 90vh;
+                position: relative; /* Needed for positioning the handle */
+            }
+            .screen {
+                position: relative;
+                background: black;
+                flex: 1;
+                min-height: 0;
+            }
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                display: block;
+                background: #000;
+            }
 
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock("landscape").catch(function (error) {
-                        console.warn("Cannot force landscape: ", error);
-                    });
+            .controls {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                background: var(--panel);
+                user-select: none; /* Standard syntax */
+                -webkit-user-select: none; /* Safari */
+                -ms-user-select: none; /* IE 10 and IE 11 */
+                transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+                flex-shrink: 0; /* Prevent control bar from shrinking */
+            }
+            .controls--hidden {
+                transform: translateY(100%);
+            }
+
+            /* Fullscreen specific layout */
+            .player:fullscreen .controls {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 10;
+                background: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+
+            .player:fullscreen .gamepad {
+                bottom: 65px; /* Adjust gamepad position in fullscreen to be above the controls */
+            }
+
+            .btn {
+                background: transparent;
+                border: 0;
+                padding: 8px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                color: var(--muted);
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 600;
+                justify-content: center;
+            }
+            #playReloadBtn {
+                width: 110px;
+            }
+            .btn:hover {
+                color: var(--accent);
+                transform: translateY(-1px);
+            }
+            .icon {
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+            }
+
+            .controls-title {
+                flex-grow: 1;
+                text-align: center;
+                color: #eab308;
+                font-weight: 600;
+            }
+
+            .right {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+            .controls-handle {
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 20px;
+                background-color: var(--panel);
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                cursor: pointer;
+                z-index: 5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--muted);
+                transition: opacity 0.3s, visibility 0.3s, background 0.3s ease-in-out;
+            }
+
+            .player:fullscreen .controls-handle {
+                background-color: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+
+            .controls-handle:hover {
+                color: var(--accent);
+            }
+            .controls-handle.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            /* --- virtual gamepad --- */
+            .gamepad {
+                position: absolute;
+                left: 18px;
+                bottom: 18px;
+                right: 18px;
+                pointer-events: none;
+                top: 0; /* Make gamepad area fill the screen vertically */
+            }
+
+            /* Make direct children of gamepad use absolute positioning */
+            .gamepad > .shoulder,
+            .gamepad > .main-controls {
+                position: absolute;
+                left: 0;
+                right: 0;
+                pointer-events: auto;
+            }
+
+            /* --- Shoulder Buttons (L & R) --- */
+            .shoulder {
+                display: flex;
+                justify-content: space-between;
+                bottom: 40%; /* Positioned L/R buttons ~60% from the bottom of game area */
+            }
+            .shoulder button {
+                width: 120px;
+                height: 45px;
+                border-radius: 8px;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(80, 80, 90, 0.5);
+                color: #e6eef6;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            /* --- Container for D-Pad and Actions --- */
+            .main-controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                bottom: 0; /* Stick main controls to the bottom */
+            }
+
+            .dpad {
+                display: grid;
+                grid-template-columns: repeat(3, 50px);
+                grid-template-rows: repeat(3, 50px);
+                gap: 6px;
+            }
+            .dpad button {
+                width: 50px;
+                height: 50px;
+                border-radius: 8px;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(93, 93, 93, 0.5);
+                color: #e6eef6;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.2s;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .dpad .center {
+                background: transparent;
+                border: 0;
+            }
+            /* Styling for invisible diagonal buttons */
+            .dpad .dpad-diag {
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* --- SNES Actions Buttons (Updated) --- */
+            .actions {
+                display: grid;
+                width: 180px;
+                height: 180px;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                align-items: center;
+                justify-items: center;
+            }
+            .actions button {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                color: #fff;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            .snes-y {
+                grid-area: 2 / 1;
+                background-color: #5cb85cbc;
+            } /* Blue */
+            .snes-x {
+                grid-area: 1 / 2;
+                background-color: #0078c2c3;
+            } /* Green */
+            .snes-b {
+                grid-area: 3 / 2;
+                background-color: #f0ac4eb9;
+            } /* Red */
+            .snes-a {
+                grid-area: 2 / 3;
+                background-color: #d9544fb5;
+            } /* Yellow */
+            /* --- End of SNES Actions Buttons --- */
+
+            button.active {
+                background: rgba(6, 182, 212, 0.6) !important;
+                transform: scale(0.95);
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            @media (max-width: 700px) {
+                .dpad button,
+                .dpad .dpad-diag,
+                .actions button {
+                    width: 44px;
+                    height: 44px;
+                }
+                .actions {
+                    width: 150px;
+                    height: 150px;
+                }
+                .shoulder button {
+                    width: 90px;
+                    height: 40px;
                 }
             }
+        </style>
+    </head>
+    <body>
+        <div class="player" id="player">
+            <div class="screen" id="screen">
+                <iframe id="gameFrame" src="./srpg_online/cover.html" allowfullscreen></iframe>
+
+                <!-- Virtual gamepad (hidden by default) -->
+                <div class="gamepad hidden" id="gamepad" aria-hidden="true">
+                    <section class="shoulder">
+                        <button data-key="PageUp">L</button>
+                        <button data-key="PageDown">R</button>
+                    </section>
+                    <div class="main-controls">
+                        <section class="dpad" role="group" aria-label="D-pad">
+                            <!-- Diagonal buttons for combined input -->
+                            <button class="dpad-diag" data-key-diag="ArrowUp,ArrowLeft"></button>
+                            <button data-key="ArrowUp">▲</button>
+                            <button class="dpad-diag" data-key-diag="ArrowUp,ArrowRight"></button>
+
+                            <button data-key="ArrowLeft">◀</button>
+                            <div class="center"></div>
+                            <button data-key="ArrowRight">▶</button>
+
+                            <button class="dpad-diag" data-key-diag="ArrowDown,ArrowLeft"></button>
+                            <button data-key="ArrowDown">▼</button>
+                            <button class="dpad-diag" data-key-diag="ArrowDown,ArrowRight"></button>
+                        </section>
+
+                        <!-- Updated Actions Section for SNES Layout -->
+                        <section class="actions">
+                            <button class="snes-y" data-key="Space">Y</button>
+                            <button class="snes-x" data-key="Escape">X</button>
+                            <button class="snes-b" data-key="Enter">B</button>
+                            <button class="snes-a" data-key="Shift">A</button>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="playReloadBtn" title="Play" aria-pressed="false">
+                    <span class="icon" id="playIcon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </span>
+                    <span id="playLabel">Play</span>
+                </button>
+
+                <button class="btn" id="stopBtn" title="Stop">
+                    <span class="icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <rect x="6" y="6" width="12" height="12" rx="1" />
+                        </svg>
+                    </span>
+                    Stop
+                </button>
+
+                <span class="controls-title">HTML5 Player</span>
+
+                <div class="right">
+                    <button class="btn" id="togglePadBtn" title="Toggle Gamepad" aria-pressed="false">
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zm9 0l-3 3 3 3H22V9h-5.5zm-3 7.5L9 16.5V22h6v-5.5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        Gamepad
+                    </button>
+
+                    <button class="btn" id="fsBtn" title="Fullscreen">
+                        <span class="icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path
+                                    d="M7 14H5v5h5v-2H7v-3zm12 5h-3v2h5v-5h-2v3zM5 5v5h2V7h3V5H5zm14 0h-5v2h3v3h2V5z"
+                                />
+                            </svg>
+                        </span>
+                        Fullscreen
+                    </button>
+                </div>
+            </div>
+            <div class="controls-handle hidden" id="controls-handle" title="Show controls">
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="m18 15-6-6-6 6" />
+                </svg>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const frame = document.getElementById("gameFrame");
+                const playReloadBtn = document.getElementById("playReloadBtn");
+                const playLabel = document.getElementById("playLabel");
+                const playIcon = document.getElementById("playIcon");
+                const stopBtn = document.getElementById("stopBtn");
+                const fsBtn = document.getElementById("fsBtn");
+                const togglePadBtn = document.getElementById("togglePadBtn");
+                const gamepad = document.getElementById("gamepad");
+                const player = document.getElementById("player");
+                const controls = document.querySelector(".controls");
+                const controlsHandle = document.getElementById("controls-handle");
+
+                let playing = false;
+                let padVisible = false;
+                let controlsHideTimer = null;
+
+                const COVER = "./srpg_online/cover.html";
+                const GAME = "./srpg_online/game.html";
+
+                const PLAY_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>`;
+                const RELOAD_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
+
+                function hideControls() {
+                    // Only hide if playing and in fullscreen
+                    if (playing && document.fullscreenElement) {
+                        controls.classList.add("controls--hidden");
+                        controlsHandle.classList.remove("hidden");
+                    }
+                }
+
+                function showControlsAndResetTimer() {
+                    controlsHandle.classList.add("hidden");
+                    controls.classList.remove("controls--hidden");
+                    clearTimeout(controlsHideTimer);
+                    // Only set the timer if playing AND in fullscreen
+                    if (playing && document.fullscreenElement) {
+                        controlsHideTimer = setTimeout(hideControls, 3000); // Hide after 3 seconds
+                    }
+                }
+
+                playReloadBtn.addEventListener("click", () => {
+                    frame.src = GAME;
+                    if (!playing) {
+                        playing = true;
+                        playLabel.textContent = "Reload";
+                        playReloadBtn.title = "Reload";
+                        playIcon.innerHTML = RELOAD_ICON;
+                        playReloadBtn.setAttribute("aria-pressed", "true");
+                        showControlsAndResetTimer(); // Start the auto-hide logic
+                    }
+                    frame.addEventListener("load", () => focusFrame(), { once: true });
+                });
+
+                stopBtn.addEventListener("click", () => {
+                    frame.src = COVER;
+                    playing = false;
+                    playLabel.textContent = "Play";
+                    playReloadBtn.title = "Play";
+                    playIcon.innerHTML = PLAY_ICON;
+                    playReloadBtn.setAttribute("aria-pressed", "false");
+                    sendMessageToGame({ type: "player-stop" });
+
+                    clearTimeout(controlsHideTimer);
+                    controls.classList.remove("controls--hidden"); // Ensure controls are visible
+                    controlsHandle.classList.add("hidden"); // Ensure handle is hidden
+                });
+
+                fsBtn.addEventListener("click", async () => {
+                    const el = player;
+                    if (!document.fullscreenElement) {
+                        try {
+                            await el.requestFullscreen();
+                        } catch (e) {
+                            console.warn("Fullscreen failed", e);
+                        }
+                    } else {
+                        document.exitFullscreen();
+                    }
+                });
+
+                document.addEventListener("fullscreenchange", () => {
+                    if (document.fullscreenElement) {
+                        // Entered fullscreen. If playing, start the hide timer.
+                        showControlsAndResetTimer();
+                    } else {
+                        // Exited fullscreen. Cancel timer and show controls.
+                        clearTimeout(controlsHideTimer);
+                        controls.classList.remove("controls--hidden");
+                        controlsHandle.classList.add("hidden");
+                    }
+                });
+
+                togglePadBtn.addEventListener("click", () => {
+                    padVisible = !padVisible;
+                    gamepad.classList.toggle("hidden", !padVisible);
+                    togglePadBtn.setAttribute("aria-pressed", String(padVisible));
+                });
+
+                controlsHandle.addEventListener("click", showControlsAndResetTimer);
+
+                controls.addEventListener("mouseenter", () => {
+                    if (playing && document.fullscreenElement) {
+                        clearTimeout(controlsHideTimer);
+                    }
+                });
+
+                controls.addEventListener("mouseleave", () => {
+                    if (playing && document.fullscreenElement) {
+                        clearTimeout(controlsHideTimer);
+                        controlsHideTimer = setTimeout(hideControls, 3000);
+                    }
+                });
+
+                function sendMessageToGame(msg) {
+                    try {
+                        frame.contentWindow.postMessage(msg, "*");
+                    } catch (e) {
+                        console.warn("postMessage failed", e);
+                    }
+                }
+
+                function dispatchKeyToFrame(key, type = "keydown") {
+                    try {
+                        const cw = frame.contentWindow;
+                        if (!cw) return;
+                        const ev = new KeyboardEvent(type, { key, bubbles: true });
+                        cw.dispatchEvent(ev);
+                    } catch (e) {}
+                }
+
+                function sendKey(key, down = true) {
+                    const type = down ? "keydown" : "keyup";
+                    sendMessageToGame({ type: "key", key, keyEvent: type });
+                    dispatchKeyToFrame(key, type);
+                }
+
+                // --- VIRTUAL GAMEPAD: STATE-DRIVEN MULTITOUCH IMPLEMENTATION ---
+                let activeTouches = [];
+                const pressedKeys = new Set();
+
+                function updateTouches(event) {
+                    event.preventDefault();
+                    activeTouches = event.touches;
+                }
+
+                function updateGamepadState() {
+                    if (!padVisible) {
+                        if (pressedKeys.size > 0) {
+                            for (const key of pressedKeys) sendKey(key, false);
+                            pressedKeys.clear();
+                            gamepad.querySelectorAll("button.active").forEach((btn) => btn.classList.remove("active"));
+                        }
+                        requestAnimationFrame(updateGamepadState);
+                        return;
+                    }
+
+                    const keysThisFrame = new Set();
+                    const buttonsToActivate = new Set();
+
+                    for (let i = 0; i < activeTouches.length; i++) {
+                        const touch = activeTouches[i];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (!element) continue;
+
+                        const button = element.closest("button[data-key], button[data-key-diag]");
+                        if (!button) continue;
+
+                        if (button.dataset.keyDiag) {
+                            const diagonalKeys = button.dataset.keyDiag.split(",");
+                            diagonalKeys.forEach((key) => {
+                                keysThisFrame.add(key);
+                                const cardinalBtn = gamepad.querySelector(`.dpad button[data-key="${key}"]`);
+                                if (cardinalBtn) buttonsToActivate.add(cardinalBtn);
+                            });
+                        } else if (button.dataset.key) {
+                            keysThisFrame.add(button.dataset.key);
+                            buttonsToActivate.add(button);
+                        }
+                    }
+
+                    for (const key of pressedKeys) {
+                        if (!keysThisFrame.has(key)) {
+                            sendKey(key, false);
+                            pressedKeys.delete(key);
+                        }
+                    }
+
+                    for (const key of keysThisFrame) {
+                        if (!pressedKeys.has(key)) {
+                            sendKey(key, true);
+                            pressedKeys.add(key);
+                        }
+                    }
+
+                    gamepad.querySelectorAll("button[data-key]").forEach((btn) => {
+                        if (buttonsToActivate.has(btn)) {
+                            btn.classList.add("active");
+                        } else {
+                            btn.classList.remove("active");
+                        }
+                    });
+
+                    requestAnimationFrame(updateGamepadState);
+                }
+
+                gamepad.addEventListener("touchstart", updateTouches, { passive: false });
+                gamepad.addEventListener("touchmove", updateTouches, { passive: false });
+                gamepad.addEventListener("touchend", updateTouches, { passive: false });
+                gamepad.addEventListener("touchcancel", updateTouches, { passive: false });
+                gamepad.addEventListener("contextmenu", (ev) => ev.preventDefault());
+
+                requestAnimationFrame(updateGamepadState);
+
+                const allowedKeys = [
+                    "ArrowUp",
+                    "ArrowDown",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Shift",
+                    "Escape",
+                    "Enter",
+                    "Space",
+                    "PageUp",
+                    "PageDown",
+                ];
+                window.addEventListener(
+                    "keydown",
+                    (ev) => {
+                        if (!playing) return;
+                        if (allowedKeys.includes(ev.key)) {
+                            ev.preventDefault();
+                            sendKey(ev.key, true);
+                        }
+                    },
+                    { capture: true }
+                );
+                window.addEventListener(
+                    "keyup",
+                    (ev) => {
+                        if (!playing) return;
+                        if (allowedKeys.includes(ev.key)) {
+                            ev.preventDefault();
+                            sendKey(ev.key, false);
+                        }
+                    },
+                    { capture: true }
+                );
+
+                function focusFrame() {
+                    try {
+                        frame.contentWindow.focus();
+                    } catch (e) {}
+                }
+                document.getElementById("screen").addEventListener("click", () => focusFrame());
+            })();
         </script>
     </body>
 </html>

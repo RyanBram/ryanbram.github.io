@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="user-scalable=no" />
+        <link rel="icon" href="icon/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="icon/icon.png" />
+        <link rel="stylesheet" type="text/css" href="css/game.css" />
+        <title>RPG Maker MZ Sample Game</title>
+    </head>
+    <body style="background-color: black">
+        <script type="text/javascript" src="js/main.js"></script>
+
+        <!-- [START] KODE SISIPAN UNTUK VIRTUAL GAMEPAD (VERSI FINAL) -->
+        <script>
+            window.addEventListener("message", (event) => {
+                // Periksa apakah objek 'Input' dari RPG Maker sudah ada
+                if (!window.Input || !window.Input.keyMapper) {
+                    return;
+                }
+
+                const { type, key, keyEvent } = event.data;
+
+                // Pastikan ini adalah pesan input dari player
+                if (type === "key" && key && keyEvent) {
+                    // Definisikan pemetaan dari nama kunci modern ke keyCode yang usang
+                    const keyCodeMap = {
+                        ArrowUp: 38,
+                        ArrowDown: 40,
+                        ArrowLeft: 37,
+                        ArrowRight: 39,
+                        Enter: 13,
+                        Escape: 27,
+                        Shift: 16,
+                        Space: 32,
+                        PageUp: 33, // <-- Tambahan untuk tombol L
+                        PageDown: 34, // <-- Tambahan untuk tombol R
+                    };
+
+                    const keyCode = keyCodeMap[key];
+                    if (!keyCode) return; // Abaikan jika kunci tidak dikenali
+
+                    // Dapatkan nama tombol internal RPG Maker (cth: 'ok', 'cancel', 'up', 'pageup')
+                    const buttonName = window.Input.keyMapper[keyCode];
+                    if (!buttonName) return;
+
+                    // Langsung manipulasi state input di dalam engine
+                    if (keyEvent === "keydown") {
+                        window.Input._currentState[buttonName] = true;
+                    } else if (keyEvent === "keyup") {
+                        window.Input._currentState[buttonName] = false;
+                    }
+                }
+            });
+        </script>
+        <!-- [END] KODE SISIPAN UNTUK VIRTUAL GAMEPAD -->
+    </body>
+</html>
