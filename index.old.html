@@ -30,16 +30,14 @@
             /* --- Main Player Layout --- */
             .player-container {
                 width: 100%;
-                /* MODIFIED: Make max-width responsive to viewport height */
-                max-width: min(1100px, 120vh);
-                max-height: 90vh;
-                aspect-ratio: 4 / 3;
+                max-width: 1100px;
                 background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.15));
                 border-radius: 12px;
                 overflow: hidden;
                 box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
                 display: flex;
                 flex-direction: column;
+                height: 90vh;
                 position: relative; /* Needed for positioning the handle */
             }
             .game-screen {
@@ -306,12 +304,6 @@
                     width: 90px;
                     height: 40px;
                 }
-            /* Pindahkan tombol L/R ke atas HANYA di mobile (orientasi lanskap & layar pendek) */
-            @media (orientation: landscape) and (max-height: 600px) {
-                .shoulder-buttons {
-                    bottom: auto; /* Hapus posisi relatif terhadap bawah */
-                    top: 48px;    /* Atur posisi 18px dari atas */
-                }
             }
         </style>
     </head>
@@ -404,7 +396,7 @@
                         <span class="icon">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                 <path
-                                    d="M7 14H5v5h5v-2H7v-3zM17 14v3h-3v2h5v-5h-2zM5 5v5h2V7h3V5H5zM14 5v2h3v3h2V5h-5z"
+                                    d="M7 14H5v5h5v-2H7v-3zm12 5h-3v2h5v-5h-2v3zM5 5v5h2V7h3V5H5zm14 0h-5v2h3v3h2V5z"
                                 />
                             </svg>
                         </span>
@@ -526,27 +518,12 @@
                 fullscreenButton.addEventListener("click", async () => {
                     if (!document.fullscreenElement) {
                         try {
-                            // 1. Meminta untuk masuk ke mode fullscreen
                             await playerContainer.requestFullscreen();
-
-                            // 2. Jika berhasil, coba kunci orientasi ke lanskap
-                            try {
-                                await screen.orientation.lock("landscape");
-                            } catch (err) {
-                                // Gagal mengunci tidak apa-apa, terutama di desktop.
-                                console.warn("Screen orientation lock failed:", err);
-                            }
                         } catch (e) {
                             console.warn("Fullscreen request failed:", e);
                         }
                     } else {
-                        // Jika keluar dari fullscreen, buka kunci orientasi
                         document.exitFullscreen();
-                        try {
-                            screen.orientation.unlock();
-                        } catch (err) {
-                            console.warn("Screen orientation unlock failed:", err);
-                        }
                     }
                 });
 
