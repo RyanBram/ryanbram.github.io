@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Maker JSON Translation Helper</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #4a4a4a;
+            border-bottom: 2px solid #6c5ce7;
+            padding-bottom: 10px;
+        }
+        .step {
+            margin-bottom: 25px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            background-color: #6c5ce7;
+            color: white;
+        }
+        button:hover {
+            background-color: #5849d1;
+        }
+        #drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            color: #aaa;
+            margin: 15px 0;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        #drop-zone.drag-over {
+            border-color: #6c5ce7;
+            background-color: #f0efff;
+        }
+        #json-file-input {
+            display: none; /* Hide default input */
+        }
+        #download-container {
+            margin-top: 20px;
+            display: none;
+        }
+        #downloadLink {
+            display: inline-block;
+            background-color: #00b894;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        #downloadLink:hover {
+            background-color: #00a283;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #ffeeba;
+            margin-top: 20px;
+        }
+        .info {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>RPG Maker JSON Translation Helper</h1>
+        <p class="info">This tool helps you extract text from RPG Maker MV/MZ .json files, translate it, and then rebuild the file without breaking its structure.</p>
+
+        <div class="warning">
+            <strong>Important:</strong>
+            <ul>
+                <li>Always back up your original files before using this tool.</li>
+                <li>Process one file at a time for best results.</li>
+                <li>This tool does not translate; it only assists in the extraction and rebuilding process. Translation quality depends on the service you use (e.g., Google Translate).</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h2>Step 1: Upload & Extract Text</h2>
+            <div id="drop-zone">
+                Drag & drop your .json file here, or click to select a file.
+                <p id="file-name-display" class="info"></p>
+            </div>
+            <input type="file" id="json-file-input" accept=".json">
+            <button id="extract-btn">Extract Text</button>
+            <p class="info">Translatable text will appear below.</p>
+            <textarea id="extracted-text" placeholder="Extracted text will appear here..."></textarea>
+        </div>
+
+        <div class="step">
+            <h2>Step 2: Paste Translation & Rebuild</h2>
+            <p class="info">Copy the text above, translate it, then paste the result below. Ensure the line count remains the same.</p>
+            <textarea id="translated-text" placeholder="Paste your translated text here..."></textarea>
+            <button id="rebuild-btn">Rebuild JSON</button>
+        </div>
+        
+        <div class="step">
+            <h2>Step 3: Download Translated JSON File</h2>
+            <div id="download-container">
+                <p>Your translated JSON file is ready!</p>
+                <a href="#" id="downloadLink" download="translated_file.json">Download JSON File</a>
+            </div>
+            <div id="status-message" class="info"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global variables to store important data
+        let originalJsonData = null;
+        let textPaths = [];
+        let originalFilename = 'file.json';
+        
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('json-file-input');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const extractBtn = document.getElementById('extract-btn');
+        const rebuildBtn = document.getElementById('rebuild-btn');
+        const extractedTextArea = document.getElementById('extracted-text');
+        const translatedTextArea = document.getElementById('translated-text');
+        const downloadContainer = document.getElementById('download-container');
+        const downloadLink = document.getElementById('downloadLink');
+        const statusMessage = document.getElementById('status-message');
+
+        // --- Drag and Drop Logic ---
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files; // Sync with hidden input
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (file && file.name.endsWith('.json')) {
+                originalFilename = file.name;
+                fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                statusMessage.textContent = 'File selected. Click "Extract Text" to begin.';
+            } else {
+                alert('Please select a valid .json file.');
+                fileNameDisplay.textContent = '';
+            }
+        }
+        
+        // --- Core Application Logic ---
+        extractBtn.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a JSON file first.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    originalJsonData = JSON.parse(event.target.result);
+                    textPaths = []; // Reset paths
+                    extractedTextArea.value = ''; // Reset textarea
+                    
+                    traverseAndExtract(originalJsonData, []);
+                    
+                    extractedTextArea.value = textPaths.map(p => p.text).join('\n');
+                    statusMessage.textContent = `Extraction complete! Found ${textPaths.length} lines of text.`;
+                    downloadContainer.style.display = 'none';
+                } catch (e) {
+                    alert('Failed to process the file. Please ensure it is a valid JSON file.\nError: ' + e.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        rebuildBtn.addEventListener('click', () => {
+            if (!originalJsonData || textPaths.length === 0) {
+                alert('You must extract text from a JSON file first.');
+                return;
+            }
+
+            const translatedLines = translatedTextArea.value.split('\n');
+            
+            if (translatedLines.length !== textPaths.length) {
+                alert(`Error: Line count mismatch! Expected ${textPaths.length} lines, but you provided ${translatedLines.length} lines.`);
+                return;
+            }
+
+            let newJsonData = JSON.parse(JSON.stringify(originalJsonData));
+
+            textPaths.forEach((pathInfo, index) => {
+                setValueByPath(newJsonData, pathInfo.path, translatedLines[index]);
+            });
+
+            const newJsonString = JSON.stringify(newJsonData, null, 2);
+            const blob = new Blob([newJsonString], { type: 'application/json' });
+            
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = `translated_${originalFilename}`;
+            downloadContainer.style.display = 'block';
+            statusMessage.textContent = 'JSON file successfully rebuilt and is ready for download!';
+        });
+
+        function traverseAndExtract(obj, currentPath) {
+            const commonTextKeys = ['name', 'description', 'profile', 'nickname', 'message1', 'message2', 'text'];
+
+            if (obj === null || typeof obj !== 'object') return;
+
+            if (Array.isArray(obj.list)) {
+                obj.list.forEach((command, index) => {
+                    if (command && typeof command === 'object') {
+                        const commandPath = [...currentPath, 'list', index];
+                        if (command.code === 401 && command.parameters[0]) {
+                            textPaths.push({ path: [...commandPath, 'parameters', 0], text: command.parameters[0] });
+                        }
+                        if (command.code === 102 && Array.isArray(command.parameters[0])) {
+                            command.parameters[0].forEach((choice, choiceIndex) => {
+                                textPaths.push({ path: [...commandPath, 'parameters', 0, choiceIndex], text: choice });
+                            });
+                        }
+                        if (command.code === 405 && command.parameters[0]) {
+                            textPaths.push({ path: [...commandPath, 'parameters', 0], text: command.parameters[0] });
+                        }
+                    }
+                });
+            }
+
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const newPath = [...currentPath, key];
+                    const value = obj[key];
+                    if (commonTextKeys.includes(key) && typeof value === 'string' && value.trim() !== '') {
+                        textPaths.push({ path: newPath, text: value });
+                    } else if (typeof value === 'object') {
+                        traverseAndExtract(value, newPath);
+                    }
+                }
+            }
+        }
+        
+        function setValueByPath(obj, path, value) {
+            let current = obj;
+            for (let i = 0; i < path.length - 1; i++) {
+                current = current[path[i]];
+            }
+            current[path[path.length - 1]] = value;
+        }
+
+    </script>
+
+</body>
+</html>

@@ -3,8 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Game Player - index.html</title>
+        <title>Game Player - index.html (Refactored)</title>
         <style>
+            /* --- CSS Variables and Global Styles --- */
             :root {
                 --bg: #0f1724;
                 --panel: #0b1220;
@@ -25,7 +26,9 @@
                 justify-content: center;
                 padding: 18px;
             }
-            .player {
+
+            /* --- Main Player Layout --- */
+            .player-container {
                 width: 100%;
                 max-width: 1100px;
                 background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.15));
@@ -37,13 +40,13 @@
                 height: 90vh;
                 position: relative; /* Needed for positioning the handle */
             }
-            .screen {
+            .game-screen {
                 position: relative;
                 background: black;
                 flex: 1;
                 min-height: 0;
             }
-            iframe {
+            .game-iframe {
                 width: 100%;
                 height: 100%;
                 border: 0;
@@ -51,7 +54,8 @@
                 background: #000;
             }
 
-            .controls {
+            /* --- Controls Bar --- */
+            .controls-bar {
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -63,27 +67,21 @@
                 transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
                 flex-shrink: 0; /* Prevent control bar from shrinking */
             }
-            .controls--hidden {
+            .controls-bar--hidden {
                 transform: translateY(100%);
             }
-
-            /* Fullscreen specific layout */
-            .player:fullscreen .controls {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 10;
-                background: rgba(11, 18, 32, 0.75);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
+            .controls-title {
+                flex-grow: 1;
+                text-align: center;
+                color: #eab308;
+                font-weight: 600;
             }
-
-            .player:fullscreen .gamepad {
-                bottom: 65px; /* Adjust gamepad position in fullscreen to be above the controls */
+            .controls-right-group {
+                display: flex;
+                gap: 8px;
+                align-items: center;
             }
-
-            .btn {
+            .control-button {
                 background: transparent;
                 border: 0;
                 padding: 8px 12px;
@@ -96,10 +94,10 @@
                 font-weight: 600;
                 justify-content: center;
             }
-            #playReloadBtn {
+            #playReloadButton {
                 width: 110px;
             }
-            .btn:hover {
+            .control-button:hover {
                 color: var(--accent);
                 transform: translateY(-1px);
             }
@@ -108,19 +106,17 @@
                 height: 20px;
                 display: inline-block;
             }
-
-            .controls-title {
-                flex-grow: 1;
-                text-align: center;
-                color: #eab308;
-                font-weight: 600;
-            }
-
-            .right {
+            .volume-control {
                 display: flex;
-                gap: 8px;
                 align-items: center;
+                gap: 8px;
             }
+            .volume-control input[type="range"] {
+                width: 100px;
+                cursor: pointer;
+            }
+
+            /* --- Controls Bar Handle (for hiding/showing in fullscreen) --- */
             .controls-handle {
                 position: absolute;
                 bottom: 0;
@@ -139,13 +135,6 @@
                 color: var(--muted);
                 transition: opacity 0.3s, visibility 0.3s, background 0.3s ease-in-out;
             }
-
-            .player:fullscreen .controls-handle {
-                background-color: rgba(11, 18, 32, 0.75);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-            }
-
             .controls-handle:hover {
                 color: var(--accent);
             }
@@ -154,32 +143,50 @@
                 visibility: hidden;
             }
 
-            /* --- virtual gamepad --- */
-            .gamepad {
+            /* --- Fullscreen Mode Specific Styles --- */
+            .player-container:fullscreen .controls-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 10;
+                background: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+            .player-container:fullscreen .virtual-gamepad {
+                bottom: 65px; /* Adjust gamepad position in fullscreen to be above the controls */
+            }
+            .player-container:fullscreen .controls-handle {
+                background-color: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+
+            /* --- Virtual Gamepad Layout --- */
+            .virtual-gamepad {
                 position: absolute;
                 left: 18px;
                 bottom: 18px;
                 right: 18px;
                 pointer-events: none;
-                top: 0; /* Make gamepad area fill the screen vertically */
+                top: 0;
             }
-
-            /* Make direct children of gamepad use absolute positioning */
-            .gamepad > .shoulder,
-            .gamepad > .main-controls {
+            .virtual-gamepad > .shoulder-buttons,
+            .virtual-gamepad > .main-gamepad-controls {
                 position: absolute;
                 left: 0;
                 right: 0;
                 pointer-events: auto;
             }
 
-            /* --- Shoulder Buttons (L & R) --- */
-            .shoulder {
+            /* --- Gamepad Shoulder Buttons (L & R) --- */
+            .shoulder-buttons {
                 display: flex;
                 justify-content: space-between;
-                bottom: 40%; /* Positioned L/R buttons ~60% from the bottom of game area */
+                bottom: 40%;
             }
-            .shoulder button {
+            .shoulder-buttons button {
                 width: 120px;
                 height: 45px;
                 border-radius: 8px;
@@ -193,14 +200,15 @@
                 -webkit-user-select: none;
             }
 
-            /* --- Container for D-Pad and Actions --- */
-            .main-controls {
+            /* --- Gamepad D-Pad and Action Buttons Container --- */
+            .main-gamepad-controls {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-end;
-                bottom: 0; /* Stick main controls to the bottom */
+                bottom: 0;
             }
 
+            /* --- Gamepad D-Pad --- */
             .dpad {
                 display: grid;
                 grid-template-columns: repeat(3, 50px);
@@ -224,15 +232,14 @@
                 background: transparent;
                 border: 0;
             }
-            /* Styling for invisible diagonal buttons */
             .dpad .dpad-diag {
                 background: transparent;
                 border: none;
                 cursor: pointer;
             }
 
-            /* --- SNES Actions Buttons (Updated) --- */
-            .actions {
+            /* --- Gamepad SNES-style Action Buttons --- */
+            .action-buttons {
                 display: grid;
                 width: 180px;
                 height: 180px;
@@ -241,7 +248,7 @@
                 align-items: center;
                 justify-items: center;
             }
-            .actions button {
+            .action-buttons button {
                 width: 50px;
                 height: 50px;
                 border-radius: 50%;
@@ -255,7 +262,6 @@
                 user-select: none;
                 -webkit-user-select: none;
             }
-
             .snes-y {
                 grid-area: 2 / 1;
                 background-color: #5cb85cbc;
@@ -272,29 +278,29 @@
                 grid-area: 2 / 3;
                 background-color: #d9544fb5;
             } /* Yellow */
-            /* --- End of SNES Actions Buttons --- */
 
+            /* --- Utility Classes --- */
             button.active {
                 background: rgba(6, 182, 212, 0.6) !important;
                 transform: scale(0.95);
             }
-
             .hidden {
                 display: none;
             }
 
+            /* --- Responsive Design Adjustments --- */
             @media (max-width: 700px) {
                 .dpad button,
                 .dpad .dpad-diag,
-                .actions button {
+                .action-buttons button {
                     width: 44px;
                     height: 44px;
                 }
-                .actions {
+                .action-buttons {
                     width: 150px;
                     height: 150px;
                 }
-                .shoulder button {
+                .shoulder-buttons button {
                     width: 90px;
                     height: 40px;
                 }
@@ -302,34 +308,28 @@
         </style>
     </head>
     <body>
-        <div class="player" id="player">
-            <div class="screen" id="screen">
-                <iframe id="gameFrame" src="./srpg_online/cover.html" allowfullscreen></iframe>
+        <div class="player-container" id="playerContainer">
+            <div class="game-screen" id="gameScreen">
+                <iframe id="gameIframe" class="game-iframe" src="./RPGMV-Ace/cover.html" allowfullscreen></iframe>
 
-                <!-- Virtual gamepad (hidden by default) -->
-                <div class="gamepad hidden" id="gamepad" aria-hidden="true">
-                    <section class="shoulder">
+                <div class="virtual-gamepad hidden" id="virtualGamepad" aria-hidden="true">
+                    <section class="shoulder-buttons">
                         <button data-key="PageUp">L</button>
                         <button data-key="PageDown">R</button>
                     </section>
-                    <div class="main-controls">
+                    <div class="main-gamepad-controls">
                         <section class="dpad" role="group" aria-label="D-pad">
-                            <!-- Diagonal buttons for combined input -->
                             <button class="dpad-diag" data-key-diag="ArrowUp,ArrowLeft"></button>
                             <button data-key="ArrowUp">▲</button>
                             <button class="dpad-diag" data-key-diag="ArrowUp,ArrowRight"></button>
-
                             <button data-key="ArrowLeft">◀</button>
                             <div class="center"></div>
                             <button data-key="ArrowRight">▶</button>
-
                             <button class="dpad-diag" data-key-diag="ArrowDown,ArrowLeft"></button>
                             <button data-key="ArrowDown">▼</button>
                             <button class="dpad-diag" data-key-diag="ArrowDown,ArrowRight"></button>
                         </section>
-
-                        <!-- Updated Actions Section for SNES Layout -->
-                        <section class="actions">
+                        <section class="action-buttons">
                             <button class="snes-y" data-key="Space">Y</button>
                             <button class="snes-x" data-key="Escape">X</button>
                             <button class="snes-b" data-key="Enter">B</button>
@@ -339,17 +339,17 @@
                 </div>
             </div>
 
-            <div class="controls">
-                <button class="btn" id="playReloadBtn" title="Play" aria-pressed="false">
-                    <span class="icon" id="playIcon">
+            <div class="controls-bar" id="controlsBar">
+                <button class="control-button" id="playReloadButton" title="Play" aria-pressed="false">
+                    <span class="icon" id="playButtonIcon">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                             <path d="M8 5v14l11-7z" />
                         </svg>
                     </span>
-                    <span id="playLabel">Play</span>
+                    <span id="playButtonLabel">Play</span>
                 </button>
 
-                <button class="btn" id="stopBtn" title="Stop">
+                <button class="control-button" id="stopButton" title="Stop">
                     <span class="icon">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                             <rect x="6" y="6" width="12" height="12" rx="1" />
@@ -358,222 +358,294 @@
                     Stop
                 </button>
 
+                <div class="volume-control">
+                    <button class="control-button" id="muteButton" title="Mute">
+                        <span id="volumeIcon" class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+                            </svg>
+                        </span>
+                        <span id="muteIcon" class="icon hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="100" title="Volume" />
+                </div>
+
                 <span class="controls-title">HTML5 Player</span>
 
-                <div class="right">
-                    <button class="btn" id="togglePadBtn" title="Toggle Gamepad" aria-pressed="false">
+                <div class="controls-right-group">
+                    <button class="control-button" id="toggleGamepadButton" title="Toggle Gamepad" aria-pressed="false">
                         <span class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zm9 0l-3 3 3 3H22V9h-5.5zm-3 7.5L9 16.5V22h6v-5.5z"
-                                ></path>
+                                <path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zm9 0l-3 3 3 3H22V9h-5.5zm-3 7.5L9 16.5V22h6v-5.5z"></path>
                             </svg>
                         </span>
                         Gamepad
                     </button>
 
-                    <button class="btn" id="fsBtn" title="Fullscreen">
+                    <button class="control-button" id="fullscreenButton" title="Fullscreen">
                         <span class="icon">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path
-                                    d="M7 14H5v5h5v-2H7v-3zm12 5h-3v2h5v-5h-2v3zM5 5v5h2V7h3V5H5zm14 0h-5v2h3v3h2V5z"
-                                />
+                                <path d="M7 14H5v5h5v-2H7v-3zm12 5h-3v2h5v-5h-2v3zM5 5v5h2V7h3V5H5zm14 0h-5v2h3v3h2V5z" />
                             </svg>
                         </span>
                         Fullscreen
                     </button>
                 </div>
             </div>
-            <div class="controls-handle hidden" id="controls-handle" title="Show controls">
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
+            <div class="controls-handle hidden" id="controlsHandle" title="Show controls">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                 </svg>
             </div>
         </div>
 
         <script>
+            // Self-invoking anonymous function to encapsulate the script and avoid global scope pollution.
             (function () {
-                const frame = document.getElementById("gameFrame");
-                const playReloadBtn = document.getElementById("playReloadBtn");
-                const playLabel = document.getElementById("playLabel");
-                const playIcon = document.getElementById("playIcon");
-                const stopBtn = document.getElementById("stopBtn");
-                const fsBtn = document.getElementById("fsBtn");
-                const togglePadBtn = document.getElementById("togglePadBtn");
-                const gamepad = document.getElementById("gamepad");
-                const player = document.getElementById("player");
-                const controls = document.querySelector(".controls");
-                const controlsHandle = document.getElementById("controls-handle");
+                // --- DOM Element References ---
+                const gameIframe = document.getElementById("gameIframe");
+                const playReloadButton = document.getElementById("playReloadButton");
+                const playButtonLabel = document.getElementById("playButtonLabel");
+                const playButtonIcon = document.getElementById("playButtonIcon");
+                const stopButton = document.getElementById("stopButton");
+                const fullscreenButton = document.getElementById("fullscreenButton");
+                const toggleGamepadButton = document.getElementById("toggleGamepadButton");
+                const virtualGamepad = document.getElementById("virtualGamepad");
+                const playerContainer = document.getElementById("playerContainer");
+                const controlsBar = document.getElementById("controlsBar");
+                const controlsHandle = document.getElementById("controlsHandle");
+                const volumeSlider = document.getElementById("volumeSlider");
+                const muteButton = document.getElementById("muteButton");
+                const volumeIcon = document.getElementById("volumeIcon");
+                const muteIcon = document.getElementById("muteIcon");
 
-                let playing = false;
-                let padVisible = false;
-                let controlsHideTimer = null;
+                // --- State Variables ---
+                let isPlaying = false;
+                let isGamepadVisible = false;
+                let controlsHideTimeout = null;
+                let lastKnownVolume = 100;
 
-                const COVER = "./srpg_online/cover.html";
-                const GAME = "./srpg_online/game.html";
+                // --- Constants ---
+                const COVER_URL = "./RPGMV-Ace/cover.html";
+                const GAME_URL = "./RPGMV-Ace/index.html";
+                const PLAY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>`;
+                const RELOAD_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
 
-                const PLAY_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>`;
-                const RELOAD_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
+                // --- Controls Bar Visibility Logic ---
 
-                function hideControls() {
-                    // Only hide if playing and in fullscreen
-                    if (playing && document.fullscreenElement) {
-                        controls.classList.add("controls--hidden");
+                // Hides the control bar, typically in fullscreen mode after a delay.
+                function hideControlsBar() {
+                    if (isPlaying && document.fullscreenElement) {
+                        controlsBar.classList.add("controls-bar--hidden");
                         controlsHandle.classList.remove("hidden");
                     }
                 }
 
-                function showControlsAndResetTimer() {
+                // Shows the control bar and resets the auto-hide timer.
+                function showControlsAndResetHideTimer() {
                     controlsHandle.classList.add("hidden");
-                    controls.classList.remove("controls--hidden");
-                    clearTimeout(controlsHideTimer);
-                    // Only set the timer if playing AND in fullscreen
-                    if (playing && document.fullscreenElement) {
-                        controlsHideTimer = setTimeout(hideControls, 3000); // Hide after 3 seconds
+                    controlsBar.classList.remove("controls-bar--hidden");
+                    clearTimeout(controlsHideTimeout);
+                    if (isPlaying && document.fullscreenElement) {
+                        controlsHideTimeout = setTimeout(hideControlsBar, 3000); // Hide after 3 seconds of inactivity.
                     }
                 }
 
-                playReloadBtn.addEventListener("click", () => {
-                    frame.src = GAME;
-                    if (!playing) {
-                        playing = true;
-                        playLabel.textContent = "Reload";
-                        playReloadBtn.title = "Reload";
-                        playIcon.innerHTML = RELOAD_ICON;
-                        playReloadBtn.setAttribute("aria-pressed", "true");
-                        showControlsAndResetTimer(); // Start the auto-hide logic
+                // --- Core Player Event Listeners ---
+
+                // Handles the Play/Reload button click.
+                playReloadButton.addEventListener("click", () => {
+                    gameIframe.src = GAME_URL; // Load or reload the game.
+                    if (!isPlaying) {
+                        isPlaying = true;
+                        playButtonLabel.textContent = "Reload";
+                        playReloadButton.title = "Reload";
+                        playButtonIcon.innerHTML = RELOAD_ICON_SVG;
+                        playReloadButton.setAttribute("aria-pressed", "true");
+                        showControlsAndResetHideTimer(); // Start the auto-hide logic.
                     }
-                    frame.addEventListener("load", () => focusFrame(), { once: true });
+                    gameIframe.addEventListener(
+                        "load",
+                        () => {
+                            focusGameIframe();
+                            // Set and send the initial volume value to the game.
+                            updateVolume(volumeSlider.value);
+                        },
+                        { once: true }
+                    );
                 });
 
-                stopBtn.addEventListener("click", () => {
-                    frame.src = COVER;
-                    playing = false;
-                    playLabel.textContent = "Play";
-                    playReloadBtn.title = "Play";
-                    playIcon.innerHTML = PLAY_ICON;
-                    playReloadBtn.setAttribute("aria-pressed", "false");
-                    sendMessageToGame({ type: "player-stop" });
+                // Handles the Stop button click.
+                stopButton.addEventListener("click", () => {
+                    gameIframe.src = COVER_URL;
+                    isPlaying = false;
+                    playButtonLabel.textContent = "Play";
+                    playReloadButton.title = "Play";
+                    playButtonIcon.innerHTML = PLAY_ICON_SVG;
+                    playReloadButton.setAttribute("aria-pressed", "false");
+                    postMessageToGame({ type: "player-stop" });
 
-                    clearTimeout(controlsHideTimer);
-                    controls.classList.remove("controls--hidden"); // Ensure controls are visible
-                    controlsHandle.classList.add("hidden"); // Ensure handle is hidden
+                    // Ensure controls are visible and the hide timer is cleared when stopping.
+                    clearTimeout(controlsHideTimeout);
+                    controlsBar.classList.remove("controls-bar--hidden");
+                    controlsHandle.classList.add("hidden");
                 });
 
-                fsBtn.addEventListener("click", async () => {
-                    const el = player;
+                // --- Fullscreen and Gamepad Toggle ---
+
+                // Handles the Fullscreen button click.
+                fullscreenButton.addEventListener("click", async () => {
                     if (!document.fullscreenElement) {
                         try {
-                            await el.requestFullscreen();
+                            await playerContainer.requestFullscreen();
                         } catch (e) {
-                            console.warn("Fullscreen failed", e);
+                            console.warn("Fullscreen request failed:", e);
                         }
                     } else {
                         document.exitFullscreen();
                     }
                 });
 
+                // Adjusts control bar visibility when fullscreen state changes.
                 document.addEventListener("fullscreenchange", () => {
                     if (document.fullscreenElement) {
-                        // Entered fullscreen. If playing, start the hide timer.
-                        showControlsAndResetTimer();
+                        showControlsAndResetHideTimer(); // Entered fullscreen, start hide timer if playing.
                     } else {
-                        // Exited fullscreen. Cancel timer and show controls.
-                        clearTimeout(controlsHideTimer);
-                        controls.classList.remove("controls--hidden");
+                        clearTimeout(controlsHideTimeout); // Exited fullscreen, cancel timer and show controls.
+                        controlsBar.classList.remove("controls-bar--hidden");
                         controlsHandle.classList.add("hidden");
                     }
                 });
 
-                togglePadBtn.addEventListener("click", () => {
-                    padVisible = !padVisible;
-                    gamepad.classList.toggle("hidden", !padVisible);
-                    togglePadBtn.setAttribute("aria-pressed", String(padVisible));
+                // Toggles the visibility of the virtual gamepad.
+                toggleGamepadButton.addEventListener("click", () => {
+                    isGamepadVisible = !isGamepadVisible;
+                    virtualGamepad.classList.toggle("hidden", !isGamepadVisible);
+                    toggleGamepadButton.setAttribute("aria-pressed", String(isGamepadVisible));
                 });
 
-                controlsHandle.addEventListener("click", showControlsAndResetTimer);
+                // --- Controls Bar Mouse Events for Auto-hide ---
+                controlsHandle.addEventListener("click", showControlsAndResetHideTimer);
 
-                controls.addEventListener("mouseenter", () => {
-                    if (playing && document.fullscreenElement) {
-                        clearTimeout(controlsHideTimer);
+                controlsBar.addEventListener("mouseenter", () => {
+                    if (isPlaying && document.fullscreenElement) {
+                        clearTimeout(controlsHideTimeout); // Pause auto-hide on hover.
                     }
                 });
 
-                controls.addEventListener("mouseleave", () => {
-                    if (playing && document.fullscreenElement) {
-                        clearTimeout(controlsHideTimer);
-                        controlsHideTimer = setTimeout(hideControls, 3000);
+                controlsBar.addEventListener("mouseleave", () => {
+                    if (isPlaying && document.fullscreenElement) {
+                        clearTimeout(controlsHideTimeout); // Reset timer on mouse leave.
+                        controlsHideTimeout = setTimeout(hideControlsBar, 3000);
                     }
                 });
 
-                function sendMessageToGame(msg) {
+                // --- Volume Control Logic ---
+
+                // Updates volume, UI elements, and sends a message to the game.
+                function updateVolume(volume) {
+                    const numericVolume = parseInt(volume, 10);
+                    // Store the last non-zero volume for unmuting.
+                    if (numericVolume > 0) {
+                        lastKnownVolume = numericVolume;
+                    }
+                    volumeSlider.value = numericVolume;
+                    postMessageToGame({ type: "volume", value: numericVolume });
+                    // Toggle mute/unmute icons.
+                    volumeIcon.classList.toggle("hidden", numericVolume === 0);
+                    muteIcon.classList.toggle("hidden", numericVolume > 0);
+                    muteButton.title = numericVolume === 0 ? "Unmute" : "Mute";
+                }
+
+                // Listener for the volume slider input.
+                volumeSlider.addEventListener("input", () => {
+                    updateVolume(volumeSlider.value);
+                });
+
+                // Listener for the mute button click.
+                muteButton.addEventListener("click", () => {
+                    const currentVolume = parseInt(volumeSlider.value, 10);
+                    if (currentVolume === 0) {
+                        updateVolume(lastKnownVolume); // Unmute to the last known volume.
+                    } else {
+                        updateVolume(0); // Mute the volume.
+                    }
+                });
+
+                // --- Communication with Game Iframe ---
+
+                // Sends a message to the game iframe via postMessage.
+                function postMessageToGame(message) {
                     try {
-                        frame.contentWindow.postMessage(msg, "*");
+                        gameIframe.contentWindow.postMessage(message, "*");
                     } catch (e) {
-                        console.warn("postMessage failed", e);
+                        console.warn("postMessage to iframe failed:", e);
                     }
                 }
 
-                function dispatchKeyToFrame(key, type = "keydown") {
+                // Dispatches a synthetic KeyboardEvent to the game iframe.
+                function dispatchKeyEventToIframe(key, eventType = "keydown") {
                     try {
-                        const cw = frame.contentWindow;
-                        if (!cw) return;
-                        const ev = new KeyboardEvent(type, { key, bubbles: true });
-                        cw.dispatchEvent(ev);
-                    } catch (e) {}
+                        const contentWin = gameIframe.contentWindow;
+                        if (!contentWin) return;
+                        const keyboardEvent = new KeyboardEvent(eventType, { key, bubbles: true });
+                        contentWin.dispatchEvent(keyboardEvent);
+                    } catch (e) {
+                        // This can fail due to cross-origin restrictions, which is expected.
+                    }
                 }
 
-                function sendKey(key, down = true) {
-                    const type = down ? "keydown" : "keyup";
-                    sendMessageToGame({ type: "key", key, keyEvent: type });
-                    dispatchKeyToFrame(key, type);
+                // Primary function to send a key event, using both postMessage and dispatchEvent.
+                function sendKeyEvent(key, isDown = true) {
+                    const eventType = isDown ? "keydown" : "keyup";
+                    postMessageToGame({ type: "key", key, keyEvent: eventType });
+                    dispatchKeyEventToIframe(key, eventType);
                 }
 
-                // --- VIRTUAL GAMEPAD: STATE-DRIVEN MULTITOUCH IMPLEMENTATION ---
+                // --- Virtual Gamepad Multitouch Logic ---
                 let activeTouches = [];
-                const pressedKeys = new Set();
+                const pressedKeys = new Set(); // Tracks keys currently held down by touch.
 
-                function updateTouches(event) {
+                // Updates the list of active touches.
+                function handleTouchUpdate(event) {
                     event.preventDefault();
                     activeTouches = event.touches;
                 }
 
-                function updateGamepadState() {
-                    if (!padVisible) {
+                // Main loop to process gamepad state based on active touches.
+                function processGamepadState() {
+                    // If gamepad is not visible, release all keys and stop processing.
+                    if (!isGamepadVisible) {
                         if (pressedKeys.size > 0) {
-                            for (const key of pressedKeys) sendKey(key, false);
+                            for (const key of pressedKeys) sendKeyEvent(key, false);
                             pressedKeys.clear();
-                            gamepad.querySelectorAll("button.active").forEach((btn) => btn.classList.remove("active"));
+                            virtualGamepad.querySelectorAll("button.active").forEach((btn) => btn.classList.remove("active"));
                         }
-                        requestAnimationFrame(updateGamepadState);
+                        requestAnimationFrame(processGamepadState);
                         return;
                     }
 
-                    const keysThisFrame = new Set();
-                    const buttonsToActivate = new Set();
+                    const keysThisFrame = new Set(); // Keys that should be pressed this frame.
+                    const buttonsToActivate = new Set(); // UI buttons to highlight.
 
+                    // Determine which buttons are being touched.
                     for (let i = 0; i < activeTouches.length; i++) {
                         const touch = activeTouches[i];
                         const element = document.elementFromPoint(touch.clientX, touch.clientY);
                         if (!element) continue;
-
                         const button = element.closest("button[data-key], button[data-key-diag]");
                         if (!button) continue;
 
+                        // Handle diagonal buttons by adding both cardinal directions.
                         if (button.dataset.keyDiag) {
                             const diagonalKeys = button.dataset.keyDiag.split(",");
                             diagonalKeys.forEach((key) => {
                                 keysThisFrame.add(key);
-                                const cardinalBtn = gamepad.querySelector(`.dpad button[data-key="${key}"]`);
+                                const cardinalBtn = virtualGamepad.querySelector(`.dpad button[data-key="${key}"]`);
                                 if (cardinalBtn) buttonsToActivate.add(cardinalBtn);
                             });
                         } else if (button.dataset.key) {
@@ -582,80 +654,76 @@
                         }
                     }
 
+                    // Release keys that are no longer touched.
                     for (const key of pressedKeys) {
                         if (!keysThisFrame.has(key)) {
-                            sendKey(key, false);
+                            sendKeyEvent(key, false);
                             pressedKeys.delete(key);
                         }
                     }
 
+                    // Press new keys that are now touched.
                     for (const key of keysThisFrame) {
                         if (!pressedKeys.has(key)) {
-                            sendKey(key, true);
+                            sendKeyEvent(key, true);
                             pressedKeys.add(key);
                         }
                     }
 
-                    gamepad.querySelectorAll("button[data-key]").forEach((btn) => {
-                        if (buttonsToActivate.has(btn)) {
-                            btn.classList.add("active");
-                        } else {
-                            btn.classList.remove("active");
-                        }
+                    // Update the visual state (highlight) of the gamepad buttons.
+                    virtualGamepad.querySelectorAll("button[data-key]").forEach((btn) => {
+                        btn.classList.toggle("active", buttonsToActivate.has(btn));
                     });
 
-                    requestAnimationFrame(updateGamepadState);
+                    requestAnimationFrame(processGamepadState); // Continue the loop.
                 }
 
-                gamepad.addEventListener("touchstart", updateTouches, { passive: false });
-                gamepad.addEventListener("touchmove", updateTouches, { passive: false });
-                gamepad.addEventListener("touchend", updateTouches, { passive: false });
-                gamepad.addEventListener("touchcancel", updateTouches, { passive: false });
-                gamepad.addEventListener("contextmenu", (ev) => ev.preventDefault());
+                // Attach touch event listeners to the gamepad area.
+                virtualGamepad.addEventListener("touchstart", handleTouchUpdate, { passive: false });
+                virtualGamepad.addEventListener("touchmove", handleTouchUpdate, { passive: false });
+                virtualGamepad.addEventListener("touchend", handleTouchUpdate, { passive: false });
+                virtualGamepad.addEventListener("touchcancel", handleTouchUpdate, { passive: false });
+                virtualGamepad.addEventListener("contextmenu", (ev) => ev.preventDefault()); // Prevent right-click menu.
 
-                requestAnimationFrame(updateGamepadState);
+                requestAnimationFrame(processGamepadState); // Start the gamepad processing loop.
 
-                const allowedKeys = [
-                    "ArrowUp",
-                    "ArrowDown",
-                    "ArrowLeft",
-                    "ArrowRight",
-                    "Shift",
-                    "Escape",
-                    "Enter",
-                    "Space",
-                    "PageUp",
-                    "PageDown",
-                ];
+                // --- Physical Keyboard Input Forwarding ---
+                const allowedKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Shift", "Escape", "Enter", "Space", "PageUp", "PageDown"];
+
+                // Capture keydown events and forward them to the game.
                 window.addEventListener(
                     "keydown",
                     (ev) => {
-                        if (!playing) return;
-                        if (allowedKeys.includes(ev.key)) {
-                            ev.preventDefault();
-                            sendKey(ev.key, true);
-                        }
-                    },
-                    { capture: true }
-                );
-                window.addEventListener(
-                    "keyup",
-                    (ev) => {
-                        if (!playing) return;
-                        if (allowedKeys.includes(ev.key)) {
-                            ev.preventDefault();
-                            sendKey(ev.key, false);
-                        }
+                        if (!isPlaying || !allowedKeys.includes(ev.key)) return;
+                        ev.preventDefault();
+                        sendKeyEvent(ev.key, true);
                     },
                     { capture: true }
                 );
 
-                function focusFrame() {
+                // Capture keyup events and forward them to the game.
+                window.addEventListener(
+                    "keyup",
+                    (ev) => {
+                        if (!isPlaying || !allowedKeys.includes(ev.key)) return;
+                        ev.preventDefault();
+                        sendKeyEvent(ev.key, false);
+                    },
+                    { capture: true }
+                );
+
+                // --- Utility Functions ---
+                // Attempts to focus the game iframe to allow direct keyboard input.
+                function focusGameIframe() {
                     try {
-                        frame.contentWindow.focus();
-                    } catch (e) {}
+                        gameIframe.contentWindow.focus();
+                    } catch (e) {
+                        // This can fail due to cross-origin restrictions, which is expected.
+                    }
                 }
-                document.getElementById("screen").addEventListener("click", () => focusFrame());
+
+                // Add a click listener to the screen area to focus the iframe.
+                document.getElementById("gameScreen").addEventListener("click", focusGameIframe);
             })();
         </script>
     </body>
