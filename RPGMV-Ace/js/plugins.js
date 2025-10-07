@@ -8,7 +8,7 @@ var $plugins =
 {"name":"StartUpFullScreen","status":true,"description":"Start up full screen","parameters":{"Shutdown":"Exit","DefaultFullScreen":"true","StartUpFullScreen":"Full Screen","UseTitle":"true","UseGameEnd":"true"}},
 {"name":"[ rpg_mixer ] ------------","status":false,"description":"----------------------------------------------------------------------","parameters":{}},
 {"name":"rpg_mixer","status":true,"description":"(v2.0) A unified dynamic audio mixer for RPG Maker MV to play external formats like MIDI and MOD.","parameters":{}},
-{"name":"SF2_MIDIPlayer","status":true,"description":"(v5.0 Modular) Memutar file MIDI dengan SoundFont (.sf2) menggunakan arsitektur dinamis.","parameters":{"defaultSoundFont":"microsoft_gm_3.sf2","debugMode":"false"}},
+{"name":"SF2_MIDIPlayer","status":false,"description":"(v5.0 Modular) Memutar file MIDI dengan SoundFont (.sf2) menggunakan arsitektur dinamis.","parameters":{"defaultSoundFont":"microsoft_gm_3.sf2","debugMode":"false"}},
 {"name":"[ rpg_interface ] --------","status":true,"description":"----------------------------------------------------------------------","parameters":{}},
 {"name":"MZWindowEquip","status":true,"description":"Message","parameters":{}},
 {"name":"MPP_RemovoEquipText","status":true,"description":"【ver.1.1】装備画面で装備後のアイテムを選択する際、一番左上の空白に「はずす」などの文字を入れます。","parameters":{"Text":"Remove","Text X":"36","Text Enabled":"true"}},

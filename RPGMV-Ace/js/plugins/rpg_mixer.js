@@ -137,8 +137,17 @@
             picoaudio: "unloaded", // States: unloaded, loading, ready, failed
             libopenmpt: "unloaded",
             libopenmpt_mode: "none", // The status will change from 'worklet' to 'legacy'
+            spessasynth: "unloaded",
         },
         _promises: {},
+        // Properti forSpessaSynth Engine
+        _spessa: {
+            lib: null,
+            audioContext: null,
+            synthesizer: null,
+            sequencer: null,
+            gainNode: null,
+        },
 
         getModMode: function () {
             return this._state.libopenmpt_mode;
@@ -157,11 +166,94 @@
                     "js/plugins/picoaudio.js",
                     () => typeof PicoAudio !== "undefined"
                 );
+            } else if (backendName === "spessasynth") {
+                this._promises.spessasynth = this._requireSpessaSynth();
             } else {
                 return Promise.reject(`[Rpg_Mixer] Backend '${backendName}' is not defined.`);
             }
             return this._promises[backendName];
         },
+
+        _requireSpessaSynth: function () {
+            return new Promise(async (resolve, reject) => {
+                if (this._state.spessasynth === "ready") return resolve();
+                if (this._state.spessasynth === "failed")
+                    return reject("[Rpg_Mixer] SpessaSynth engine previously failed to load.");
+
+                console.log("[Rpg_Mixer] SpessaSynth engine loading started...");
+                this._state.spessasynth = "loading";
+
+                try {
+                    // 1. Load SpessaSynth main library
+                    await this._loadScript("js/plugins/index.js");
+                    await this._waitForSpessaLibrary();
+                    if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
+
+                    // 2. Setup AudioContext and Worklet
+                    this._spessa.audioContext = WebAudio._context || new AudioContext();
+                    if (this._spessa.audioContext.state === "suspended") await this._spessa.audioContext.resume();
+
+                    const workletBlob = await this._fetchScriptAsBlob("js/plugins/spessasynth_processor.min.js");
+                    const workletUrl = URL.createObjectURL(workletBlob);
+                    await this._spessa.audioContext.audioWorklet.addModule(workletUrl);
+                    URL.revokeObjectURL(workletUrl);
+
+                    // 3. Initialize Synthesizer and connect nodes
+                    this._spessa.synthesizer = new this._spessa.lib.WorkletSynthesizer(this._spessa.audioContext);
+                    this._spessa.gainNode = this._spessa.audioContext.createGain();
+                    this._spessa.synthesizer.connect(this._spessa.gainNode);
+                    this._spessa.gainNode.connect(WebAudio._masterGainNode || this._spessa.audioContext.destination);
+
+                    // 4. Load HARDCODED SoundFont
+                    const sfUrl = "audio/soundfonts/soundfont.sf2";
+                    const sfResponse = await fetch(sfUrl);
+                    if (!sfResponse.ok) throw new Error(`SoundFont not found at: ${sfUrl}`);
+                    const sfBuffer = await sfResponse.arrayBuffer();
+                    await this._spessa.synthesizer.soundBankManager.addSoundBank(sfBuffer, "default");
+
+                    // 5. Create Sequencer
+                    this._spessa.sequencer = new this._spessa.lib.Sequencer(this._spessa.synthesizer);
+
+                    this._state.spessasynth = "ready";
+                    console.log("[Rpg_Mixer] SpessaSynth engine is ready.");
+                    resolve();
+                } catch (error) {
+                    this._state.spessasynth = "failed";
+                    console.error("[Rpg_Mixer] FAILED to initialize SpessaSynth engine.", error);
+                    reject(error);
+                }
+            });
+        },
+
+        // Helper for SpessaSynth
+        _loadScript: function (path) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = path;
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => reject(`Failed to load script: ${path}`);
+                document.body.appendChild(script);
+            });
+        },
+        _fetchScriptAsBlob: async function (path) {
+            const response = await fetch(path);
+            if (!response.ok) throw new Error(`Could not fetch script: ${path}`);
+            return new Blob([await response.text()], { type: "application/javascript" });
+        },
+        _waitForSpessaLibrary: function () {
+            return new Promise((resolve) => {
+                const interval = setInterval(() => {
+                    if (window.SpessaSynthLib) {
+                        clearInterval(interval);
+                        this._spessa.lib = window.SpessaSynthLib;
+                        resolve();
+                    }
+                }, 50);
+            });
+        },
+        // End of Helper SpessaSynth
 
         _requireLibOpenMPT: function () {
             return new Promise((resolve, reject) => {
@@ -241,8 +333,8 @@
     // --- Format Handler Configuration ---
     const formatHandlers = {
         midi: {
-            extensions: ["_midi"],
-            backend: "picoaudio",
+            extensions: ["_mid", "_midi"],
+            backend: "spessasynth",
         },
         mod: {
             extensions: ["_mod", "_xm", "_s3m", "_it", "_mo3"],
@@ -266,54 +358,75 @@
         this._isLoading = false;
         this._onLoadListeners = [];
         this._context = WebAudio._context;
-        this._pico = null;
-        this._playerNode = null; // legacy script processor node
-        this._gainNode = null;
-        this._workletNode = null;
         this._load();
         this._loadTime = undefined;
         this._decodeTime = undefined;
+
+        // Properti untuk backends
+        this._activeMidiBackend = "none"; // "spessasynth", "picoaudio", or "none"
+        this._pico = null; // picoaudio instance
+        this._playerNode = null; // legacy script processor node (MOD)
+        this._gainNode = null; // MOD gain node
+        this._workletNode = null; // MOD worklet node
     };
 
-    // --- KEY CHANGE IS IN THE `play` METHOD ---
-
     ExternalAudio.prototype.play = function (loop, offset) {
-        if (this.isReady()) {
-            this.stop();
-            const backendName = formatHandlers[this._format].backend;
+        if (!this.isReady()) {
+            this.addLoadListener(() => this.play(loop, offset));
+            return;
+        }
 
-            BackendManager.require(backendName)
+        this.stop();
+        this._loop = loop;
+        const primaryBackend = formatHandlers[this._format].backend;
+
+        if (this._format === "midi") {
+            // Coba SpessaSynth dulu
+            BackendManager.require("spessasynth")
                 .then(() => {
-                    this._loop = loop;
-                    if (this._format === "midi") {
-                        this._playMidi();
-                    } else if (this._format === "mod") {
-                        // Checking if mode is succesfully loaded by BackendManager
-                        if (BackendManager.getModMode() === "worklet") {
-                            this._playModWorklet();
-                        } else {
-                            this._playMod(); // Fallback to legacy method
-                        }
+                    this._activeMidiBackend = "spessasynth";
+                    this._playMidiSpessa(offset);
+                })
+                .catch((error) => {
+                    console.warn("[Rpg_Mixer] SpessaSynth failed. Falling back to PicoAudio.", error);
+                    // Jika gagal, coba PicoAudio
+                    BackendManager.require("picoaudio")
+                        .then(() => {
+                            this._activeMidiBackend = "picoaudio";
+                            this._playMidiPico();
+                        })
+                        .catch((fallbackError) => {
+                            console.error("[Rpg_Mixer] All MIDI backends failed to load.", fallbackError);
+                        });
+                });
+        } else if (this._format === "mod") {
+            BackendManager.require(primaryBackend)
+                .then(() => {
+                    // Checking if mode is succesfully loaded by BackendManager
+                    if (BackendManager.getModMode() === "worklet") {
+                        this._playModWorklet();
+                    } else {
+                        this._playMod(); // Fallback to legacy method
                     }
                 })
                 .catch((error) => {
                     console.error(error);
                 });
-        } else {
-            this.addLoadListener(() => {
-                this.play(loop, offset);
-            });
         }
     };
-
-    // --- (The rest of the methods remain unchanged as they are either shared or self-contained) ---
 
     ExternalAudio.prototype.isReady = function () {
         return !!this._buffer;
     };
+
     ExternalAudio.prototype.isPlaying = function () {
         if (this._format === "midi") {
-            return this._pico && this._pico.isPlaying();
+            if (this._activeMidiBackend === "spessasynth") {
+                // Cek state internal sequencer karena bersifat shared
+                return BackendManager._spessa.sequencer && BackendManager._spessa.sequencer.isPlaying;
+            } else if (this._activeMidiBackend === "picoaudio") {
+                return this._pico && this._pico.isPlaying();
+            }
         }
         if (this._format === "mod") {
             // Cek kedua kemungkinan player
@@ -321,9 +434,11 @@
         }
         return false;
     };
+
     ExternalAudio.prototype.addLoadListener = function (listener) {
         this._onLoadListeners.push(listener);
     };
+
     ExternalAudio.prototype._callLoadListeners = function () {
         while (this._onLoadListeners.length > 0) {
             this._onLoadListeners.shift()();
@@ -331,16 +446,18 @@
     };
 
     ExternalAudio.prototype._reportDebugInfo = function () {
-        const fileName = this._url.substring(this._url.lastIndexOf("/") + 1);
-        const backendName = formatHandlers[this._format].backend;
+        let fileName = this._url.substring(this._url.lastIndexOf("/") + 1);
+        fileName = decodeURIComponent(fileName).replace(/\.ogg$/, "");
+        let backendName = "N/A";
         let mode = "Unknown"; // Default value
 
         if (this._format === "mod") {
+            backendName = "libopenmpt";
             // Taken directly from BackendManager: 'worklet' or 'legacy'
             mode = BackendManager.getModMode();
         } else if (this._format === "midi") {
-            // PicoAudio use ScriptProcessorNode
-            mode = "legacy";
+            backendName = this._activeMidiBackend; // "spessasynth" or "picoaudio"
+            mode = backendName === "spessasynth" ? "Worklet" : "Legacy";
         }
 
         DebugManager.updateInfo({
@@ -352,7 +469,6 @@
         });
     };
 
-    // --- MIDI / MOD Specific Methods ---
     ExternalAudio.prototype._load = function () {
         if (this._isLoading || this.isReady()) return;
         this._isLoading = true;
@@ -378,9 +494,13 @@
     };
 
     ExternalAudio.prototype.fadeOut = function (duration) {
-        if (this._format === "midi" && this._pico) {
-            this._manualFade(duration, false); // false means fade out
-            setTimeout(() => this.stop(), duration * 1000);
+        if (this._format === "midi") {
+            if (this._activeMidiBackend === "spessasynth") {
+                this._fadeOutSpessa(duration);
+            } else if (this._activeMidiBackend === "picoaudio") {
+                this._manualFade(duration, false); // false for fade out
+                setTimeout(() => this.stop(), duration * 1000);
+            }
         } else if (this._format === "mod" && this._gainNode) {
             const currentTime = this._context.currentTime;
             this._gainNode.gain.cancelScheduledValues(currentTime);
@@ -390,7 +510,6 @@
         }
     };
 
-    // For MIDI
     ExternalAudio.prototype._manualFade = function (duration, fadeIn) {
         if (!this._pico || this._fadeInterval) return;
         const startVolume = this._pico.getMasterVolume();
@@ -401,13 +520,10 @@
         this._fadeInterval = setInterval(() => {
             currentTime += tick;
             const newVolume = startVolume + (endVolume - startVolume) * (currentTime / durationMs);
-
             this._pico.setMasterVolume(Math.max(0, Math.min(1, newVolume)));
-
             if (currentTime >= durationMs) {
                 clearInterval(this._fadeInterval);
                 this._fadeInterval = null;
-
                 if (!fadeIn) {
                     this.stop();
                 }
@@ -416,8 +532,12 @@
     };
 
     ExternalAudio.prototype.fadeIn = function (duration) {
-        if (this._format === "midi" && this._pico) {
-            this._pico.fadein(duration);
+        if (this._format === "midi") {
+            if (this._activeMidiBackend === "spessasynth") {
+                this._fadeInSpessa(duration);
+            } else if (this._activeMidiBackend === "picoaudio" && this._pico) {
+                this._pico.fadein(duration);
+            }
         } else if (this._format === "mod" && this._gainNode) {
             const currentTime = this._context.currentTime;
             this._gainNode.gain.cancelScheduledValues(currentTime);
@@ -425,14 +545,21 @@
             this._gainNode.gain.linearRampToValueAtTime(this._volume, currentTime + duration);
         }
     };
+
     ExternalAudio.prototype.updateParameters = function (config) {
         if (config.volume !== undefined) {
             this.volume = config.volume / 100;
         }
     };
+
     ExternalAudio.prototype.stop = function () {
         if (this._format === "midi") {
-            this._stopMidi();
+            if (this._activeMidiBackend === "spessasynth") {
+                this._stopMidiSpessa();
+            } else if (this._activeMidiBackend === "picoaudio") {
+                this._stopMidiPico();
+            }
+            this._activeMidiBackend = "none";
         } else if (this._format === "mod") {
             // Stop both player mode for cleanup
             this._stopMod(); // Stop legacy mode
@@ -441,13 +568,19 @@
     };
 
     ExternalAudio.prototype.seek = function () {
-        if (this._format === "midi" && this._pico) {
-            return this._pico.getTime();
+        if (this._format === "midi") {
+            if (this._activeMidiBackend === "spessasynth") {
+                if (BackendManager._spessa.sequencer) {
+                    return BackendManager._spessa.sequencer.currentTime; // Mengembalikan posisi SpessaSynth
+                }
+            } else if (this._activeMidiBackend === "picoaudio" && this._pico) {
+                return this._pico.getTime();
+            }
         } else if (this._format === "mod") {
             if (this._playerNode) {
                 return this._playerNode.context.currentTime;
             } else if (this._workletNode) {
-                return 0;
+                return 0; // Worklet tidak mendukung seek secara native
             }
         }
         return 0;
@@ -459,15 +592,64 @@
         },
         set: function (value) {
             this._volume = value;
-            if (this._format === "midi" && this._pico) {
-                this._pico.setMasterVolume(this._volume);
+            if (this._format === "midi") {
+                if (this._activeMidiBackend === "spessasynth" && BackendManager._spessa.gainNode) {
+                    const engine = BackendManager._spessa;
+                    engine.gainNode.gain.setValueAtTime(this._volume, engine.audioContext.currentTime);
+                } else if (this._activeMidiBackend === "picoaudio" && this._pico) {
+                    this._pico.setMasterVolume(this._volume);
+                }
             } else if (this._format === "mod" && this._gainNode) {
                 this._gainNode.gain.value = this._volume;
             }
         },
         configurable: true,
     });
-    ExternalAudio.prototype._playMidi = function () {
+
+    // --- Metode spesifik untuk MIDI (SpessaSynth) ---
+    ExternalAudio.prototype._playMidiSpessa = function (startTime) {
+        const engine = BackendManager._spessa;
+        engine.sequencer.pause();
+        engine.sequencer.loadNewSongList([{ binary: this._buffer }]);
+        engine.sequencer.loopCount = this._loop ? Infinity : 0;
+        this.volume = this._volume;
+        engine.sequencer.play(false, startTime || 0);
+        this._reportDebugInfo();
+    };
+
+    ExternalAudio.prototype._stopMidiSpessa = function () {
+        const engine = BackendManager._spessa;
+        if (engine.sequencer) {
+            engine.sequencer.pause();
+            if (engine.gainNode) {
+                engine.gainNode.gain.cancelScheduledValues(engine.audioContext.currentTime);
+            }
+        }
+    };
+
+    ExternalAudio.prototype._fadeOutSpessa = function (duration) {
+        const engine = BackendManager._spessa;
+        if (!this.isPlaying() || !engine.gainNode) return;
+        const gain = engine.gainNode.gain;
+        const currentTime = engine.audioContext.currentTime;
+        gain.cancelScheduledValues(currentTime);
+        gain.setValueAtTime(gain.value, currentTime);
+        gain.linearRampToValueAtTime(0.0001, currentTime + duration);
+        setTimeout(() => this.stop(), duration * 1000);
+    };
+
+    ExternalAudio.prototype._fadeInSpessa = function (duration) {
+        const engine = BackendManager._spessa;
+        if (!engine.gainNode) return;
+        const gain = engine.gainNode.gain;
+        const currentTime = engine.audioContext.currentTime;
+        gain.cancelScheduledValues(currentTime);
+        gain.setValueAtTime(0, currentTime);
+        gain.linearRampToValueAtTime(this._volume, currentTime + duration);
+    };
+
+    // --- Metode spesifik untuk MIDI (PicoAudio FALLBACK) ---
+    ExternalAudio.prototype._playMidiPico = function () {
         const startTime = performance.now();
         this._pico = new PicoAudio();
         this._pico.init();
@@ -481,7 +663,7 @@
         this._reportDebugInfo();
     };
 
-    ExternalAudio.prototype._stopMidi = function () {
+    ExternalAudio.prototype._stopMidiPico = function () {
         if (this._fadeInterval) {
             clearInterval(this._fadeInterval);
             this._fadeInterval = null;
@@ -492,6 +674,7 @@
         }
     };
 
+    // --- Metode spesifik untuk MOD (LENGKAP DAN ASLI) ---
     ExternalAudio.prototype._playMod = function () {
         const startTime = performance.now();
         this._playerNode = this._createModPlayerNode();
@@ -520,28 +703,21 @@
             numberOfOutputs: 1,
             outputChannelCount: [2],
         });
-
-        // Handlinge message from worklet, like: end of music
         this._workletNode.port.onmessage = (msg) => {
             if (msg.data.cmd === "end" && !this._loop) {
                 this.stop();
             }
         };
-
-        // Sending configuration to worklet
         const config = {
             repeatCount: this._loop ? -1 : 0,
             stereoSeparation: 100,
             interpolationFilter: 0,
         };
         this._workletNode.port.postMessage({ cmd: "config", val: config });
-
-        // Sending buffer to audio for playing
         this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
-        this._decodeTime = performance.now() - startTime; // Time for node setup
-
-        this._setupModWebAudioNodes(); // Preparing gain node
-        this._workletNode.connect(this._gainNode); // Connecting worklet to output
+        this._decodeTime = performance.now() - startTime;
+        this._setupModWebAudioNodes();
+        this._workletNode.connect(this._gainNode);
         this._reportDebugInfo();
     };
 
@@ -560,6 +736,7 @@
         }
         this._gainNode.gain.value = this._volume;
     };
+
     ExternalAudio.prototype._createModPlayerNode = function () {
         const playerNode = this._context.createScriptProcessor(4096, 0, 2);
         const byteArray = new Uint8Array(this._buffer);
