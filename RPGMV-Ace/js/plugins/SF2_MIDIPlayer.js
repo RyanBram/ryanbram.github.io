@@ -54,7 +54,7 @@
 (function () {
     const pluginName = "SF2_MIDIPlayer_Modular";
     const parameters = PluginManager.parameters(pluginName);
-    const defaultSoundFont = String(parameters["defaultSoundFont"] || "microsoft_gm_3.sf2");
+    const defaultSoundFont = String(parameters["defaultSoundFont"] || "soundfont.sf2");
     const DEBUG = String(parameters["debugMode"] || "false") === "true";
 
     const log = (...args) => DEBUG && console.log(`%c${pluginName}:`, "color: #33aaff;", ...args);
@@ -64,8 +64,8 @@
     // Manages the on-demand loading and state of the SpessaSynth engine.
     const SF2EngineManager = {
         _libScripts: {
-            spessa: "js/plugins/index.js",
-            worklet: "js/plugins/spessasynth_processor.min.js",
+            spessa: "js/plugins/spessasynth_lib.compat.js",
+            worklet: "js/plugins/spessasynth_processor.compat.js",
         },
         _state: "unloaded", // unloaded, loading, ready, failed
         _promise: null,

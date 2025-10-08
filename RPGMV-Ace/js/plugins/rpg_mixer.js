@@ -185,7 +185,7 @@
 
                 try {
                     // 1. Load SpessaSynth main library
-                    await this._loadScript("js/plugins/index.js");
+                    await this._loadScript("js/plugins/spessasynth_lib.js");
                     await this._waitForSpessaLibrary();
                     if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
 
@@ -193,7 +193,7 @@
                     this._spessa.audioContext = WebAudio._context || new AudioContext();
                     if (this._spessa.audioContext.state === "suspended") await this._spessa.audioContext.resume();
 
-                    const workletBlob = await this._fetchScriptAsBlob("js/plugins/spessasynth_processor.min.js");
+                    const workletBlob = await this._fetchScriptAsBlob("js/plugins/spessasynth_processor.js");
                     const workletUrl = URL.createObjectURL(workletBlob);
                     await this._spessa.audioContext.audioWorklet.addModule(workletUrl);
                     URL.revokeObjectURL(workletUrl);
