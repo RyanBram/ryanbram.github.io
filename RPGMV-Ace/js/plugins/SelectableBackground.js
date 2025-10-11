@@ -17,7 +17,7 @@
     // 1251
     Window_Selectable.prototype.drawAllItems = function () {
         var topIndex = this.topIndex();
-        for (var i = 0; i < this.maxPageItems(); i++) {
+        for (var i = 0; i <= this.maxPageItems(); i++) {
             var index = topIndex + i;
             if (index < this.maxItems()) {
                 this.drawItemBackground(index);
