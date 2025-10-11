@@ -1,5 +1,5 @@
 [
 null,
-{"id":1,"expanded":true,"name":"Main Map","order":1,"parentId":0,"scrollX":819,"scrollY":453},
-{"id":2,"expanded":false,"name":"Music Room","order":2,"parentId":0,"scrollX":819,"scrollY":453,"quick":false}
+null,
+{"id":2,"expanded":false,"name":"MAP001","order":1,"parentId":0,"scrollX":648,"scrollY":360.59999999999997}
 ]

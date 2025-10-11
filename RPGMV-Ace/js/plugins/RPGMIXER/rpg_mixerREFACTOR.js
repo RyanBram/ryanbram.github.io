@@ -650,7 +650,6 @@
         }
     };
 
-    /*
     const _alias_AudioManager_stopBgm = AudioManager.stopBgm;
     AudioManager.stopBgm = function () {
         if (this._bgmBuffer && !(this._bgmBuffer instanceof ExternalAudio)) {
@@ -658,28 +657,13 @@
         }
         _alias_AudioManager_stopBgm.call(this);
     };
-*/
-    /*    
-    AudioManager.replayBgm = function (bgm) {
-        if (this.isCurrentBgm(bgm)) return;
-        if (bgm) {
-            this.playBgm(bgm, bgm.pos);
-        }
-    };
-*/
+
     const _alias_AudioManager_stopBgs = AudioManager.stopBgs;
     AudioManager.stopBgs = function () {
         if (this._bgsBuffer && !(this._bgsBuffer instanceof ExternalAudio)) {
             DebugManager.updateInfo({});
         }
         _alias_AudioManager_stopBgs.call(this);
-    };
-
-    AudioManager.replayBgs = function (bgs) {
-        if (this.isCurrentBgs(bgs)) return;
-        if (bgs) {
-            this.playBgs(bgs, bgs.pos);
-        }
     };
 
     const _alias_AudioManager_stopMe = AudioManager.stopMe;
@@ -690,39 +674,31 @@
         _alias_AudioManager_stopMe.call(this);
     };
 
-    /*
-    // NEW: Alias AudioManager.saveBgm to handle ExternalAudio
+    // Gunakan metode "lebih aman" untuk menyimpan posisi BGM
     const _alias_AudioManager_saveBgm = AudioManager.saveBgm;
     AudioManager.saveBgm = function () {
-        if (this._currentBgm && this._bgmBuffer instanceof ExternalAudio) {
-            const bgm = this._currentBgm;
-            // Get position from our new seek method
-            bgm.pos = this._bgmBuffer.seek();
-            return bgm;
-        } else {
-            // Call original method for standard audio
-            return _alias_AudioManager_saveBgm.call(this);
-        }
-    };
-*/
-    // ▶️ ALIAS BARU YANG LEBIH AMAN UNTUK MENANGANI PENYIMPANAN POSISI BGM
-    /*
-    const _alias_AudioManager_saveBgm_mixer = AudioManager.saveBgm;
-    AudioManager.saveBgm = function () {
-        // Panggil fungsi asli terlebih dahulu untuk mendapatkan objek BGM dasar
-        const savedBgm = _alias_AudioManager_saveBgm_mixer.call(this);
+        // Panggil fungsi asli terlebih dahulu
+        const savedBgm = _alias_AudioManager_saveBgm.call(this);
 
-        // Jika BGM yang sedang berjalan adalah ExternalAudio,
-        // pastikan kita menimpa 'pos' dengan nilai dari 'seek' kita.
-        if (this._bgmBuffer && this._bgmBuffer instanceof ExternalAudio) {
+        // Jika BGM adalah ExternalAudio, timpa 'pos' dengan nilai dari method 'seek' kita
+        if (savedBgm && this._bgmBuffer && this._bgmBuffer instanceof ExternalAudio) {
             savedBgm.pos = this._bgmBuffer.seek();
         }
 
         return savedBgm;
     };
+
+    // Terapkan logika yang sama untuk BGS
+    const _alias_AudioManager_saveBgs = AudioManager.saveBgs;
     AudioManager.saveBgs = function () {
-        this.updateBgsParameters(this._currentBgs);
-        return this._currentBgs;
+        // Panggil fungsi asli terlebih dahulu
+        const savedBgs = _alias_AudioManager_saveBgs.call(this);
+
+        // Jika BGS adalah ExternalAudio, timpa 'pos' dengan nilai dari method 'seek' kita
+        if (savedBgs && this._bgsBuffer && this._bgsBuffer instanceof ExternalAudio) {
+            savedBgs.pos = this._bgsBuffer.seek();
+        }
+
+        return savedBgs;
     };
-    */
 })();

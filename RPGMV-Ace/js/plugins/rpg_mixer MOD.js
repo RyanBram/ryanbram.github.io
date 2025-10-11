@@ -160,7 +160,7 @@
 
         _requireSpessaSynth: function () {
             return new Promise(async (resolve, reject) => {
-                if (this._state.spessasynth === "ready") return resolve(this._spessa.lib); // Kembalikan library-nya
+                if (this._state.spessasynth === "ready") return resolve();
                 if (this._state.spessasynth === "failed")
                     return reject("[Rpg_Mixer] SpessaSynth engine previously failed to load.");
 
@@ -168,29 +168,39 @@
                 this._state.spessasynth = "loading";
 
                 try {
-                    // 1. Muat library utama
+                    // 1. Load SpessaSynth main library
                     await this._loadScript("js/libs/spessasynth_lib.js");
-                    await this._waitForSpessaLibrary(); // Ini akan set this._spessa.lib
+                    await this._waitForSpessaLibrary();
                     if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
 
-                    const audioContext = WebAudio._context || new AudioContext();
-                    if (audioContext.state === "suspended") await audioContext.resume();
+                    // 2. Setup AudioContext and Worklet
+                    this._spessa.audioContext = WebAudio._context || new AudioContext();
+                    if (this._spessa.audioContext.state === "suspended") await this._spessa.audioContext.resume();
 
-                    // 2. Muat worklet processor
                     const workletBlob = await this._fetchScriptAsBlob("js/libs/spessasynth_processor.js");
                     const workletUrl = URL.createObjectURL(workletBlob);
-                    await audioContext.audioWorklet.addModule(workletUrl);
+                    await this._spessa.audioContext.audioWorklet.addModule(workletUrl);
                     URL.revokeObjectURL(workletUrl);
 
-                    // 3. Muat soundfont dan simpan di cache manager untuk digunakan nanti
+                    // 3. Initialize Synthesizer and connect nodes
+                    this._spessa.synthesizer = new this._spessa.lib.WorkletSynthesizer(this._spessa.audioContext);
+                    this._spessa.gainNode = this._spessa.audioContext.createGain();
+                    this._spessa.synthesizer.connect(this._spessa.gainNode);
+                    this._spessa.gainNode.connect(WebAudio._masterGainNode || this._spessa.audioContext.destination);
+
+                    // 4. Load HARDCODED SoundFont
                     const sfUrl = "audio/soundfonts/soundfont.sf2";
                     const sfResponse = await fetch(sfUrl);
                     if (!sfResponse.ok) throw new Error(`SoundFont not found at: ${sfUrl}`);
-                    this._spessa.soundfontBuffer = await sfResponse.arrayBuffer(); // Simpan buffer soundfont
+                    const sfBuffer = await sfResponse.arrayBuffer();
+                    await this._spessa.synthesizer.soundBankManager.addSoundBank(sfBuffer, "default");
+
+                    // 5. Create Sequencer
+                    this._spessa.sequencer = new this._spessa.lib.Sequencer(this._spessa.synthesizer);
 
                     this._state.spessasynth = "ready";
                     console.log("[Rpg_Mixer] SpessaSynth engine is ready.");
-                    resolve(this._spessa.lib); // Berhasil, kembalikan library-nya
+                    resolve();
                 } catch (error) {
                     this._state.spessasynth = "failed";
                     console.error("[Rpg_Mixer] FAILED to initialize SpessaSynth engine.", error);
@@ -288,9 +298,7 @@
         this._loadTime = undefined;
         this._decodeTime = undefined;
         this._gainNode = null;
-        this._workletNode = null; // MOD
-        this._synthesizer = null; // MIDI
-        this._sequencer = null; //MIDI
+        this._workletNode = null;
     };
 
     ExternalAudio.prototype.play = function (loop, offset) {
@@ -299,43 +307,63 @@
             return;
         }
 
-        // NEW: Check if the current buffer is the same as the one in the sequencer
-        const isSameSong =
-            this._format === "midi" &&
-            BackendManager._spessa.sequencer &&
-            BackendManager._spessa.sequencer.activeSong &&
-            BackendManager._spessa.sequencer.activeSong.arrayBuffer === this._buffer;
-
-        if (!isSameSong) {
-            this.stop(); // Only stop if it's a different song
-        }
-
+        this.stop();
         this._loop = loop;
+
         const backendName = formatHandlers[this._format].backend;
 
         BackendManager.require(backendName)
             .then(() => {
                 if (this._format === "midi") {
-                    this._playMidi(offset, isSameSong); // Pass the flag
+                    this._playMidi(offset || 0);
                 } else if (this._format === "mod") {
-                    this._playMod(offset);
+                    this._playMod(offset || 0);
                 }
             })
             .catch((error) => {
                 console.error(`[Rpg_Mixer] Backend '${backendName}' failed to load.`, error);
             });
     };
+    /*
+    ExternalAudio.prototype.pause = function () {
+        if (this._workletNode && !this._isPaused) {
+            if (this._format === "mod") {
+                this._workletNode.port.postMessage({ cmd: "pause" });
+                this._isPaused = true;
+            } else if (this._format === "midi") {
+                const sequencer = BackendManager._spessa.sequencer;
+                if (sequencer && sequencer.isPlaying) {
+                    sequencer.pause();
+                    this._isPaused = true;
+                }
+            }
+        }
+    };
 
+    ExternalAudio.prototype.resume = function () {
+        if (this._format === "mod" && this._workletNode && this._isPaused) {
+            this._workletNode.port.postMessage({ cmd: "unpause" });
+            this._isPaused = false;
+        } else if (this._format === "midi") {
+            const sequencer = BackendManager._spessa.sequencer;
+            if (sequencer && sequencer.paused) {
+                sequencer.play();
+                this._isPaused = false;
+            }
+        }
+    };
+*/
     ExternalAudio.prototype.isReady = function () {
         return !!this._buffer;
     };
 
     ExternalAudio.prototype.isPlaying = function () {
         if (this._format === "midi") {
-            return BackendManager._spessa.sequencer && BackendManager._spessa.sequencer.isPlaying;
+            const sequencer = BackendManager._spessa.sequencer;
+            return !!(sequencer && sequencer.isPlaying && !this._isPaused);
         }
         if (this._format === "mod") {
-            return !!this._workletNode;
+            return !!this._workletNode && !this._isPaused;
         }
         return false;
     };
@@ -402,8 +430,14 @@
      * @returns {GainNode|null} The active GainNode for the current audio format.
      */
     ExternalAudio.prototype._getActiveGainNode = function () {
-        // Jauh lebih sederhana!
-        return this._gainNode;
+        if (this._format === "midi") {
+            // MIDI menggunakan GainNode bersama dari SpessaSynth
+            return BackendManager._spessa.gainNode;
+        } else if (this._format === "mod") {
+            // MOD menggunakan GainNode milik instance ini
+            return this._gainNode;
+        }
+        return null;
     };
 
     ExternalAudio.prototype.fadeOut = function (duration) {
@@ -445,18 +479,35 @@
         } else if (this._format === "mod") {
             this._stopMod();
         }
+        this._currentTime = 0;
+        this._isPaused = false;
     };
 
-    ExternalAudio.prototype.seek = function () {
-        if (this._format === "midi") {
-            if (this._sequencer) {
-                return this._sequencer.currentTime || 0;
+    ExternalAudio.prototype.seek = function (position) {
+        if (position !== undefined) {
+            // --- Setter ---
+            if (this._format === "mod" && this._workletNode) {
+                this._workletNode.port.postMessage({ cmd: "setPos", val: position });
+                this._currentTime = position;
+            } else if (this._format === "midi") {
+                // MODIFIKASI MIDI: Atur currentTime pada sequencer
+                const sequencer = BackendManager._spessa.sequencer;
+                if (sequencer) {
+                    sequencer.currentTime = position;
+                }
             }
+        } else {
+            // --- Getter ---
+            if (this._format === "midi") {
+                const sequencer = BackendManager._spessa.sequencer;
+                if (sequencer) {
+                    return sequencer.currentTime;
+                }
+            } else if (this._format === "mod") {
+                return this._currentTime;
+            }
+            return 0;
         }
-        if (this._format === "mod") {
-            return this._currentPosition || 0;
-        }
-        return 0;
     };
 
     Object.defineProperty(ExternalAudio.prototype, "volume", {
@@ -465,67 +516,61 @@
         },
         set: function (value) {
             this._volume = value;
-            // Logika disatukan karena sekarang MIDI dan MOD sama-sama pakai this._gainNode
-            if (this._gainNode) {
-                this._gainNode.gain.setValueAtTime(this._volume, this._context.currentTime);
+            if (this._format === "midi") {
+                if (BackendManager._spessa.gainNode) {
+                    const engine = BackendManager._spessa;
+                    engine.gainNode.gain.setValueAtTime(this._volume, engine.audioContext.currentTime);
+                }
+            } else if (this._format === "mod" && this._gainNode) {
+                this._gainNode.gain.value = this._volume;
             }
         },
         configurable: true,
     });
 
+    // --- Metode spesifik untuk MIDI ---
     ExternalAudio.prototype._playMidi = function (offset) {
-        // Hentikan instance sebelumnya jika ada
-        this.stop();
+        const startTime = performance.now();
+        this._workletNode = BackendManager._spessa.synthNode; // a single node for all midis
+        const buffer = this._buffer;
+        const name = this._url;
 
-        const SpessaLib = BackendManager._spessa.lib;
-        const soundfont = BackendManager._spessa.soundfontBuffer;
+        // --- KOREKSI DIMULAI ---
+        // Fungsi yang benar adalah 'loadNewSongList' dan membutuhkan array objek lagu.
+        const songList = [
+            {
+                binary: buffer,
+                fileName: name,
+            },
+        ];
+        BackendManager._spessa.sequencer.loadNewSongList(songList);
+        // --- KOREKSI SELESAI ---
 
-        if (!SpessaLib || !soundfont) {
-            console.error("[Rpg_Mixer] SpessaSynth library or soundfont not ready.");
-            return;
+        BackendManager._spessa.sequencer.loop = this._loop;
+        BackendManager._spessa.sequencer.play();
+
+        // Terapkan offset jika ada
+        if (offset > 0) {
+            BackendManager._spessa.sequencer.currentTime = offset;
         }
 
-        // 1. Buat node audio untuk instance ini
-        this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
-        this._gainNode = this._context.createGain();
-        this._gainNode.gain.value = this._volume;
-
-        // 2. Hubungkan node: synthesizer -> gainNode -> masterGain
-        this._synthesizer.connect(this._gainNode);
-        this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
-
-        // 3. Siapkan sequencer
-        this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
-
-        // 4. Load soundfont dan lagu, lalu mainkan
-        this._synthesizer.soundBankManager.addSoundBank(soundfont.slice(0), "default").then(() => {
-            this._sequencer.loadNewSongList([{ binary: this._buffer }]);
-            this._sequencer.loopCount = this._loop ? Infinity : 0;
-            this._sequencer.currentTime = offset || 0;
-            this._sequencer.play();
-            this._reportDebugInfo();
-        });
+        this._decodeTime = performance.now() - startTime;
+        this._setupWebAudioNodes();
+        this._gainNode.connect(this._context.destination);
+        this._reportDebugInfo();
     };
 
     ExternalAudio.prototype._stopMidi = function () {
-        if (this._sequencer) {
-            this._sequencer.pause();
-            this._sequencer = null;
-        }
-        if (this._synthesizer) {
-            this._synthesizer.disconnect();
-            this._synthesizer = null;
-        }
-        if (this._gainNode) {
-            this._gainNode.disconnect();
-            this._gainNode = null;
+        const engine = BackendManager._spessa;
+        if (engine.sequencer) {
+            engine.sequencer.pause();
+            if (engine.gainNode) {
+                engine.gainNode.gain.cancelScheduledValues(engine.audioContext.currentTime);
+            }
         }
     };
 
     ExternalAudio.prototype._playMod = function (offset) {
-        const pos = offset || 0;
-        this._currentPosition = pos; // Inisialisasi posisi
-
         const startTime = performance.now();
         this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
             numberOfInputs: 0,
@@ -533,20 +578,18 @@
             outputChannelCount: [2],
         });
         this._workletNode.port.onmessage = (msg) => {
-            const data = msg.data;
-            if (data.cmd === "pos") {
-                this._currentPosition = data.pos;
-            } else if (data.cmd === "meta" && pos > 0) {
-                this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
-            } else if (data.cmd === "end") {
-                if (this._loop) {
-                    this.play(this._loop, 0); // Loop kembali ke awal
-                } else {
-                    this.stop();
-                }
+            if (msg.data.cmd === "end" && !this._loop) {
+                this.stop();
             }
         };
-
+        this._workletNode.port.onmessage = (msg) => {
+            const data = msg.data;
+            if (data.cmd === "end" && !this._loop) {
+                this.stop();
+            } else if (data.cmd === "pos") {
+                this._currentTime = data.pos;
+            }
+        };
         const config = {
             repeatCount: this._loop ? -1 : 0,
             stereoSeparation: 100,
@@ -554,8 +597,14 @@
         };
         this._workletNode.port.postMessage({ cmd: "config", val: config });
         this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
+        if (offset > 0) {
+            this._workletNode.port.postMessage({ cmd: "setPos", val: offset });
+            this._currentTime = offset;
+        } else {
+            this._currentTime = 0;
+        }
         this._decodeTime = performance.now() - startTime;
-        this._setupModWebAudioNodes();
+        this._setupWebAudioNodes();
         this._workletNode.connect(this._gainNode);
         this._reportDebugInfo();
     };
@@ -568,7 +617,7 @@
         }
     };
 
-    ExternalAudio.prototype._setupModWebAudioNodes = function () {
+    ExternalAudio.prototype._setupWebAudioNodes = function () {
         if (!this._gainNode) {
             this._gainNode = this._context.createGain();
             this._gainNode.connect(WebAudio._masterGainNode);
@@ -579,9 +628,6 @@
     //=============================================================================
     // AudioManager Integration (The Core Hook)
     //=============================================================================
-    AudioManager._savedBgm = null;
-    AudioManager._savedBgs = null;
-
     const _AudioManager_createBuffer = AudioManager.createBuffer;
     AudioManager.createBuffer = function (folder, name) {
         const nameWithoutExt = name.replace(/\.ogg$/, "");
@@ -650,36 +696,12 @@
         }
     };
 
-    /*
-    const _alias_AudioManager_stopBgm = AudioManager.stopBgm;
-    AudioManager.stopBgm = function () {
-        if (this._bgmBuffer && !(this._bgmBuffer instanceof ExternalAudio)) {
-            DebugManager.updateInfo({});
-        }
-        _alias_AudioManager_stopBgm.call(this);
-    };
-*/
-    /*    
-    AudioManager.replayBgm = function (bgm) {
-        if (this.isCurrentBgm(bgm)) return;
-        if (bgm) {
-            this.playBgm(bgm, bgm.pos);
-        }
-    };
-*/
     const _alias_AudioManager_stopBgs = AudioManager.stopBgs;
     AudioManager.stopBgs = function () {
         if (this._bgsBuffer && !(this._bgsBuffer instanceof ExternalAudio)) {
             DebugManager.updateInfo({});
         }
         _alias_AudioManager_stopBgs.call(this);
-    };
-
-    AudioManager.replayBgs = function (bgs) {
-        if (this.isCurrentBgs(bgs)) return;
-        if (bgs) {
-            this.playBgs(bgs, bgs.pos);
-        }
     };
 
     const _alias_AudioManager_stopMe = AudioManager.stopMe;
@@ -689,40 +711,4 @@
         }
         _alias_AudioManager_stopMe.call(this);
     };
-
-    /*
-    // NEW: Alias AudioManager.saveBgm to handle ExternalAudio
-    const _alias_AudioManager_saveBgm = AudioManager.saveBgm;
-    AudioManager.saveBgm = function () {
-        if (this._currentBgm && this._bgmBuffer instanceof ExternalAudio) {
-            const bgm = this._currentBgm;
-            // Get position from our new seek method
-            bgm.pos = this._bgmBuffer.seek();
-            return bgm;
-        } else {
-            // Call original method for standard audio
-            return _alias_AudioManager_saveBgm.call(this);
-        }
-    };
-*/
-    // ▶️ ALIAS BARU YANG LEBIH AMAN UNTUK MENANGANI PENYIMPANAN POSISI BGM
-    /*
-    const _alias_AudioManager_saveBgm_mixer = AudioManager.saveBgm;
-    AudioManager.saveBgm = function () {
-        // Panggil fungsi asli terlebih dahulu untuk mendapatkan objek BGM dasar
-        const savedBgm = _alias_AudioManager_saveBgm_mixer.call(this);
-
-        // Jika BGM yang sedang berjalan adalah ExternalAudio,
-        // pastikan kita menimpa 'pos' dengan nilai dari 'seek' kita.
-        if (this._bgmBuffer && this._bgmBuffer instanceof ExternalAudio) {
-            savedBgm.pos = this._bgmBuffer.seek();
-        }
-
-        return savedBgm;
-    };
-    AudioManager.saveBgs = function () {
-        this.updateBgsParameters(this._currentBgs);
-        return this._currentBgs;
-    };
-    */
 })();

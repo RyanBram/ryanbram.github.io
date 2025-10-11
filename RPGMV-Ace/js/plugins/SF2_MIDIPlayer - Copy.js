@@ -96,6 +96,15 @@
                     await this._waitForLibrary();
                     if (!this.lib) throw new Error("SpessaSynthLib not found on window.");
 
+                    // 2. Setup AudioContext and Worklet
+                    this.audioContext = WebAudio._context || new AudioContext();
+                    if (this.audioContext.state === "suspended") await this.audioContext.resume();
+
+                    const workletBlob = await this._fetchScriptAsBlob("worklet");
+                    const workletUrl = URL.createObjectURL(workletBlob);
+                    await this.audioContext.audioWorklet.addModule(workletUrl);
+                    URL.revokeObjectURL(workletUrl);
+
                     // 3. Initialize Synthesizer and connect nodes
                     this.synthesizer = new this.lib.WorkletSynthesizer(this.audioContext);
                     this.gainNode = this.audioContext.createGain();
