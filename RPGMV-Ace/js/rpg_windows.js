@@ -59,7 +59,7 @@ Window_Base.prototype.textPadding = function() {
 };
 
 Window_Base.prototype.standardBackOpacity = function() {
-    return 192;
+    return 255;
 };
 
 Window_Base.prototype.loadWindowskin = function() {
