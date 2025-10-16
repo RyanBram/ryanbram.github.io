@@ -201,58 +201,39 @@
     //   rpg_windows.js
     //=============================================================================
 
-    function adjustRatio() {
-        const aspectRatio = window.innerWidth / window.innerHeight;
-        let screenWidth;
-        const screenHeight = paramScreenHeight;
+    var aspectRatio = window.innerWidth / window.innerHeight;
 
-        // The logic is now dynamic for both mobile and desktop
+    var screenWidth;
+    var screenHeight = paramScreenHeight;
+
+    if (!Utils.isMobileDevice()) {
+        screenWidth = paramScreenWidth;
+    } else {
         screenWidth = Math.round(screenHeight * aspectRatio);
-
-        // Ensure minimum width is not smaller than the default screen width from parameters
-        if (screenWidth < paramScreenWidth) {
-            screenWidth = paramScreenWidth;
-        }
-
-        let windowWidth = paramWindowWidth;
-        let windowHeight = paramWindowHeight;
-
-        // Set the new dimensions for SceneManager and Graphics
-        SceneManager._screenWidth = screenWidth;
-        SceneManager._screenHeight = screenHeight;
-        SceneManager._boxWidth = windowWidth;
-        SceneManager._boxHeight = windowHeight;
-
-        Graphics.width = screenWidth;
-        Graphics.height = screenHeight;
-
-        // [FIX] Use the MV-compatible method to resize the renderer
-        if (Graphics._renderer) {
-            Graphics._renderer.resize(screenWidth, screenHeight);
-        }
-
-        Graphics._updateAllElements();
-
-        // Refresh the title scene if it's the current scene
-        if (SceneManager._scene && SceneManager._scene instanceof Scene_Title) {
-            SceneManager.goto(Scene_Title);
-        }
     }
 
-    // Add resize event listener
-    window.addEventListener("resize", adjustRatio);
+    var windowWidth;
+    var windowHeight;
 
-    //=============================================================================
-    // Original Plugin Content (with necessary initial setup)
-    //=============================================================================
+    if (paramWindowWidth) {
+        windowWidth = paramWindowWidth;
+    } else if (screenWidth !== SceneManager._screenWidth) {
+        windowWidth = screenWidth;
+    }
+
+    if (paramWindowHeight) {
+        windowHeight = paramWindowHeight;
+    } else if (screenHeight !== SceneManager._screenHeight) {
+        windowHeight = screenHeight;
+    }
 
     ImageCache.limit = paramCacheLimit * 1000 * 1000;
+    SceneManager._screenWidth = screenWidth;
+    SceneManager._screenHeight = screenHeight;
+    SceneManager._boxWidth = windowWidth;
+    SceneManager._boxHeight = windowHeight;
 
-    // The initial setup is now handled by adjustRatio, but we set a default
-    SceneManager._screenWidth = paramScreenWidth;
-    SceneManager._screenHeight = paramScreenHeight;
-    SceneManager._boxWidth = paramWindowWidth;
-    SceneManager._boxHeight = paramWindowHeight;
+    //============================[ rpg_core.js ]==================================
 
     //.Graphics.setErrorMessage(paramErrorMessage);
     //.Graphics.setShowErrorDetail(paramShowErrorDetail);
@@ -414,14 +395,14 @@
     var _SceneManager_initNwjs = SceneManager.initNwjs;
     SceneManager.initNwjs = function () {
         _SceneManager_initNwjs.apply(this, arguments);
-        // [FIX] Use parameter variables instead of dynamic ones
-        if (Utils.isNwjs() && paramScreenWidth && paramScreenHeight) {
-            var dw = paramScreenWidth - window.innerWidth;
-            var dh = paramScreenHeight - window.innerHeight;
+        if (Utils.isNwjs() && screenWidth && screenHeight) {
+            var dw = screenWidth - window.innerWidth;
+            var dh = screenHeight - window.innerHeight;
             window.moveBy(-dw / 2, -dh / 2);
             window.resizeBy(dw, dh);
         }
     };
+
     // 2120
     if (paramMaxRenderingFps) {
         var currentTime = Date.now();
@@ -483,11 +464,10 @@
     //-----------------------------------------------------------------------------
 
     //===========================[ rpg_scenes.js ]=================================
-    // Call adjustRatio on game start
-    const _Scene_Boot_start = Scene_Boot.prototype.start;
+    // [NEW from StartUpFullScreen] - Start game in FullScreen if enabled
+    var _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function () {
         _Scene_Boot_start.apply(this, arguments);
-        adjustRatio();
         // Only run on Desktop and if not in event test mode
         if (Utils.isNwjs() && ConfigManager.startUpFullScreen && !DataManager.isEventTest()) {
             Graphics.requestFullScreen();
