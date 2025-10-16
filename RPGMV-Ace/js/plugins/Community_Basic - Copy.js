@@ -89,39 +89,6 @@
  * @type number
  * @desc The maximum value of rendering frame per seconds (0: unlimited)
  * @default 0
- *
- * @param ---Full Screen & Exit---
- *
- * @param Default Full Screen
- * @type boolean
- * @desc If set to ON, the game will start in full screen mode.
- * @on ON
- * @off OFF
- * @default false
- *
- * @param Full Screen Option Name
- * @type string
- * @desc The text for the full screen option in the Options menu.
- * @default Full Screen
- *
- * @param Add Shutdown to Title
- * @type boolean
- * @desc If set to ON, adds a "Shutdown" command to the title screen.
- * @on ON
- * @off OFF
- * @default true
- *
- * @param Shutdown Command Name
- * @type string
- * @desc The text for the Shutdown command.
- * @default Shutdown
- *
- * @param Add Shutdown to Game End
- * @type boolean
- * @desc If set to ON, adds a "Shutdown" command to the game end screen.
- * @on ON
- * @off OFF
- * @default true
  */
 
 (function () {
@@ -183,11 +150,6 @@
     var paramErrorMessage = parameters["Error Message"];
     var paramShowErrorDetail = parameters["Show Error Detail"] === "true";
     var paramEnableProgressBar = parameters["Enable Progress Bar"] === "true";
-    var paramDefaultFullScreen = parameters["Default Full Screen"] === "true";
-    var paramFullScreenOptionName = parameters["Full Screen Option Name"] || "Full Screen";
-    var paramAddShutdownToTitle = parameters["Add Shutdown to Title"] === "true";
-    var paramShutdownCommandName = parameters["Shutdown Command Name"] || "Shutdown";
-    var paramAddShutdownToGameEnd = parameters["Add Shutdown to Game End"] === "true";
 
     //-----------------------------------------------------------------------------
 
@@ -238,12 +200,6 @@
     //.Graphics.setErrorMessage(paramErrorMessage);
     //.Graphics.setShowErrorDetail(paramShowErrorDetail);
     //.Graphics.setProgressEnabled(paramEnableProgressBar);
-
-    // [NEW from StartUpFullScreen] - Graphics FullScreen Request
-    Graphics.requestFullScreen = function () {
-        if (this._isFullScreen()) return;
-        this._requestFullScreen();
-    };
 
     // 2633 - Make game screen always start in fit mode, can be toggled by F3 (1/1)
     Graphics._defaultStretchMode = function () {
@@ -361,21 +317,6 @@
         }
     };
 
-    ConfigManager.startUpFullScreen = paramDefaultFullScreen;
-
-    var _ConfigManager_makeData = ConfigManager.makeData;
-    ConfigManager.makeData = function () {
-        var config = _ConfigManager_makeData.apply(this, arguments);
-        config.startUpFullScreen = this.startUpFullScreen;
-        return config;
-    };
-
-    var _ConfigManager_applyData_FullScreen = ConfigManager.applyData;
-    ConfigManager.applyData = function (config) {
-        _ConfigManager_applyData_FullScreen.apply(this, arguments);
-        this.startUpFullScreen = this.readFlag(config, "startUpFullScreen", paramDefaultFullScreen);
-    };
-
     // 1908
     SceneManager.preferableRendererType = function () {
         if (Utils.isOptionValid("canvas")) {
@@ -464,57 +405,6 @@
     //-----------------------------------------------------------------------------
 
     //===========================[ rpg_scenes.js ]=================================
-    // [NEW from StartUpFullScreen] - Start game in FullScreen if enabled
-    var _Scene_Boot_start = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function () {
-        _Scene_Boot_start.apply(this, arguments);
-        // Only run on Desktop and if not in event test mode
-        if (Utils.isNwjs() && ConfigManager.startUpFullScreen && !DataManager.isEventTest()) {
-            Graphics.requestFullScreen();
-        }
-    };
-
-    // [NEW from StartUpFullScreen] - Add Shutdown command to Title Screen
-    if (paramAddShutdownToTitle && Utils.isNwjs()) {
-        var _Scene_Title_createCommandWindow = Scene_Title.prototype.createCommandWindow;
-        Scene_Title.prototype.createCommandWindow = function () {
-            _Scene_Title_createCommandWindow.apply(this, arguments);
-            this._commandWindow.setHandler("shutdown", this.commandShutdown.bind(this));
-        };
-
-        Scene_Title.prototype.commandShutdown = function () {
-            this._commandWindow.close();
-            this.fadeOutAll();
-            SceneManager.goto(Scene_Terminate);
-        };
-    }
-
-    // [NEW from StartUpFullScreen] - Add Shutdown command to Game End Screen
-    if (paramAddShutdownToGameEnd && Utils.isNwjs()) {
-        var _Scene_GameEnd_createCommandWindow = Scene_GameEnd.prototype.createCommandWindow;
-        Scene_GameEnd.prototype.createCommandWindow = function () {
-            _Scene_GameEnd_createCommandWindow.apply(this, arguments);
-            this._commandWindow.setHandler("shutdown", this.commandShutdown.bind(this));
-        };
-
-        Scene_GameEnd.prototype.commandShutdown = function () {
-            this._commandWindow.close();
-            this.fadeOutAll();
-            SceneManager.goto(Scene_Terminate);
-        };
-    }
-
-    // [NEW from StartUpFullScreen] - Scene_Terminate for exiting the game
-    function Scene_Terminate() {
-        this.initialize.apply(this, arguments);
-    }
-
-    Scene_Terminate.prototype = Object.create(Scene_Base.prototype);
-    Scene_Terminate.prototype.constructor = Scene_Terminate;
-
-    Scene_Terminate.prototype.start = function () {
-        SceneManager.terminate();
-    };
 
     // 443 - Adjusting Title Background size based on screen resolution (1/2)
     Scene_Title.prototype.start = function () {
@@ -668,87 +558,6 @@
         }
     };
 */
-
-    // [NEW from StartUpFullScreen] - Add Shutdown to Title Command Window
-    if (paramAddShutdownToTitle && Utils.isNwjs()) {
-        var _Window_TitleCommand_makeCommandList = Window_TitleCommand.prototype.makeCommandList;
-        Window_TitleCommand.prototype.makeCommandList = function () {
-            _Window_TitleCommand_makeCommandList.apply(this, arguments);
-            this.addCommand(paramShutdownCommandName, "shutdown");
-        };
-    }
-
-    // [NEW from StartUpFullScreen] - Add Shutdown to Game End Command Window
-    if (paramAddShutdownToGameEnd && Utils.isNwjs()) {
-        var _Window_GameEnd_makeCommandList = Window_GameEnd.prototype.makeCommandList;
-        Window_GameEnd.prototype.makeCommandList = function () {
-            _Window_GameEnd_makeCommandList.apply(this, arguments);
-            this.addCommand(paramShutdownCommandName, "shutdown");
-            // This line reorders the commands to place Shutdown correctly
-            this._list.splice(this._list.length - 2, 0, this._list.pop());
-        };
-    }
-
-    // [NEW from StartUpFullScreen] - Add FullScreen option to Options Window
-    if (Utils.isNwjs()) {
-        var _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
-        Window_Options.prototype.addGeneralOptions = function () {
-            _Window_Options_addGeneralOptions.apply(this, arguments);
-            this.addCommand(paramFullScreenOptionName, "startUpFullScreen");
-        };
-
-        var _Window_Options_processOk = Window_Options.prototype.processOk;
-        Window_Options.prototype.processOk = function () {
-            var index = this.index();
-            var symbol = this.commandSymbol(index);
-            if (symbol === "startUpFullScreen") {
-                var value = this.getConfigValue(symbol);
-                this.changeValue(symbol, !value);
-                if (!value) {
-                    Graphics.requestFullScreen();
-                } else {
-                    Graphics._cancelFullScreen();
-                }
-            } else {
-                _Window_Options_processOk.apply(this, arguments);
-            }
-        };
-
-        // --- F4 Key Synchronization Fix ---
-        function syncFullScreenStatus() {
-            var isFullScreen = Graphics._isFullScreen();
-            if (ConfigManager.startUpFullScreen !== isFullScreen) {
-                ConfigManager.startUpFullScreen = isFullScreen;
-            }
-        }
-        document.addEventListener("fullscreenchange", syncFullScreenStatus);
-        document.addEventListener("webkitfullscreenchange", syncFullScreenStatus);
-        document.addEventListener("mozfullscreenchange", syncFullScreenStatus);
-        document.addEventListener("MSFullscreenChange", syncFullScreenStatus);
-
-        var _Window_Options_update = Window_Options.prototype.update;
-        Window_Options.prototype.update = function () {
-            _Window_Options_update.call(this);
-            var symbol = "startUpFullScreen";
-            var index = this.findSymbol(symbol);
-            if (index > -1) {
-                var text = this.statusText(index);
-                // Simple check if text representation has changed
-                if (this._lastStatusText[index] !== text) {
-                    this._lastStatusText[index] = text;
-                    this.redrawItem(index);
-                }
-            }
-        };
-
-        var _Window_Options_drawItem = Window_Options.prototype.drawItem;
-        Window_Options.prototype.drawItem = function (index) {
-            _Window_Options_drawItem.apply(this, arguments);
-            if (!this._lastStatusText) this._lastStatusText = {};
-            this._lastStatusText[index] = this.statusText(index);
-        };
-    }
-
     // 4295 - Adjusting message text speed (1/1)
     var _Window_Message_clearFlags = Window_Message.prototype.clearFlags;
     Window_Message.prototype.clearFlags = function (textState) {

@@ -1,211 +1,55 @@
 /*:
- * @plugindesc (v2.3.3) A unified dynamic audio mixer for RPG Maker MV to play external formats like MIDI and MOD with effects.
+ * @plugindesc (v2.2) A unified dynamic audio mixer for RPG Maker MV to play external formats like MIDI and MOD.
  * @author RyanBram
- * @license Apache License
+ * @license MIT
  * @target MV
  *
  * @help
  * ==============================================================================
  * Rpg_Mixer - A Unified Dynamic Audio Player
  * ==============================================================================
- * Version 2.3.3: Revised Reverb implementation to support built-in default sound.
+ * Version 2.2: Refined & Optimized
  *
  * --- Introduction ---
  * This plugin acts as a central mixer to play various external audio formats.
- * It now features DYNAMIC LOADING and global effects for MIDI.
+ * It now features DYNAMIC LOADING: backend libraries are only loaded when a
+ * file that requires them is actually played.
+ * This improves performance and prevents game crashes if a backend is missing.
  *
- * --- MIDI Effects (Chorus & Reverb) ---
- * You can now enable global Chorus and Reverb effects for all MIDI files.
+ * --- Requirements (Optional Backends) ---
+ * Place the backend libraries you need in your project's `js/libs/` folder.
  *
- * - Chorus Parameters: (See previous version for details)
+ * - For MIDI playback: spessasynth_lib.js, spessasynth_processor.js, and a soundfont file.
+ * - For Module playback: libopenmpt.worklet.js
  *
- * - Reverb (Gema):
- * - Reverb IR File (Opsional): Anda bisa menggunakan file Impulse
- * Response (.wav) kustom untuk suara gema yang unik (misal: gema gereja,
- * gua, dll.). Tempatkan file di folder /audio/.
- * - JIKA DIKOSONGKAN: Reverb akan tetap berfungsi menggunakan
- * suara gema default yang sudah ada di dalam library.
+ * --- How to Use ---
+ *
+ * 1. Place your custom audio file (e.g., `mymusic.mid`, `cooltune.it`) in the
+ * appropriate audio folder (`/audio/bgm/`, `/audio/bgs/`, or `/audio/me/`).
+ *
+ * 2. IMPORTANT: To make the file selectable in the RPG Maker MV editor, you must
+ * rename the original file's extension to `.ogg`.
+ *
+ * 3. Add a special suffix before the new `.ogg` extension to identify the format.
+ *
+ * - For MIDI files (.mid): Use the `_mid or `_rmi` suffix.
+ * Example: `battle.mid` -> `battle_mid.ogg`
+ *
+ * - For Module files (.mod, .xm, .s3m, .it, .mo3): Use a suffix like
+ * `_mod`, `_xm`, `_s3m`, etc.
+ * Example: `dungeon.it` -> `dungeon_it.ogg`
+ *
+ * 4. Use the event commands (Play BGM, BGS, ME) as usual. If a backend library
+ * is missing, the game will post a warning to the console (F8) and continue
+ * running without sound, instead of crashing.
  *
  * --- License ---
  * Released under the MIT license.
- *
- * @param --- MIDI Effects ---
- *
- * @param enableReverb
- * @text Enable Reverb
- * @desc Mengaktifkan efek reverb (gema) global untuk pemutaran MIDI.
- * @type boolean
- * @default false
- *
- * @param reverbMix
- * @text Reverb Mix Level
- * @desc Mengontrol volume gema (reverb). 0.0 (kering) hingga 1.0 (basah).
- * Nilai wajar: 0.2 - 0.5
- * @type number
- * @decimals 2
- * @default 0.3
- *
- * @param reverbIRFile
- * @text Reverb IR File (Opsional)
- * @desc File .wav untuk reverb. Jika dikosongkan, akan menggunakan suara
- * reverb default dari library.
- * @type file
- * @dir audio/
- * @default
- *
- * @param enableChorus
- * @text Enable Chorus
- * @desc Mengaktifkan efek chorus global untuk pemutaran MIDI.
- * @type boolean
- * @default false
- *
- * @param chorusDepth
- * @text Chorus Depth (s)
- * @desc Mengontrol lebar modulasi chorus dalam detik.
- * Nilai wajar: 0.001 - 0.004
- * @type number
- * @decimals 3
- * @default 0.002
- *
- * @param chorusRate
- * @text Chorus Rate (Hz)
- * @desc Mengontrol kecepatan modulasi chorus dalam Hertz.
- * Nilai wajar: 0.5 - 2.0
- * @type number
- * @decimals 2
- * @default 1.5
- *
- * @param chorusDelay
- * @text Chorus Delay (s)
- * @desc Waktu tunda dasar untuk chorus dalam detik.
- * Nilai wajar: 0.020 - 0.035
- * @type number
- * @decimals 3
- * @default 0.025
- *
  */
 
 "use strict";
 
 (function () {
-    const pluginName = "Rpg_Mixer";
-    const parameters = PluginManager.parameters(pluginName);
-
-    // --- Global Effects Manager ---
-    const EffectsManager = {
-        _isInitialized: false,
-        _pluginParameters: {
-            enableChorus: parameters["enableChorus"] === "true",
-            chorusDepth: parseFloat(parameters["chorusDepth"] || 0.3),
-            chorusRate: parseFloat(parameters["chorusRate"] || 1.5),
-            chorusDelay: parseFloat(parameters["chorusDelay"] || 0.025),
-            enableReverb: parameters["enableReverb"] === "true",
-            reverbIRFile: parameters["reverbIRFile"],
-        },
-        _context: null,
-        _chorus: null,
-        _reverb: null,
-        _inputNode: null,
-        _outputNode: null,
-
-        initialize: function (SpessaLib, audioContext) {
-            if (this._isInitialized || !audioContext) return;
-            this._isInitialized = true;
-            this._context = audioContext;
-
-            // Panggil decoder reverb bawaan sekali saja saat inisialisasi
-            if (SpessaLib.decodeReverb) {
-                SpessaLib.decodeReverb(this._context);
-            }
-
-            console.log("[Rpg_Mixer] Initializing global effects...");
-
-            this._inputNode = this._context.createGain();
-            this._outputNode = this._context.createGain();
-            let lastNode = this._inputNode;
-
-            if (this._pluginParameters.enableChorus) {
-                try {
-                    const chorusConfig = {
-                        depth: this._pluginParameters.chorusDepth,
-                        rate: this._pluginParameters.chorusRate,
-                        delay: this._pluginParameters.chorusDelay * 1000,
-                    };
-                    this._chorus = new SpessaLib.ChorusProcessor(this._context, chorusConfig);
-                    lastNode.connect(this._chorus.input);
-                    lastNode = this._chorus.output;
-                    console.log("[Rpg_Mixer] Global Chorus effect enabled.", chorusConfig);
-                } catch (e) {
-                    console.error("[Rpg_Mixer] Failed to create or connect ChorusProcessor.", e);
-                }
-            }
-
-            const reverbMixLevel = parseFloat(this._pluginParameters.reverbMix || 0.3); // Baca parameter baru
-
-            // --- LOGIKA REVERB DIPERBARUI ---
-            if (this._pluginParameters.enableReverb) {
-                // Jika ada file IR yang ditentukan, muat file tersebut
-                if (this._pluginParameters.reverbIRFile) {
-                    this._loadImpulseResponse().then((impulseResponse) => {
-                        if (impulseResponse) {
-                            try {
-                                // Tambahkan 'mix' ke config
-                                const reverbConfig = { impulseResponse: impulseResponse, mix: reverbMixLevel };
-                                this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
-                                lastNode.connect(this._reverb.input);
-                                this._reverb.output.connect(this._outputNode);
-                                console.log("[Rpg_Mixer] Global Reverb enabled with custom IR. Mix:", reverbMixLevel);
-                            } catch (e) {
-                                // ... (error handling)
-                            }
-                        } // ... (error handling)
-                    });
-                }
-                // Jika tidak ada file IR, gunakan reverb default
-                else {
-                    try {
-                        // Tambahkan 'mix' ke config
-                        const reverbConfig = { mix: reverbMixLevel };
-                        this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
-                        lastNode.connect(this._reverb.input);
-                        this._reverb.output.connect(this._outputNode);
-                        console.log("[Rpg_Mixer] Global Reverb enabled with default sound. Mix:", reverbMixLevel);
-                    } catch (e) {
-                        // ... (error handling)
-                    }
-                }
-            } else {
-                // Jika reverb tidak aktif, langsung sambungkan ke output
-                lastNode.connect(this._outputNode);
-            }
-        },
-
-        _loadImpulseResponse: async function () {
-            const path = `audio/${this._pluginParameters.reverbIRFile}`;
-            console.log(`[Rpg_Mixer] Loading Reverb Impulse Response from: ${path}`);
-            try {
-                const response = await fetch(path);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await this._context.decodeAudioData(arrayBuffer);
-                return audioBuffer;
-            } catch (e) {
-                console.error(`[Rpg_Mixer] Failed to load or decode Impulse Response file '${path}'.`, e);
-                return null;
-            }
-        },
-
-        getInputNode: function () {
-            return this._inputNode;
-        },
-
-        getOutputNode: function () {
-            return this._outputNode;
-        },
-    };
-
     const DebugManager = {
         debugDiv: null,
         debugMode: 0, // 0: Off, 1: Audio Profile, 2: Visualizer (WIP)
@@ -270,17 +114,12 @@
             if (playbackMode.length > 0) {
                 playbackMode = playbackMode.charAt(0).toUpperCase() + playbackMode.slice(1);
             }
-            const effects = [];
-            if (EffectsManager._chorus) effects.push("Chorus");
-            if (EffectsManager._reverb) effects.push("Reverb");
-            const effectsText = effects.length > 0 ? effects.join(" & ") : "None";
 
             const content = `
     <b style="color: #80ff80;">MODE: ${playbackMode}</b><br>
     <hr style="border-color: #555; margin: 4px 0;">
     <b>File:</b> ${fileName}<br>
     <b>Backend:</b> ${backend}<br>
-    <b>Effects:</b> ${effectsText}<br>
     <b>Load Time:</b> ${loadTime}<br>
     <b>Parse Time:</b> ${decodeTime}
     `;
@@ -318,6 +157,7 @@
             }
             return this._promises[backendName];
         },
+
         _requireSpessaSynth: function () {
             return new Promise(async (resolve, reject) => {
                 if (this._state.spessasynth === "ready") return resolve(this._spessa.lib);
@@ -327,7 +167,9 @@
                 console.log("[Rpg_Mixer] SpessaSynth engine loading started...");
                 this._state.spessasynth = "loading";
 
+                // Pindahkan outer try...catch ke dalam untuk penanganan yang lebih baik
                 try {
+                    // 1. Muat library utama (tetap sama)
                     if (!this._spessa.lib) {
                         await this._loadScript("js/libs/spessasynth_lib.js");
                         await this._waitForSpessaLibrary();
@@ -337,8 +179,8 @@
                     const audioContext = WebAudio._context || new AudioContext();
                     if (audioContext.state === "suspended") await audioContext.resume();
 
-                    EffectsManager.initialize(this._spessa.lib, audioContext);
-
+                    // 2. Muat worklet processor (tetap sama)
+                    // Periksa jika sudah dimuat untuk mencegah error 'addModule' ganda
                     if (!this._spessa.workletLoaded) {
                         const workletBlob = await this._fetchScriptAsBlob("js/libs/spessasynth_processor.js");
                         const workletUrl = URL.createObjectURL(workletBlob);
@@ -347,21 +189,27 @@
                         this._spessa.workletLoaded = true;
                     }
 
+                    // 3. Muat soundfont dengan logika fallback yang diperbaiki
                     let soundfontBuffer = null;
                     const primarySfUrl = "audio/soundfont.sf2";
 
                     try {
+                        // Percobaan Pertama: Muat soundfont.sf2
                         console.log(`[Rpg_Mixer] Attempting to load primary soundfont: ${primarySfUrl}`);
                         const primarySfResponse = await fetch(primarySfUrl);
                         if (!primarySfResponse.ok) {
+                            // Ini untuk error HTTP seperti 404 jika game di-host online
                             throw new Error(`HTTP status ${primarySfResponse.status}`);
                         }
                         soundfontBuffer = await primarySfResponse.arrayBuffer();
                         console.log("[Rpg_Mixer] Primary soundfont loaded successfully.");
                     } catch (primaryError) {
+                        // Kegagalan: soundfont.sf2 tidak ditemukan atau error lainnya.
                         console.warn(
                             `[Rpg_Mixer] Primary soundfont failed to load (${primaryError.message}). Checking for Windows fallback...`
                         );
+
+                        // Percobaan Kedua: Fallback ke gm.dls jika di Windows
                         const isWindows = typeof process !== "undefined" && process.platform === "win32";
                         if (isWindows) {
                             const fallbackPath = "C:/Windows/System32/drivers/gm.dls";
@@ -375,15 +223,18 @@
                                 );
                                 console.log("[Rpg_Mixer] Fallback DLS soundfont loaded successfully.");
                             } catch (fallbackError) {
+                                // Jika fallback juga gagal, lempar error final
                                 throw new Error(
                                     `Primary SoundFont failed AND Windows fallback DLS could not be loaded from ${fallbackPath}. Reason: ${fallbackError.message}`
                                 );
                             }
                         } else {
+                            // Jika bukan Windows, kegagalan pertama bersifat final
                             throw new Error(`Primary SoundFont not found. No fallback available for non-Windows OS.`);
                         }
                     }
 
+                    // Validasi akhir
                     if (!soundfontBuffer) {
                         throw new Error("Fatal: Could not load any valid soundfont.");
                     }
@@ -455,6 +306,24 @@
                     });
             });
         },
+
+        /** Pre-Load backend
+         * @description Pre-initializes all available audio backends to prevent delay on first playback.
+         */
+        /*
+        initializeAll: function () {
+            console.log("[Rpg_Mixer] Pre-initializing all backends...");
+            // Memulai proses loading untuk SpessaSynth (MIDI)
+            this._requireSpessaSynth().catch((error) => {
+                // Jika gagal, tampilkan error di console tapi jangan hentikan game
+                console.error("[Rpg_Mixer] Failed to pre-initialize SpessaSynth backend.", error);
+            });
+            // Memulai proses loading untuk LibOpenMPT (MOD)
+            this._requireLibOpenMPT().catch((error) => {
+                console.error("[Rpg_Mixer] Failed to pre-initialize LibOpenMPT backend.", error);
+            });
+        },
+*/
     };
 
     // --- Format Handler Configuration ---
@@ -500,6 +369,7 @@
             return;
         }
 
+        // NEW: Check if the current buffer is the same as the one in the sequencer
         const isSameSong =
             this._format === "midi" &&
             BackendManager._spessa.sequencer &&
@@ -507,7 +377,7 @@
             BackendManager._spessa.sequencer.activeSong.arrayBuffer === this._buffer;
 
         if (!isSameSong) {
-            this.stop();
+            this.stop(); // Only stop if it's a different song
         }
 
         this._loop = loop;
@@ -516,7 +386,7 @@
         BackendManager.require(backendName)
             .then(() => {
                 if (this._format === "midi") {
-                    this._playMidi(offset, isSameSong);
+                    this._playMidi(offset, isSameSong); // Pass the flag
                 } else if (this._format === "mod") {
                     this._playMod(offset);
                 }
@@ -597,7 +467,12 @@
         xhr.send();
     };
 
+    /**
+     * @private
+     * @returns {GainNode|null} The active GainNode for the current audio format.
+     */
     ExternalAudio.prototype._getActiveGainNode = function () {
+        // Jauh lebih sederhana!
         return this._gainNode;
     };
 
@@ -610,6 +485,7 @@
 
         gain.cancelScheduledValues(currentTime);
         gain.setValueAtTime(gain.value, currentTime);
+        // Fade ke nilai yang sangat kecil, bukan 0, untuk menghindari beberapa edge case di browser
         gain.linearRampToValueAtTime(0.0001, currentTime + duration);
 
         setTimeout(() => this.stop(), duration * 1000);
@@ -659,6 +535,7 @@
         },
         set: function (value) {
             this._volume = value;
+            // Logika disatukan karena sekarang MIDI dan MOD sama-sama pakai this._gainNode
             if (this._gainNode) {
                 this._gainNode.gain.setValueAtTime(this._volume, this._context.currentTime);
             }
@@ -667,6 +544,7 @@
     });
 
     ExternalAudio.prototype._playMidi = function (offset) {
+        // Hentikan instance sebelumnya jika ada
         this.stop();
 
         const SpessaLib = BackendManager._spessa.lib;
@@ -677,27 +555,22 @@
             return;
         }
 
+        // 1. Buat node audio untuk instance ini
         this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
-        this._synthesizer.setMasterParameter("masterGain", 2);
+        this._synthesizer.setMasterParameter("masterGain", 2.0);
         this._gainNode = this._context.createGain();
         this._gainNode.gain.value = this._volume;
 
-        const effectsInput = EffectsManager.getInputNode();
-        const effectsOutput = EffectsManager.getOutputNode();
-        if (effectsInput && effectsOutput) {
-            this._synthesizer.connect(effectsInput);
-            effectsOutput.connect(this._gainNode);
-        } else {
-            this._synthesizer.connect(this._gainNode);
-        }
+        // 2. Hubungkan node: synthesizer -> gainNode -> masterGain
+        this._synthesizer.connect(this._gainNode);
         this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
 
+        // 3. Siapkan sequencer
         this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
 
+        // 4. Load soundfont dan lagu, lalu mainkan
         this._synthesizer.soundBankManager.addSoundBank(soundfont.slice(0), "default").then(() => {
-            const startTime = performance.now();
             this._sequencer.loadNewSongList([{ binary: this._buffer }]);
-            this._decodeTime = performance.now() - startTime;
             this._sequencer.loopCount = this._loop ? Infinity : 0;
             this._sequencer.currentTime = offset || 0;
             this._sequencer.play();
@@ -721,10 +594,8 @@
     };
 
     ExternalAudio.prototype._playMod = function (offset) {
-        this.stop();
-
         const pos = offset || 0;
-        this._currentPosition = pos;
+        this._currentPosition = pos; // Inisialisasi posisi
 
         const startTime = performance.now();
         this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
@@ -740,7 +611,7 @@
                 this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
             } else if (data.cmd === "end") {
                 if (this._loop) {
-                    this.play(this._loop, 0);
+                    this.play(this._loop, 0); // Loop kembali ke awal
                 } else {
                     this.stop();
                 }
@@ -777,7 +648,7 @@
     };
 
     //=============================================================================
-    // AudioManager Integration
+    // AudioManager Integration (The Core Hook)
     //=============================================================================
     AudioManager._savedBgm = null;
     AudioManager._savedBgs = null;
@@ -797,7 +668,13 @@
         return _AudioManager_createBuffer.call(this, folder, name);
     };
 
-    console.log("[Rpg_Mixer] Unified dynamic audio player loaded (v2.3.1 with effects fix).");
+    console.log("[Rpg_Mixer] Unified dynamic audio player loaded.");
+
+    const _Scene_Boot_start = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+        _Scene_Boot_start.call(this);
+        DebugManager.initialize();
+    };
 
     //=============================================================================
     // [Modification] Hook for detecting native RPG Maker Audio system
@@ -846,43 +723,61 @@
 
     const _alias_AudioManager_stopBgm = AudioManager.stopBgm;
     AudioManager.stopBgm = function () {
-        DebugManager.updateInfo({});
+        if (this._bgmBuffer && !(this._bgmBuffer instanceof ExternalAudio)) {
+            DebugManager.updateInfo({});
+        }
         _alias_AudioManager_stopBgm.call(this);
     };
 
     const _alias_AudioManager_stopBgs = AudioManager.stopBgs;
     AudioManager.stopBgs = function () {
-        DebugManager.updateInfo({});
+        if (this._bgsBuffer && !(this._bgsBuffer instanceof ExternalAudio)) {
+            DebugManager.updateInfo({});
+        }
         _alias_AudioManager_stopBgs.call(this);
     };
 
     const _alias_AudioManager_stopMe = AudioManager.stopMe;
     AudioManager.stopMe = function () {
-        DebugManager.updateInfo({});
+        if (this._meBuffer && !(this._meBuffer instanceof ExternalAudio)) {
+            DebugManager.updateInfo({});
+        }
         _alias_AudioManager_stopMe.call(this);
     };
 
+    // Gunakan metode "lebih aman" untuk menyimpan posisi BGM
     const _alias_AudioManager_saveBgm = AudioManager.saveBgm;
     AudioManager.saveBgm = function () {
+        // Panggil fungsi asli terlebih dahulu
         const savedBgm = _alias_AudioManager_saveBgm.call(this);
+
+        // Jika BGM adalah ExternalAudio, timpa 'pos' dengan nilai dari method 'seek' kita
         if (savedBgm && this._bgmBuffer && this._bgmBuffer instanceof ExternalAudio) {
             savedBgm.pos = this._bgmBuffer.seek();
         }
+
         return savedBgm;
     };
 
+    // Terapkan logika yang sama untuk BGS
     const _alias_AudioManager_saveBgs = AudioManager.saveBgs;
     AudioManager.saveBgs = function () {
+        // Panggil fungsi asli terlebih dahulu
         const savedBgs = _alias_AudioManager_saveBgs.call(this);
+
+        // Jika BGS adalah ExternalAudio, timpa 'pos' dengan nilai dari method 'seek' kita
         if (savedBgs && this._bgsBuffer && this._bgsBuffer instanceof ExternalAudio) {
             savedBgs.pos = this._bgsBuffer.seek();
         }
+
         return savedBgs;
     };
-
-    const _Scene_Boot_start = Scene_Boot.prototype.start;
+    /*
+    // Pre-load Backend
+    const _alias_Scene_Boot_start_mixer = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function () {
-        _Scene_Boot_start.call(this);
-        DebugManager.initialize();
+        _alias_Scene_Boot_start_mixer.call(this); // Jalankan fungsi start yang asli
+        BackendManager.initializeAll(); // Jalankan fungsi inisialisasi kita
     };
+*/
 })();
