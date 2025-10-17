@@ -11,6 +11,6 @@
     },
     "dependencies": {
         "concat": "^1.0.3",
-        "jsdoc": "^3.6.2"
+        "jsdoc": "^3.6.11"
     }
 }
