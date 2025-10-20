@@ -25,6 +25,19 @@
  * - Window_BattleActor (window untuk memilih target aktor) akan
  * menyesuaikan posisi dan ukurannya dengan Window_BattleStatus.
  *
+ * --- FITUR TAMBAHAN (DIGABUNG) ---
+ * 1. Menyembunyikan Actor Command Window saat memilih skill, item, atau target.
+ * (Berdasarkan HideActorCommand.js)
+ * 2. Memaksa window pemilihan target untuk muncul meskipun skill/item
+ * berefek ke "semua" (all) atau "random".
+ * (Berdasarkan IZ_TargetSelect.js)
+ * 3. [FIX] Area klik mouse/sentuh kini mencakup seluruh window saat
+ * memilih target "all".
+ *
+ * --- CATATAN KOMPATIBILITAS ---
+ * Jika Anda menggunakan IZ_BattleHelp, pastikan plugin ini
+ * ditempatkan DI BAWAH IZ_BattleHelp di Plugin Manager Anda.
+ *
  * Pastikan plugin ini ditempatkan di bawah Community_Basic.js
  * di Plugin Manager.
  */
@@ -450,3 +463,200 @@ Window_BattleStatus.prototype.drawActorTp = function (actor, x, y, width) {
     // Label dihilangkan, hanya menyisakan angka.
     this.drawText(actor.tp, x + width - 64, y, 64, "right");
 };
+
+//=============================================================================
+// FITUR 1: Sembunyikan Actor Command (dari HideActorCommand.js)
+//=============================================================================
+
+(function () {
+    var _Scene_Battle_commandSkill = Scene_Battle.prototype.commandSkill;
+    Scene_Battle.prototype.commandSkill = function () {
+        this._actorCommandWindow.hide();
+        this._actorCommandWindow.deactivate();
+        _Scene_Battle_commandSkill.call(this);
+    };
+
+    var _Scene_Battle_commandItem = Scene_Battle.prototype.commandItem;
+    Scene_Battle.prototype.commandItem = function () {
+        this._actorCommandWindow.hide();
+        this._actorCommandWindow.deactivate();
+        _Scene_Battle_commandItem.call(this);
+    };
+
+    var _Scene_Battle_selectEnemySelection = Scene_Battle.prototype.selectEnemySelection;
+    Scene_Battle.prototype.selectEnemySelection = function () {
+        if (this._actorCommandWindow.currentSymbol() === "attack") {
+            this._actorCommandWindow.hide();
+            this._actorCommandWindow.deactivate();
+        }
+        _Scene_Battle_selectEnemySelection.call(this);
+    };
+
+    var _Scene_Battle_changeInputWindow = Scene_Battle.prototype.changeInputWindow;
+    Scene_Battle.prototype.changeInputWindow = function () {
+        _Scene_Battle_changeInputWindow.call(this);
+        if (BattleManager.actor()) {
+            this._actorCommandWindow.show();
+        }
+    };
+
+    var _Scene_Battle_onEnemyCancel = Scene_Battle.prototype.onEnemyCancel;
+    Scene_Battle.prototype.onEnemyCancel = function () {
+        _Scene_Battle_onEnemyCancel.call(this);
+        if (this._actorCommandWindow.currentSymbol() === "attack") {
+            this._actorCommandWindow.show();
+        }
+    };
+
+    var _Scene_Battle_onSkillCancel = Scene_Battle.prototype.onSkillCancel;
+    Scene_Battle.prototype.onSkillCancel = function () {
+        _Scene_Battle_onSkillCancel.call(this);
+        this._actorCommandWindow.show();
+    };
+
+    var _Scene_Battle_onItemCancel = Scene_Battle.prototype.onItemCancel;
+    Scene_Battle.prototype.onItemCancel = function () {
+        _Scene_Battle_onItemCancel.call(this);
+        this._actorCommandWindow.show();
+    };
+})();
+
+//=============================================================================
+// FITUR 2: Tampilkan Target-Select untuk 'All' (dari IZ_TargetSelect.js)
+//=============================================================================
+
+(function () {
+    Game_Action.prototype.isNoneSelect = function () {
+        //BARU
+        return this.checkItemScope([0, 11]); //none, user
+    };
+
+    Scene_Battle.prototype.remCursor = function () {
+        //BARU
+        this._enemyWindow.setCursorAll(false);
+        this._actorWindow.setCursorAll(false);
+    };
+
+    var _IZ_Scene_Battle_selectNextCommand = Scene_Battle.prototype.selectNextCommand;
+    Scene_Battle.prototype.selectNextCommand = function () {
+        this.remCursor();
+        this._helpWindow.hide();
+        _IZ_Scene_Battle_selectNextCommand.call(this);
+    };
+
+    var _IZ_Scene_Battle_onActorCancel = Scene_Battle.prototype.onActorCancel;
+    Scene_Battle.prototype.onActorCancel = function () {
+        this.remCursor();
+        _IZ_Scene_Battle_onActorCancel.call(this);
+    };
+
+    // === ALIAS GABUNGAN ===
+    // Kita meng-alias 'onEnemyCancel' yang SUDAH di-alias oleh Fitur 1
+    var _IZ_Scene_Battle_onEnemyCancel = Scene_Battle.prototype.onEnemyCancel;
+    Scene_Battle.prototype.onEnemyCancel = function () {
+        this.remCursor(); // Logika dari IZ_TargetSelect
+        _IZ_Scene_Battle_onEnemyCancel.call(this); // Memanggil versi dari Fitur 1 (HideActorCommand)
+    };
+
+    // === OVERWRITE ===
+    // Fungsi ini MENGGANTIKAN (overwrite) fungsi bawaan Scene_Battle
+    Scene_Battle.prototype.onSelectAction = function () {
+        var action = BattleManager.inputtingAction();
+        this.remCursor();
+        this._skillWindow.hide();
+        this._itemWindow.hide();
+
+        if (!action.needsSelection()) {
+            if (action.isNoneSelect()) {
+                this.selectNextCommand();
+            } else if (action.isForOpponent()) {
+                this._enemyWindow.setCursorAll(true);
+                this.selectEnemySelection();
+            } else {
+                this._actorWindow.setCursorAll(true);
+                this.selectActorSelection();
+            }
+        } else if (action.isForOpponent()) {
+            this.selectEnemySelection();
+        } else {
+            this.selectActorSelection();
+        }
+    };
+
+    //--- Penyesuaian untuk 'select' agar target berkedip (OVERWRITE) ---
+    // Logika ini menggantikan fungsi asli
+    Window_BattleActor.prototype.select = function (index) {
+        Window_BattleStatus.prototype.select.call(this, index);
+        if (this.cursorAll()) {
+            for (var i = 0; i < this.maxItems(); i++) {
+                $gameParty.members()[i]._selected = true;
+            }
+        } else {
+            $gameParty.select(this.actor());
+        }
+    };
+
+    Window_BattleEnemy.prototype.select = function (index) {
+        Window_Selectable.prototype.select.call(this, index);
+        if (this.cursorAll()) {
+            for (var i = 0; i < this.maxItems(); i++) {
+                this._enemies[i]._selected = true;
+            }
+        } else {
+            $gameTroop.select(this.enemy());
+        }
+    };
+
+    // --- BARU: Perbaikan Mouse 'Select All' ---
+    // Memodifikasi perilaku sentuh/klik untuk window target
+    // agar seluruh area window dapat diklik saat 'select all' aktif.
+
+    var _IZ_Window_BattleEnemy_onTouch = Window_BattleEnemy.prototype.onTouch;
+    Window_BattleEnemy.prototype.onTouch = function (triggered) {
+        if (this.cursorAll() && triggered) {
+            // Jika mode "select all" dan ada klik
+            var x = this.canvasToLocalX(TouchInput.x);
+            var y = this.canvasToLocalY(TouchInput.y);
+            // Cek apakah klik ada di DALAM area konten
+            if (this.isContentsArea(x, y)) {
+                // Selalu set index ke 0 (atau index valid manapun)
+                // Ini untuk memastikan 'select' terpanggil dengan benar
+                this.select(0);
+                // Langsung panggil processOk
+                if (this.isOkEnabled()) {
+                    this.processOk();
+                    return; // Hentikan eksekusi lebih lanjut
+                }
+            }
+        }
+        // Jika bukan mode "select all", atau tidak di-trigger,
+        // atau diklik di luar area konten, jalankan logic asli.
+        _IZ_Window_BattleEnemy_onTouch.call(this, triggered);
+    };
+
+    var _IZ_Window_BattleActor_onTouch = Window_BattleActor.prototype.onTouch;
+    Window_BattleActor.prototype.onTouch = function (triggered) {
+        if (this.cursorAll() && triggered) {
+            // Jika mode "select all" dan ada klik
+            var x = this.canvasToLocalX(TouchInput.x);
+            var y = this.canvasToLocalY(TouchInput.y);
+            // Cek apakah klik ada di DALAM area konten
+            if (this.isContentsArea(x, y)) {
+                this.select(0);
+                if (this.isOkEnabled()) {
+                    this.processOk();
+                    return; // Hentikan eksekusi lebih lanjut
+                }
+            }
+        }
+        // Jalankan logic asli
+        _IZ_Window_BattleActor_onTouch.call(this, triggered);
+    };
+})();
+
+/*
+CREDITS
+Raphael Lourenço - https://forums.rpgmakerweb.com/index.php?threads/trying-to-make-mz-style-window_selectable-for-mv.127788/
+Sasuke KANNAZUKI (神無月サスケ) - https://plugin.fungamemake.com/archives/19730
+Izusant (いず) -  https://plugin.fungamemake.com/archives/18938
+*/

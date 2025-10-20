@@ -85,3 +85,9 @@
         }
     };
 })();
+
+/*
+CREDITS
+Raphael Lourenço - https://forums.rpgmakerweb.com/index.php?threads/trying-to-make-mz-style-window_selectable-for-mv.127788/
+
+*/

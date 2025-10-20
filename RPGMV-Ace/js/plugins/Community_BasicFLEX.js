@@ -31,7 +31,7 @@
  * @param UI Area Width
  * @type number
  * @desc If set, change window width to this value
- * @default 832
+ * @default 836
  *
  * @param UI Area Height
  * @type number
@@ -116,6 +116,7 @@
  * @desc The text for the Shutdown command.
  * @default Shutdown
  *
+DRAFTJS_BLOCK_KEY:bthd6
  * @param Add Shutdown to Game End
  * @type boolean
  * @desc If set to ON, adds a "Shutdown" command to the game end screen.
@@ -176,7 +177,7 @@
     var paramBattleFormationPlacement = parameters["Battle Formation Placement"].toLowerCase();
     var paramAlwaysDash = parameters["Always Dash"] === "true" || parameters["Always Dash"] === "on";
     var paramTextSpeed = toNumber(parameters["Text Speed"], 1);
-    var paramWindowWidth = toNumber(parameters["UI Area Width"], 832);
+    var paramWindowWidth = toNumber(parameters["UI Area Width"], 836);
     var paramWindowHeight = toNumber(parameters["UI Area Height"], 624);
     var paramMaxRenderingFps = toNumber(parameters["Max Rendering FPS"], 0);
     var paramAutoSaveFileId = toNumber(parameters["Auto Save File ID"], 0);
@@ -616,35 +617,6 @@
             this.drawGameTitle();
         }
     };
-
-    // ============================================================================
-    // [PERBAIKAN] Tambahkan fungsi requestLayoutUpdate ke Scene_Map
-    // ============================================================================
-    // Fungsi ini akan dipanggil oleh plugin Community_Basic.js saat
-    // mendeteksi perubahan ukuran layar (resize).
-    Scene_Map.prototype.requestLayoutUpdate = function () {
-        // 1. Panggil fungsi update layout dasar dari Scene_Base.
-        //    (Plugin Community_Basic.js Anda telah mendefinisikan fungsi ini
-        //    di Scene_Base untuk meng-update posisi window/UI).
-        if (Scene_Base.prototype.requestLayoutUpdate) {
-            Scene_Base.prototype.requestLayoutUpdate.call(this);
-        }
-
-        // 2. [FIX] Hancurkan dan buat ulang spriteset.
-        //    Ini adalah inti perbaikan, meniru perilaku "buka/tutup menu"
-        //    yang Anda identifikasi.
-        if (this._spriteset) {
-            this.removeChild(this._spriteset);
-        }
-
-        // 3. Panggil fungsi createSpriteset (dari baris 601 di atas)
-        //    untuk membuat spriteset baru dengan ukuran yang sudah benar.
-        this.createSpriteset();
-    };
-    // ============================================================================
-    // [AKHIR PERBAIKAN]
-    // ============================================================================
-
     // Scene_MenuBase perlu update scaling background snapshot-nya
     var _Scene_MenuBase_requestLayoutUpdate =
         Scene_MenuBase.prototype.requestLayoutUpdate || Scene_Base.prototype.requestLayoutUpdate;
@@ -666,31 +638,9 @@
         }
     };
 
-    // [FIX] Panggil layout update saat Scene_Battle dimulai
-    var _Scene_Battle_start = Scene_Battle.prototype.start;
-    Scene_Battle.prototype.start = function () {
-        _Scene_Battle_start.apply(this, arguments);
-        // Panggil fungsi update layout kita secara manual
-        // untuk memastikan posisi awal sudah benar
-        this.requestLayoutUpdate();
-    };
-
     //-----------------------------------------------------------------------------
 
     //===========================[ rpg_sprites.js ]================================
-
-    // Ganti ini di rpg_sprites.js atau plugin Anda
-    Spriteset_Battle.prototype.createBattleField = function () {
-        var width = Graphics.width; // Ubah ke Graphics.width
-        var height = Graphics.height; // Ubah ke Graphics.height
-        var x = 0; // Ubah ke 0
-        var y = 0; // Ubah ke 0
-        this._battleField = new Sprite();
-        this._battleField.setFrame(x, y, width, height);
-        this._battleField.x = x;
-        this._battleField.y = y;
-        this._baseSprite.addChild(this._battleField);
-    };
 
     // 731 - Adjust Actor Home to match screen resolution (1/1)
     //* New formula (toggleable between not centered/centered)
@@ -870,11 +820,6 @@
     Spriteset_Battle.prototype.requestLayoutUpdate = function () {
         _Spriteset_Battle_requestLayoutUpdate.call(this); // Jalankan update dasar (Pictures)
 
-        // [FIX] Update ukuran battleField agar sesuai layar
-        if (this._battleField) {
-            this._battleField.setFrame(0, 0, Graphics.width, Graphics.height);
-        }
-
         // 1. Skalakan ulang battlebacks
         if (this._back1Sprite) {
             this._back1Sprite.scaleSprite();
@@ -883,18 +828,14 @@
             this._back2Sprite.scaleSprite();
         }
 
-        // Hitung offset UI
-        var x_offset = (Graphics.width - Graphics.boxWidth) / 2;
-        var y_offset = (Graphics.height - Graphics.boxHeight) / 2;
-
+        // [FIX] Tambahkan pengecekan mode side-view
         if ($gameSystem.isSideView()) {
             // --- LOGIKA SIDE-VIEW ---
-            // Kalkulasi dari plugin Anda sudah menggunakan Graphics.width,
-            // jadi kita panggil saja.
 
             // 2. Posisikan ulang Aktor (Side-View)
             if (this._actorSprites) {
                 this._actorSprites.forEach(function (sprite, index) {
+                    // Panggil fungsi setActorHome kustom Anda (dari Community_Basic)
                     sprite.setActorHome(index);
                 });
             }
@@ -905,6 +846,7 @@
                     if (sprite._enemy) {
                         var enemyIndex = sprite._enemy.index();
                         if (enemyIndex >= 0) {
+                            // Panggil fungsi setEnemyHome kustom Anda (dari Community_Basic)
                             sprite.setEnemyHome(enemyIndex);
                         }
                     }
@@ -913,10 +855,14 @@
         } else {
             // --- LOGIKA FRONT-VIEW ---
 
+            // [FIX] Hitung offset untuk memusatkan UI
+            var x_offset = (Graphics.width - Graphics.boxWidth) / 2;
+            var y_offset = (Graphics.height - Graphics.boxHeight) / 2;
+
             // 2. Posisikan ulang Aktor (Front-View)
             if (this._actorSprites) {
                 this._actorSprites.forEach(function (sprite, index) {
-                    // Posisi asli (relatif 816x624) + offset UI
+                    // Gunakan logika Asli rpg_sprites.js, TAPI tambahkan offset
                     sprite.setHome(600 + index * 32 + x_offset, 280 + index * 48 + y_offset);
                 });
             }
@@ -924,7 +870,7 @@
             // 3. Posisikan ulang Musuh (Front-View)
             if (this._enemySprites) {
                 this._enemySprites.forEach(function (sprite) {
-                    // Posisi editor (relatif 816x624) + offset UI
+                    // Gunakan posisi editor, TAPI tambahkan offset
                     if (sprite._enemy) {
                         sprite.setHome(sprite._enemy.screenX() + x_offset, sprite._enemy.screenY() + y_offset);
                     }
@@ -1053,6 +999,7 @@
         this.wait();
     };
 
+    DRAFTJS_BLOCK_KEY: bthd6;
     // 5031 - Simplifying sidevew BattleLog (3/4)
     var _Window_BattleLog_drawLineText = Window_BattleLog.prototype.drawLineText;
     Window_BattleLog.prototype.drawLineText = function (index) {

@@ -1385,10 +1385,13 @@ AudioManager.playMe = function (me) {
             this._currentBgm.pos = this._bgmBuffer.seek();
             this._bgmBuffer.stop();
         }
+        var isLoopingMe = me.name.charAt(0) === '!';
         this._meBuffer = this.createBuffer("me", me.name);
         this.updateMeParameters(me);
-        this._meBuffer.play(false);
-        this._meBuffer.addStopListener(this.stopMe.bind(this));
+        this._meBuffer.play(isLoopingMe);
+        if (!isLoopingMe) {
+            this._meBuffer.addStopListener(this.stopMe.bind(this));
+        }
     }
 };
 
