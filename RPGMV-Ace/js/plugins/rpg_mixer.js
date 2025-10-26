@@ -424,14 +424,16 @@
                         await this._waitForSpessaLibrary();
                         if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
                     }
-
+                    const audioContext = WebAudio._context || new AudioContext();
                     // Create AudioContext with optimized settings for Chrome
+                    /*
                     const audioContext =
                         WebAudio._context ||
                         new AudioContext({
                             latencyHint: "playback", // Optimize for playback quality over latency
                             sampleRate: 44100, // Standard sample rate for better compatibility
                         });
+                        */
                     if (audioContext.state === "suspended") await audioContext.resume();
 
                     EffectsManager.initialize(this._spessa.lib, audioContext);
