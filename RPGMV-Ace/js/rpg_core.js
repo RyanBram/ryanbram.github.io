@@ -3052,14 +3052,20 @@ Graphics._createPixiApp = function () {
             backgroundColor: 0x000000, // Optional
             // CHROME
             antialias: true, // Enable anti-aliasing for smoother rendering
-            //resolution: window.devicePixelRatio || 1, // Use device pixel ratio for crisp rendering
-            //autoDensity: true, // Automatically adjust CSS size
+            // resolution: window.devicePixelRatio || 1, // Use device pixel ratio for crisp rendering
+            // autoDensity: true, // Automatically adjust CSS size
             // CHROME
         };
 
         // Cut 'hello' Pixi message
         if (PIXI.settings.RENDER_OPTIONS) PIXI.settings.RENDER_OPTIONS.hello = false;
         else if (PIXI.utils) PIXI.utils.sayHello = function () {}; // Fallback
+
+        // CHROME: Force pixel-perfect rendering by rounding all sprite positions
+        if (PIXI.settings) {
+            PIXI.settings.ROUND_PIXELS = true; // Auto-round all pixel coordinates
+        }
+        // CHROME
 
         this._app = new PIXI.Application(appOptions);
         this._renderer = this._app.renderer; // Simpan referensi renderer
