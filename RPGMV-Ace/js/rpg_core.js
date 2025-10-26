@@ -7294,11 +7294,11 @@ Window.prototype.update = function () {
  * @param {Number} height The height of the window
  */
 Window.prototype.move = function (x, y, width, height) {
-    this.x = x || 0;
-    this.y = y || 0;
+    this.x = Math.round(x || 0);
+    this.y = Math.round(y || 0);
     if (this._width !== width || this._height !== height) {
-        this._width = width || 0;
-        this._height = height || 0;
+        this._width = Math.round(width || 0);
+        this._height = Math.round(height || 0);
         this._refreshAllParts();
     }
 };
@@ -7492,10 +7492,10 @@ Window.prototype._refreshFrame = function () {
  */
 Window.prototype._refreshCursor = function () {
     var pad = this._padding;
-    var x = this._cursorRect.x + pad - this.origin.x;
-    var y = this._cursorRect.y + pad - this.origin.y;
-    var w = this._cursorRect.width;
-    var h = this._cursorRect.height;
+    var x = Math.round(this._cursorRect.x + pad - this.origin.x);
+    var y = Math.round(this._cursorRect.y + pad - this.origin.y);
+    var w = Math.round(this._cursorRect.width);
+    var h = Math.round(this._cursorRect.height);
     var m = 4;
     var x2 = Math.max(x, pad);
     var y2 = Math.max(y, pad);
@@ -7548,12 +7548,12 @@ Window.prototype._refreshArrows = function () {
     this._downArrowSprite.anchor.x = 0.5;
     this._downArrowSprite.anchor.y = 0.5;
     this._downArrowSprite.setFrame(sx + q, sy + q + p, p, q);
-    this._downArrowSprite.move(w / 2, h - q);
+    this._downArrowSprite.move(Math.round(w / 2), h - q);
     this._upArrowSprite.bitmap = this._windowskin;
     this._upArrowSprite.anchor.x = 0.5;
     this._upArrowSprite.anchor.y = 0.5;
     this._upArrowSprite.setFrame(sx + q, sy, p, q);
-    this._upArrowSprite.move(w / 2, q);
+    this._upArrowSprite.move(Math.round(w / 2), q);
 };
 
 /**
