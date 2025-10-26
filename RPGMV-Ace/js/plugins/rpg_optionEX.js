@@ -278,7 +278,6 @@
     // Manages the configuration data.
     //=========================================================================
 
-    ConfigManager.showFps = false;
     ConfigManager.windowOpacityHex = windowOpacityDefault;
     ConfigManager.windowColorRHex = windowColorRDefault;
     ConfigManager.windowColorGHex = windowColorGDefault;
@@ -292,7 +291,6 @@
     };
 
     ConfigManager.makeExtraData = function (config) {
-        config.showFps = this.showFps;
         config.windowOpacityHex = this.windowOpacityHex;
         config.windowColorRHex = this.windowColorRHex;
         config.windowColorGHex = this.windowColorGHex;
@@ -303,7 +301,6 @@
     var _AKUNOU_ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _AKUNOU_ConfigManager_applyData.call(this, config);
-        this.showFps = this.readFlag(config, "showFps", false);
         this.windowOpacityHex = this.readConfigValue(config, "windowOpacityHex", windowOpacityDefault, 0, 255);
         this.windowColorRHex = this.readConfigValue(config, "windowColorRHex", windowColorRDefault, -255, 255);
         this.windowColorGHex = this.readConfigValue(config, "windowColorGHex", windowColorGDefault, -255, 255);
@@ -375,38 +372,43 @@
     // The window for changing various settings on the options screen.
     //=========================================================================
 
+    // Use Graphics.boxWidth for full screen width
     Window_Options.prototype.windowWidth = function () {
         return Graphics.boxWidth;
     };
 
-    // [FIX] Use fixed height based on Graphics.boxHeight like Window_MenuStatus
-    // This allows scrolling when items exceed visible area
+    // Use Graphics.boxHeight for full screen height
     Window_Options.prototype.windowHeight = function () {
         return Graphics.boxHeight;
     };
 
-    // [FIX] Override statusWidth to match HP/MP gauge width (186)
+    // [FIX] Override statusWidth to accommodate 5-digit numbers
     // statusWidth = gaugeWidth + VALUE_WIDTH + GAUGE_PADDING
-    // statusWidth = 186 + 40 + 12 = 238
+    // statusWidth = 186 + 60 + 12 = 258
     Window_Options.prototype.statusWidth = function () {
-        return 238;
+        return 258;
     };
 
     var _AKUNOU_Window_Options_makeCommandList = Window_Options.prototype.makeCommandList;
     Window_Options.prototype.makeCommandList = function () {
-        // Gameplay category - default RPG Maker options
+        // Gameplay category
         this.addCategoryLabel("Gameplay");
+        this.addSpacer();
         this.addGeneralOptions(); // Always Dash, Command Remember, etc
 
-        // Display category - window appearance options
+        // Display category
         this.addCategoryLabel("Display");
+        this.addSpacer();
         this.addDisplayOptions();
 
-        // Audio category - volume options
+        // Audio category
         this.addCategoryLabel("Audio");
+        this.addSpacer();
         this.addVolumeOptions(); // Use default addVolumeOptions
 
         // Restore Defaults button
+        this.addCategoryLabel(""); // Empty category for spacing before Default
+        this.addSpacer();
         this.addDefaultOptions();
     };
 
@@ -414,10 +416,8 @@
         this.addCommand(labelText, "category");
     };
 
-    Window_Options.prototype.addGeneralOptions = function () {
-        this.addCommand(TextManager.alwaysDash, "alwaysDash");
-        this.addCommand(TextManager.commandRemember, "commandRemember");
-        this.addCommand("Show FPS", "showFps");
+    Window_Options.prototype.addSpacer = function () {
+        this.addCommand("", "spacer");
     };
 
     Window_Options.prototype.addDisplayOptions = function () {
@@ -442,54 +442,79 @@
         return symbol === "category";
     };
 
-    // Override isCommandEnabled to disable category labels
+    Window_Options.prototype.isSpacerSymbol = function (symbol) {
+        return symbol === "spacer";
+    };
+
+    // Override isCommandEnabled to disable category labels and spacers
     var _AKUNOU_Window_Options_isCommandEnabled = Window_Options.prototype.isCommandEnabled;
     Window_Options.prototype.isCommandEnabled = function (index) {
         var symbol = this.commandSymbol(index);
-        if (this.isCategorySymbol(symbol)) {
+        if (this.isCategorySymbol(symbol) || this.isSpacerSymbol(symbol)) {
             return false;
         }
         return _AKUNOU_Window_Options_isCommandEnabled.call(this, index);
     };
 
+    // Override activate to set initial cursor position after category label and spacer
+    var _AKUNOU_Window_Options_activate = Window_Options.prototype.activate;
+    Window_Options.prototype.activate = function () {
+        _AKUNOU_Window_Options_activate.call(this);
+        // Set cursor to index 2 (skip category label at 0 and spacer at 1)
+        if (
+            this.index() === 0 ||
+            this.isCategorySymbol(this.commandSymbol(this.index())) ||
+            this.isSpacerSymbol(this.commandSymbol(this.index()))
+        ) {
+            this.select(2);
+        }
+    };
+
     // Override cursorDown to skip category labels
     var _AKUNOU_Window_Options_cursorDown = Window_Options.prototype.cursorDown;
+    // Override cursorDown to skip category labels and spacers (no wrapping)
     Window_Options.prototype.cursorDown = function (wrap) {
         var index = this.index();
         var maxItems = this.maxItems();
         var maxCols = this.maxCols();
-        if (index < maxItems - maxCols || (wrap && maxCols === 1)) {
+        if (index < maxItems - maxCols) {
             this.select((index + maxCols) % maxItems);
-            // Skip category labels
-            while (this.isCategorySymbol(this.commandSymbol(this.index()))) {
-                this.select((this.index() + maxCols) % maxItems);
-                if (this.index() === index) break; // Prevent infinite loop
+            // Skip category labels and spacers
+            while (
+                this.isCategorySymbol(this.commandSymbol(this.index())) ||
+                this.isSpacerSymbol(this.commandSymbol(this.index()))
+            ) {
+                var nextIndex = (this.index() + maxCols) % maxItems;
+                if (nextIndex >= maxItems || nextIndex <= index) break; // Stop at bottom
+                this.select(nextIndex);
             }
         }
     };
 
-    // Override cursorUp to skip category labels
-    var _AKUNOU_Window_Options_cursorUp = Window_Options.prototype.cursorUp;
+    // Override cursorUp to skip category labels and spacers (no wrapping)
     Window_Options.prototype.cursorUp = function (wrap) {
         var index = this.index();
         var maxItems = this.maxItems();
         var maxCols = this.maxCols();
-        if (index >= maxCols || (wrap && maxCols === 1)) {
+        if (index >= maxCols) {
             this.select((index - maxCols + maxItems) % maxItems);
-            // Skip category labels
-            while (this.isCategorySymbol(this.commandSymbol(this.index()))) {
-                this.select((this.index() - maxCols + maxItems) % maxItems);
-                if (this.index() === index) break; // Prevent infinite loop
+            // Skip category labels and spacers
+            while (
+                this.isCategorySymbol(this.commandSymbol(this.index())) ||
+                this.isSpacerSymbol(this.commandSymbol(this.index()))
+            ) {
+                var prevIndex = (this.index() - maxCols + maxItems) % maxItems;
+                if (prevIndex >= index || this.index() === 0) break; // Stop at top (prevent wrap or hitting index 0)
+                this.select(prevIndex);
+            }
+            // If we ended up at a category label or spacer (index 0), move back down
+            if (
+                this.isCategorySymbol(this.commandSymbol(this.index())) ||
+                this.isSpacerSymbol(this.commandSymbol(this.index()))
+            ) {
+                this.select(index); // Stay at previous position
             }
         }
-    };
-
-    // Draw horizontal line like Window_Status (but below the text)
-    Window_Options.prototype.drawHorzLine = function (y) {
-        const lineY = y + this.lineHeight() - 4; // Position at bottom of line, not middle
-        this.contents.paintOpacity = 48;
-        this.contents.fillRect(0, lineY, this.contentsWidth(), 2, this.normalColor());
-        this.contents.paintOpacity = 255;
     };
 
     Window_Options.prototype.drawItem = function (index) {
@@ -497,13 +522,21 @@
         const symbol = this.commandSymbol(index);
         const enabled = this.isCommandEnabled(index);
 
+        // Skip drawing spacers completely - they are just empty space
+        if (this.isSpacerSymbol(symbol)) {
+            return;
+        }
+
         // Untuk category label
         if (this.isCategorySymbol(symbol)) {
             this.resetTextColor();
-            // Draw category text in white (normal color)
-            this.drawText(this.commandName(index), rect.x, rect.y, rect.width, "center");
-            // Draw horizontal line like Window_Status
-            this.drawHorzLine(rect.y);
+            // Draw category label in white (normal color)
+            // Move text down by 0.5 row to center it vertically with spacer below
+            const textY = rect.y + Math.floor(this.lineHeight() / 2);
+            this.drawText(this.commandName(index), rect.x, textY, rect.width, "center");
+            // Draw underline for category (moved down 0.25 row from text)
+            const lineY = textY + Math.floor(this.lineHeight() / 4) + this.lineHeight() - 4;
+            this.contents.fillRect(rect.x, lineY, rect.width, 2, this.normalColor());
             return;
         }
 
@@ -520,7 +553,7 @@
         if (isGaugeItem) {
             const GAUGE_HEIGHT = 6; // Tinggi gauge
             const GAUGE_PADDING = 12; // Jarak antara gauge dan teks nilai
-            const VALUE_WIDTH = 60; // Ruang untuk teks nilai (diperbesar untuk 5 digit)
+            const VALUE_WIDTH = 60; // Ruang untuk teks nilai (5 digit: "-255" to "100")
 
             const statusWidth = this.statusWidth();
             const gaugeAreaX = rect.x + rect.width - statusWidth;
@@ -568,6 +601,11 @@
             // Gambar isi gauge
             this.contents.gradientFillRect(gaugeAreaX, gaugeY, gaugeWidth * rate, GAUGE_HEIGHT, color1, color2);
 
+            // Draw handle at gauge position (like icon, directly to contents)
+            const handleX = gaugeAreaX + Math.floor(gaugeWidth * rate) - Math.floor(HANDLE_WIDTH / 2);
+            const handleY = rect.y + Math.floor((rect.height - HANDLE_HEIGHT) / 2);
+            this.drawHandle(handleX, handleY);
+
             // 3. Gambar Teks Nilai (rata kanan)
             this.resetTextColor();
             const valueX = gaugeAreaX + gaugeWidth + GAUGE_PADDING;
@@ -608,27 +646,6 @@
         }
         if (this.isColorSymbol(symbol)) {
             this.updateTone();
-        }
-        if (symbol === "showFps") {
-            this.updateFpsDisplay(value);
-        }
-    };
-
-    Window_Options.prototype.updateFpsDisplay = function (show) {
-        if (show) {
-            // Show FPS meter
-            Graphics.showFps();
-            // Show Debug Audio Info
-            if (typeof DebugManager !== "undefined") {
-                DebugManager.show();
-            }
-        } else {
-            // Hide FPS meter
-            Graphics.hideFps();
-            // Hide Debug Audio Info
-            if (typeof DebugManager !== "undefined") {
-                DebugManager.hide();
-            }
         }
     };
 
@@ -768,87 +785,28 @@
     var _AKUNOU_Handle_Window_Options_initialize = Window_Options.prototype.initialize;
     Window_Options.prototype.initialize = function (x, y) {
         _AKUNOU_Handle_Window_Options_initialize.call(this, x, y);
-        this._handleSprites = [];
         this._isDragging = false;
         this._draggedHandleIndex = -1;
-        this.createHandleSprites();
+        // Create handle bitmap once for reuse
+        this._handleBitmap = this.createHandleBitmap();
     };
 
-    Window_Options.prototype.createHandleSprites = function () {
-        // Buat bitmap tunggal untuk semua handle agar lebih efisien
-        const handleBitmap = new Bitmap(HANDLE_WIDTH, HANDLE_HEIGHT);
-        handleBitmap.fillAll("rgba(255, 255, 255, 0.8)");
-        handleBitmap.fillRect(1, 1, HANDLE_WIDTH - 2, HANDLE_HEIGHT - 2, "rgba(0, 0, 0, 0.5)");
-        handleBitmap.fillRect(2, 2, HANDLE_WIDTH - 4, HANDLE_HEIGHT - 4, "rgba(192, 192, 255, 1)");
-
-        for (let i = 0; i < this.maxPageItems(); i++) {
-            const sprite = new Sprite(handleBitmap);
-            sprite.anchor.x = 0.5;
-            sprite.anchor.y = 0.5;
-            sprite.visible = false;
-            this._handleSprites.push(sprite);
-            this.addChild(sprite);
-        }
+    Window_Options.prototype.createHandleBitmap = function () {
+        // Create handle bitmap (like an icon)
+        const bitmap = new Bitmap(HANDLE_WIDTH, HANDLE_HEIGHT);
+        bitmap.fillAll("rgba(255, 255, 255, 0.8)");
+        bitmap.fillRect(1, 1, HANDLE_WIDTH - 2, HANDLE_HEIGHT - 2, "rgba(0, 0, 0, 0.5)");
+        bitmap.fillRect(2, 2, HANDLE_WIDTH - 4, HANDLE_HEIGHT - 4, "rgba(192, 192, 255, 1)");
+        return bitmap;
     };
 
-    // Alias fungsi update
-    var _AKUNOU_Handle_Window_Options_update = Window_Options.prototype.update;
-    Window_Options.prototype.update = function () {
-        _AKUNOU_Handle_Window_Options_update.call(this);
-        if (this.isOpenAndActive()) {
-            this.updateHandles();
+    Window_Options.prototype.drawHandle = function (x, y) {
+        // Draw handle to contents bitmap (like drawIcon)
+        // Ensure handle bitmap is created
+        if (!this._handleBitmap) {
+            this._handleBitmap = this.createHandleBitmap();
         }
-    };
-
-    Window_Options.prototype.updateHandles = function () {
-        const topIndex = this.topIndex();
-
-        for (let i = 0; i < this._handleSprites.length; i++) {
-            const index = topIndex + i;
-            const sprite = this._handleSprites[i];
-
-            if (index < this.maxItems()) {
-                const symbol = this.commandSymbol(index);
-                const isGaugeItem = this.isVolumeSymbol(symbol) || this.isHexSymbol(symbol);
-
-                if (isGaugeItem) {
-                    const rect = this.itemRect(index);
-                    // Mengambil geometri yang sama persis dari drawItem
-                    const GAUGE_HEIGHT = 6;
-                    const GAUGE_PADDING = 12;
-                    const VALUE_WIDTH = 60;
-                    const statusWidth = this.statusWidth();
-                    const gaugeWidth = statusWidth - VALUE_WIDTH - GAUGE_PADDING;
-                    const gaugeAreaX = rect.x + rect.width - statusWidth;
-
-                    // Kalkulasi posisi Y yang presisi untuk gauge
-                    const gaugeY = rect.y + Math.floor((rect.height - GAUGE_HEIGHT) / 2);
-
-                    const value = this.getConfigValue(symbol);
-                    let rate = 0;
-
-                    if (this.isVolumeSymbol(symbol)) rate = value / 100;
-                    else if (this.isOpacitySymbol(symbol)) rate = value / 255;
-                    else if (this.isColorSymbol(symbol)) rate = (value + 255) / 510;
-
-                    // [FIX] Handle center position from left edge to right edge of gauge
-                    // Shift left by half handle width for symmetry
-                    // Rate=0: handle center at gaugeAreaX - HANDLE_WIDTH/2 (half handle extends left)
-                    // Rate=1: handle center at gaugeAreaX + gaugeWidth - HANDLE_WIDTH/2 (half handle extends right)
-                    const handleX = gaugeAreaX + gaugeWidth * rate - HANDLE_WIDTH / 2;
-
-                    sprite.x = this.padding + handleX;
-                    // [FIX] Subtract origin.y for smooth vertical scrolling
-                    sprite.y = this.padding + gaugeY + Math.floor(GAUGE_HEIGHT / 2) - this.origin.y;
-
-                    sprite.visible = true;
-                } else {
-                    sprite.visible = false;
-                }
-            } else {
-                sprite.visible = false;
-            }
-        }
+        this.contents.blt(this._handleBitmap, 0, 0, HANDLE_WIDTH, HANDLE_HEIGHT, x, y);
     };
 
     // Tambahkan fungsi baru untuk menangani touch
@@ -856,27 +814,43 @@
         if (!this.isOpenAndActive()) return;
 
         if (TouchInput.isTriggered()) {
-            // [FIX] Use canvasToLocalX for horizontal, worldTransform for vertical
-            const touchPos = new Point(TouchInput.x, TouchInput.y);
-            const localPosOriginal = this.worldTransform.applyInverse(touchPos);
-            const localX = this.canvasToLocalX(TouchInput.x);
-            const localPos = new Point(localX, localPosOriginal.y);
+            const x = this.canvasToLocalX(TouchInput.x);
+            const y = this.canvasToLocalY(TouchInput.y);
+            const hitIndex = this.hitTest(x, y);
 
-            for (let i = 0; i < this._handleSprites.length; i++) {
-                const sprite = this._handleSprites[i];
-                if (sprite.visible) {
-                    // Area deteksi handle diperbesar sedikit untuk kemudahan
-                    const hitBox = new Rectangle(
-                        sprite.x - HANDLE_WIDTH,
-                        sprite.y - HANDLE_HEIGHT,
-                        HANDLE_WIDTH * 2,
-                        HANDLE_HEIGHT * 2
-                    );
-                    if (hitBox.contains(localPos.x, localPos.y)) {
+            if (hitIndex >= 0) {
+                const symbol = this.commandSymbol(hitIndex);
+                const isGaugeItem = this.isVolumeSymbol(symbol) || this.isHexSymbol(symbol);
+
+                if (isGaugeItem) {
+                    // Check if touch is on handle area (expanded hit area)
+                    const rect = this.itemRectForText(hitIndex);
+                    const GAUGE_PADDING = 12;
+                    const VALUE_WIDTH = 60;
+                    const statusWidth = this.statusWidth();
+                    const gaugeWidth = statusWidth - VALUE_WIDTH - GAUGE_PADDING;
+                    const gaugeAreaX = rect.x + rect.width - statusWidth;
+
+                    const value = this.getConfigValue(symbol);
+                    let rate = 0;
+                    if (this.isVolumeSymbol(symbol)) rate = value / 100;
+                    else if (this.isOpacitySymbol(symbol)) rate = value / 255;
+                    else if (this.isColorSymbol(symbol)) rate = (value + 255) / 510;
+
+                    const handleX = gaugeAreaX + Math.floor(gaugeWidth * rate) - Math.floor(HANDLE_WIDTH / 2);
+                    const handleY = rect.y + Math.floor((rect.height - HANDLE_HEIGHT) / 2);
+
+                    // Expanded hit area for easier touch
+                    if (
+                        x >= handleX - HANDLE_WIDTH &&
+                        x <= handleX + HANDLE_WIDTH * 2 &&
+                        y >= handleY - HANDLE_HEIGHT &&
+                        y <= handleY + HANDLE_HEIGHT * 2
+                    ) {
                         this._isDragging = true;
-                        this._draggedHandleIndex = this.topIndex() + i;
-                        this.select(this._draggedHandleIndex); // Pilih item yang di-drag
-                        return; // Hentikan proses lebih lanjut
+                        this._draggedHandleIndex = hitIndex;
+                        this.select(hitIndex);
+                        return;
                     }
                 }
             }
@@ -885,18 +859,16 @@
         if (this._isDragging) {
             if (TouchInput.isMoved()) {
                 const symbol = this.commandSymbol(this._draggedHandleIndex);
-                const rect = this.itemRect(this._draggedHandleIndex);
+                const rect = this.itemRectForText(this._draggedHandleIndex);
 
-                // Menggunakan kalkulasi geometri yang sama persis
                 const GAUGE_PADDING = 12;
                 const VALUE_WIDTH = 60;
                 const statusWidth = this.statusWidth();
                 const gaugeWidth = statusWidth - VALUE_WIDTH - GAUGE_PADDING;
                 const gaugeAreaX = rect.x + rect.width - statusWidth;
 
-                // [FIX] Apply same calculation as in updateHandles
                 const touchX = this.canvasToLocalX(TouchInput.x);
-                const relativeX = (touchX - this.padding - gaugeAreaX).clamp(0, gaugeWidth);
+                const relativeX = (touchX - gaugeAreaX).clamp(0, gaugeWidth);
 
                 const rate = relativeX / gaugeWidth;
                 let newValue;
@@ -916,7 +888,7 @@
                 this._isDragging = false;
                 this._draggedHandleIndex = -1;
             }
-            return; // Saat dragging, jangan proses klik biasa
+            return;
         }
 
         // Panggil proses touch dari parent jika tidak ada interaksi dengan handle
@@ -934,9 +906,9 @@
         if (index >= 0) {
             var symbol = this.commandSymbol(index);
 
-            // Prevent selection of category labels
-            if (this.isCategorySymbol(symbol)) {
-                return; // Ignore clicks on category labels
+            // Prevent selection of category labels and spacers
+            if (this.isCategorySymbol(symbol) || this.isSpacerSymbol(symbol)) {
+                return; // Ignore clicks on category labels and spacers
             }
 
             var isGaugeItem = this.isVolumeSymbol(symbol) || this.isHexSymbol(symbol);
@@ -955,27 +927,5 @@
 
         // Untuk item non-gauge, atau event hover (bukan klik), jalankan logika aslinya.
         _AKUNOU_Handle_Window_Options_onTouch.call(this, triggered);
-    };
-
-    //=========================================================================
-    // Initialize FPS display on game start
-    //=========================================================================
-    var _Scene_Boot_start = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function () {
-        _Scene_Boot_start.call(this);
-        // Apply showFps setting on game start
-        if (ConfigManager.showFps) {
-            Graphics.showFps();
-            // Show Debug Audio Info
-            if (typeof DebugManager !== "undefined") {
-                DebugManager.show();
-            }
-        } else {
-            Graphics.hideFps();
-            // Hide Debug Audio Info
-            if (typeof DebugManager !== "undefined") {
-                DebugManager.hide();
-            }
-        }
     };
 })();
