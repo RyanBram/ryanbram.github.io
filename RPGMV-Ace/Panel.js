@@ -150,7 +150,7 @@
 
     // Toggles the visibility of the virtual gamepad.
     toggleGamepadButton.addEventListener("click", () => {
-        if (!isPlaying) return; // <-- TAMBAHKAN BARIS INI
+        if (!isPlaying) return;
 
         isGamepadVisible = !isGamepadVisible;
         virtualGamepad.classList.toggle("hidden", !isGamepadVisible);
@@ -158,6 +158,11 @@
 
         // Block or unblock game input based on configuration
         updateGameInputBlocking();
+
+        // Reset auto-hide timer after toggling gamepad in fullscreen
+        if (isPlaying && document.fullscreenElement) {
+            showControlsAndResetHideTimer();
+        }
     });
 
     // --- Function to Block/Unblock Game Input ---
