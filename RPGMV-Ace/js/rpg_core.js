@@ -821,12 +821,12 @@ Bitmap.prototype._createCanvas = function (width, height) {
     this.__canvas.width = Math.max(width || 0, 1);
     this.__canvas.height = Math.max(height || 0, 1);
 
-    // CHROME Enable smoothing for better text rendering quality
+    /*/ CHROME Enable smoothing for better text rendering quality
     if (this.__context) {
         this.__context.imageSmoothingEnabled = true;
         this.__context.imageSmoothingQuality = "high";
     }
-    // CHROME
+    // CHROME */
     if (this._image) {
         var w = Math.max(this._image.width || 0, 1);
         var h = Math.max(this._image.height || 0, 1);
@@ -1442,10 +1442,10 @@ Bitmap.prototype.drawText = function (text, x, y, maxWidth, lineHeight, align) {
         context.textBaseline = "alphabetic";
         context.globalAlpha = 1;
 
-        // CHROME Improve text rendering quality on Chrome
+        /*/ CHROME Improve text rendering quality on Chrome
         context.imageSmoothingEnabled = true;
         context.imageSmoothingQuality = "high";
-        // CHROME
+        // CHROME */
         this._drawTextOutline(text, tx, ty, maxWidth);
         context.globalAlpha = alpha;
         this._drawTextBody(text, tx, ty, maxWidth);
