@@ -107,20 +107,42 @@
         if (!document.fullscreenElement) {
             try {
                 await playerContainer.requestFullscreen();
+
+                // Force landscape orientation on mobile devices
+                if (screen.orientation && screen.orientation.lock) {
+                    try {
+                        await screen.orientation.lock("landscape");
+                        console.log("Screen locked to landscape");
+                    } catch (err) {
+                        console.warn("Orientation lock failed (may need user gesture):", err);
+                    }
+                }
             } catch (e) {
                 console.warn("Fullscreen request failed:", e);
             }
         } else {
             document.exitFullscreen();
+
+            // Unlock orientation when exiting fullscreen
+            if (screen.orientation && screen.orientation.unlock) {
+                try {
+                    screen.orientation.unlock();
+                    console.log("Screen orientation unlocked");
+                } catch (err) {
+                    console.warn("Orientation unlock failed:", err);
+                }
+            }
         }
     });
 
     // Adjusts control bar visibility when fullscreen state changes.
     document.addEventListener("fullscreenchange", () => {
         if (document.fullscreenElement) {
-            showControlsAndResetHideTimer(); // Entered fullscreen, start hide timer if playing.
+            // Entered fullscreen
+            showControlsAndResetHideTimer();
         } else {
-            clearTimeout(controlsHideTimeout); // Exited fullscreen, cancel timer and show controls.
+            // Exited fullscreen
+            clearTimeout(controlsHideTimeout);
             controlsBar.classList.remove("controls-bar--hidden");
             controlsHandle.classList.add("hidden");
         }
@@ -153,7 +175,16 @@
     updateGameInputBlocking();
 
     // --- Controls Bar Mouse Events for Auto-hide ---
-    controlsHandle.addEventListener("click", showControlsAndResetHideTimer);
+    controlsHandle.addEventListener("click", () => {
+        showControlsAndResetHideTimer();
+    });
+
+    // Add mouse move to game screen area to trigger control bar visibility
+    playerContainer.addEventListener("mousemove", () => {
+        if (isPlaying && document.fullscreenElement) {
+            showControlsAndResetHideTimer();
+        }
+    });
 
     controlsBar.addEventListener("mouseenter", () => {
         if (isPlaying && document.fullscreenElement) {
@@ -170,6 +201,27 @@
 
     // --- Controls Bar Touch Events for Auto-hide ---
     // Add touch support to prevent controls from hiding during interaction
+
+    // Touch on handle to show controls
+    controlsHandle.addEventListener(
+        "touchend",
+        () => {
+            showControlsAndResetHideTimer();
+        },
+        { passive: true }
+    );
+
+    // Touch anywhere on player container (including game screen) to show controls
+    playerContainer.addEventListener(
+        "touchstart",
+        () => {
+            if (isPlaying && document.fullscreenElement) {
+                showControlsAndResetHideTimer();
+            }
+        },
+        { passive: true }
+    );
+
     controlsBar.addEventListener(
         "touchstart",
         () => {
