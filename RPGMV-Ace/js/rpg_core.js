@@ -821,12 +821,12 @@ Bitmap.prototype._createCanvas = function (width, height) {
     this.__canvas.width = Math.max(width || 0, 1);
     this.__canvas.height = Math.max(height || 0, 1);
 
-    /*/ Enable smoothing for better text rendering quality
+    // CHROME Enable smoothing for better text rendering quality
     if (this.__context) {
         this.__context.imageSmoothingEnabled = true;
         this.__context.imageSmoothingQuality = "high";
     }
-*/
+    // CHROME
     if (this._image) {
         var w = Math.max(this._image.width || 0, 1);
         var h = Math.max(this._image.height || 0, 1);
@@ -1214,17 +1214,6 @@ Bitmap.prototype.resize = function (width, height) {
 Bitmap.prototype.blt = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     dw = dw || sw;
     dh = dh || sh;
-
-    // Bulatkan semua parameter untuk menghindari sub-pixel rendering di Chrome
-    sx = Math.round(sx);
-    sy = Math.round(sy);
-    sw = Math.round(sw);
-    sh = Math.round(sh);
-    dx = Math.round(dx);
-    dy = Math.round(dy);
-    dw = Math.round(dw);
-    dh = Math.round(dh);
-
     if (
         sx >= 0 &&
         sy >= 0 &&
@@ -1260,17 +1249,6 @@ Bitmap.prototype.blt = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
 Bitmap.prototype.bltImage = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     dw = dw || sw;
     dh = dh || sh;
-
-    // Bulatkan semua parameter untuk menghindari sub-pixel rendering di Chrome
-    sx = Math.round(sx);
-    sy = Math.round(sy);
-    sw = Math.round(sw);
-    sh = Math.round(sh);
-    dx = Math.round(dx);
-    dy = Math.round(dy);
-    dw = Math.round(dw);
-    dh = Math.round(dh);
-
     if (
         sx >= 0 &&
         sy >= 0 &&
@@ -1447,16 +1425,16 @@ Bitmap.prototype.drawText = function (text, x, y, maxWidth, lineHeight, align) {
             this.drawSmallText(text, x, y, maxWidth, lineHeight, align);
             return;
         }
-        var tx = Math.round(x);
-        var ty = Math.round(y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2));
+        var tx = x;
+        var ty = y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2);
         var context = this._context;
         var alpha = context.globalAlpha;
         maxWidth = maxWidth || 0xffffffff;
         if (align === "center") {
-            tx += Math.round(maxWidth / 2);
+            tx += maxWidth / 2;
         }
         if (align === "right") {
-            tx += Math.round(maxWidth);
+            tx += maxWidth;
         }
         context.save();
         context.font = this._makeFontNameText();
@@ -1464,10 +1442,10 @@ Bitmap.prototype.drawText = function (text, x, y, maxWidth, lineHeight, align) {
         context.textBaseline = "alphabetic";
         context.globalAlpha = 1;
 
-        /*/ Improve text rendering quality on Chrome
+        // CHROME Improve text rendering quality on Chrome
         context.imageSmoothingEnabled = true;
         context.imageSmoothingQuality = "high";
-*/
+        // CHROME
         this._drawTextOutline(text, tx, ty, maxWidth);
         context.globalAlpha = alpha;
         this._drawTextBody(text, tx, ty, maxWidth);
@@ -1696,9 +1674,7 @@ Bitmap.prototype.addLoadListener = function (listner) {
  * @private
  */
 Bitmap.prototype._makeFontNameText = function () {
-    // Bulatkan fontSize untuk menghindari sub-pixel rendering yang buruk di Chrome
-    var roundedFontSize = Math.round(this.fontSize);
-    return (this.fontItalic ? "Italic " : "") + roundedFontSize + "px " + this.fontFace;
+    return (this.fontItalic ? "Italic " : "") + this.fontSize + "px " + this.fontFace;
 };
 
 /**
@@ -3052,9 +3028,11 @@ Graphics._createPixiApp = function () {
             width: this._width,
             height: this._height,
             backgroundColor: 0x000000, // Optional
+            // CHROME
             antialias: true, // Enable anti-aliasing for smoother rendering
             // resolution: window.devicePixelRatio || 1, // Use device pixel ratio for crisp rendering
-            //            autoDensity: true, // Automatically adjust CSS size
+            // autoDensity: true, // Automatically adjust CSS size
+            // CHROME
         };
 
         // Cut 'hello' Pixi message
