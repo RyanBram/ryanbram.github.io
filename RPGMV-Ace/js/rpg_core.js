@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_core.js v1.6.1 (community-1.3b)
+// rpg_core.js community-2.0b (pixi v7)
 //=============================================================================
 
 function ProgressWatcher() {
@@ -17,7 +17,7 @@ ProgressWatcher._bitmapListener = function (bitmap) {
     bitmap.addLoadListener(
         function () {
             this._countLoaded++;
-            this._progressListener(this._countLoaded, this._countLoading);
+            this._progressListener && this._progressListener(this._countLoaded, this._countLoading);
         }.bind(this)
     );
 };
@@ -27,7 +27,7 @@ ProgressWatcher._audioListener = function (audio) {
     audio.addLoadListener(
         function () {
             this._countLoaded++;
-            this._progressListener(this._countLoaded, this._countLoading);
+            this._progressListener && this._progressListener(this._countLoaded, this._countLoading);
         }.bind(this)
     );
 };
@@ -239,18 +239,12 @@ Utils.RPGMAKER_ENGINE = "community-1.3b";
  */
 Utils.isOptionValid = function (name) {
     if (location.search.slice(1).split("&").contains(name)) {
-        return 1;
+        return true;
     }
-    if (this.isElectronjs()) {
-        if (this.isNwjs() && process.argv.length > 0 && process.argv[0].split("&").contains(name)) {
-            return 1;
-        }
-    } else {
-        if (typeof nw !== "undefined" && nw.App.argv.length > 0 && nw.App.argv[0].split("&").contains(name)) {
-            return 1;
-        }
+    if (typeof nw !== "undefined" && nw.App.argv.length > 0 && nw.App.argv[0].split("&").contains(name)) {
+        return true;
     }
-    return 0;
+    return false;
 };
 
 /**
@@ -262,17 +256,6 @@ Utils.isOptionValid = function (name) {
  */
 Utils.isNwjs = function () {
     return typeof require === "function" && typeof process === "object";
-};
-
-/**
- * Checks whether the platform is Electron
- *
- * @static
- * @method isElectronjs
- * @return {Boolean} True if the platform is Electron
- */
-Utils.isElectronjs = function () {
-    return window && window.process && window.process.versions && window.process.versions["electron"];
 };
 
 /**
@@ -706,7 +689,8 @@ Point.prototype = Object.create(PIXI.Point.prototype);
 Point.prototype.constructor = Point;
 
 Point.prototype.initialize = function (x, y) {
-    PIXI.Point.call(this, x, y);
+    var baseInstance = new PIXI.Point(x, y);
+    Object.assign(this, baseInstance);
 };
 
 /**
@@ -742,7 +726,8 @@ Rectangle.prototype = Object.create(PIXI.Rectangle.prototype);
 Rectangle.prototype.constructor = Rectangle;
 
 Rectangle.prototype.initialize = function (x, y, width, height) {
-    PIXI.Rectangle.call(this, x, y, width, height);
+    var baseInstance = new PIXI.Rectangle(x, y, width, height);
+    Object.assign(this, baseInstance);
 };
 
 /**
@@ -846,7 +831,9 @@ Bitmap.prototype._createCanvas = function (width, height) {
         this.__context.drawImage(this._image, 0, 0);
     }
 
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 Bitmap.prototype._createBaseTexture = function (source) {
@@ -855,11 +842,7 @@ Bitmap.prototype._createBaseTexture = function (source) {
     this.__baseTexture.width = source.width;
     this.__baseTexture.height = source.height;
 
-    if (this._smooth) {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-    } else {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-    }
+    this._updateScaleMode();
 };
 
 Bitmap.prototype._clearImgInstance = function () {
@@ -892,7 +875,7 @@ Object.defineProperties(Bitmap.prototype, {
 
     _baseTexture: {
         get: function () {
-            if (!this.__baseTexture) this._createBaseTexture(this._image || this.__canvas);
+            if (!this.__baseTexture) this._createBaseTexture(this._image || this._canvas);
             return this.__baseTexture;
         },
     },
@@ -1001,25 +984,27 @@ Bitmap.load = function (url) {
  * @return Bitmap
  */
 Bitmap.snap = function (stage) {
-    var width = Graphics.width;
-    var height = Graphics.height;
-    var bitmap = new Bitmap(width, height);
-    var context = bitmap._context;
-    var renderTexture = PIXI.RenderTexture.create(width, height);
+    const width = Graphics.width;
+    const height = Graphics.height;
+    const bitmap = new Bitmap(width, height);
+
     if (stage) {
-        Graphics._renderer.render(stage, renderTexture);
+        const renderer = Graphics._renderer;
+        const renderTexture = PIXI.RenderTexture.create({ width: width, height: height });
+        renderer.render(stage, { renderTexture });
         stage.worldTransform.identity();
-        var canvas = null;
-        if (Graphics.isWebGL()) {
-            canvas = Graphics._renderer.extract.canvas(renderTexture);
+        const canvas = renderer.extract.canvas(renderTexture);
+        if (canvas) {
+            bitmap.context.drawImage(canvas, 0, 0);
+            canvas.width = 0;
+            canvas.height = 0;
         } else {
-            canvas = renderTexture.baseTexture._canvasRenderTarget.canvas;
+            console.error("Failed to create canvas for RenderTexture.");
         }
-        context.drawImage(canvas, 0, 0);
-    } else {
+        renderTexture.destroy({ destroyBase: true });
     }
-    renderTexture.destroy({ destroyBase: true });
-    bitmap._setDirty();
+
+    bitmap.baseTexture.update();
     return bitmap;
 };
 
@@ -1165,13 +1150,7 @@ Object.defineProperty(Bitmap.prototype, "smooth", {
     set: function (value) {
         if (this._smooth !== value) {
             this._smooth = value;
-            if (this.__baseTexture) {
-                if (this._smooth) {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-                } else {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-                }
-            }
+            this._updateScaleMode();
         }
     },
     configurable: true,
@@ -1241,7 +1220,9 @@ Bitmap.prototype.blt = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     ) {
         this._context.globalCompositeOperation = "source-over";
         this._context.drawImage(source._canvas, sx, sy, sw, sh, dx, dy, dw, dh);
-        this._setDirty();
+        if (this._baseTexture) {
+            this._baseTexture.update();
+        }
     }
 };
 
@@ -1274,7 +1255,9 @@ Bitmap.prototype.bltImage = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     ) {
         this._context.globalCompositeOperation = "source-over";
         this._context.drawImage(source._image, sx, sy, sw, sh, dx, dy, dw, dh);
-        this._setDirty();
+        if (this._baseTexture) {
+            this._baseTexture.update();
+        }
     }
 };
 
@@ -1319,7 +1302,9 @@ Bitmap.prototype.getAlphaPixel = function (x, y) {
  */
 Bitmap.prototype.clearRect = function (x, y, width, height) {
     this._context.clearRect(x, y, width, height);
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 /**
@@ -1347,7 +1332,9 @@ Bitmap.prototype.fillRect = function (x, y, width, height, color) {
     context.fillStyle = color;
     context.fillRect(x, y, width, height);
     context.restore();
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 /**
@@ -1386,7 +1373,9 @@ Bitmap.prototype.gradientFillRect = function (x, y, width, height, color1, color
     context.fillStyle = grad;
     context.fillRect(x, y, width, height);
     context.restore();
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 /**
@@ -1406,7 +1395,9 @@ Bitmap.prototype.drawCircle = function (x, y, radius, color) {
     context.arc(x, y, radius, 0, Math.PI * 2, false);
     context.fill();
     context.restore();
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 /**
@@ -1448,7 +1439,9 @@ Bitmap.prototype.drawText = function (text, x, y, maxWidth, lineHeight, align) {
         context.globalAlpha = alpha;
         this._drawTextBody(text, tx, ty, maxWidth);
         context.restore();
-        this._setDirty();
+        if (this._baseTexture) {
+            this._baseTexture.update();
+        }
     }
 };
 
@@ -1485,7 +1478,8 @@ Bitmap.prototype.drawSmallText = function (text, x, y, maxWidth, lineHeight, ali
     while (scaledHeightWithOutline > bitmapHeight) bitmapHeight *= 2;
     if (bitmap.width !== bitmapWidth || bitmap.height !== bitmapHeight) bitmap.resize(bitmapWidth, bitmapHeight);
 
-    bitmap.drawText(text, bitmap.outlineWidth, bitmap.outlineWidth, scaledMaxWidth, minFontSize, align);
+    var roundedOutlineWidth = Math.round(bitmap.outlineWidth); // for Safari
+    bitmap.drawText(text, roundedOutlineWidth, roundedOutlineWidth, scaledMaxWidth, minFontSize, align);
     this.blt(
         bitmap,
         0,
@@ -1535,7 +1529,9 @@ Bitmap.prototype.adjustTone = function (r, g, b) {
             pixels[i + 2] += b;
         }
         context.putImageData(imageData, 0, 0);
-        this._setDirty();
+        if (this._baseTexture) {
+            this._baseTexture.update();
+        }
     }
 };
 
@@ -1605,7 +1601,9 @@ Bitmap.prototype.rotateHue = function (offset) {
             pixels[i + 2] = rgb[2];
         }
         context.putImageData(imageData, 0, 0);
-        this._setDirty();
+        if (this._baseTexture) {
+            this._baseTexture.update();
+        }
     }
 };
 
@@ -1641,7 +1639,9 @@ Bitmap.prototype.blur = function () {
         }
         context.restore();
     }
-    this._setDirty();
+    if (this._baseTexture) {
+        this._baseTexture.update();
+    }
 };
 
 /**
@@ -1737,7 +1737,9 @@ Bitmap.prototype.decode = function () {
             this._loadingState = "loaded";
 
             if (!this.__canvas) this._createBaseTexture(this._image);
-            this._setDirty();
+            if (this._baseTexture) {
+                this._baseTexture.update();
+            }
             this._callLoadListeners();
             break;
 
@@ -1783,14 +1785,6 @@ Bitmap.prototype._onError = function () {
     this._image.removeEventListener("load", this._loadListener);
     this._image.removeEventListener("error", this._errorListener);
     this._loadingState = "error";
-};
-
-/**
- * @method _setDirty
- * @private
- */
-Bitmap.prototype._setDirty = function () {
-    this._dirty = true;
 };
 
 /**
@@ -1847,6 +1841,16 @@ Bitmap.prototype._requestImage = function (url) {
     }
 };
 
+Bitmap.prototype._updateScaleMode = function () {
+    if (this._baseTexture) {
+        if (this._smooth) {
+            this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+        } else {
+            this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        }
+    }
+};
+
 Bitmap.prototype.isRequestOnly = function () {
     return !(this._decodeAfterRequest || this.isReady());
 };
@@ -1894,7 +1898,7 @@ Graphics._videoVolume = 1;
 Graphics.initialize = function (width, height, type) {
     this._width = width || 800;
     this._height = height || 600;
-    this._rendererType = type || "auto";
+    // this._rendererType = type || "auto";
     this._boxWidth = this._width;
     this._boxHeight = this._height;
 
@@ -1909,11 +1913,12 @@ Graphics.initialize = function (width, height, type) {
     this._videoLoading = false;
     this._upperCanvas = null;
     this._renderer = null;
+    this._app = null;
     this._fpsMeter = null;
     this._modeBox = null;
     this._skipCount = 0;
     this._maxSkip = 3;
-    this._rendered = false;
+    // this._rendered = false;
     this._loadingImage = null;
     this._loadingCount = 0;
     this._fpsMeterToggled = false;
@@ -1932,6 +1937,7 @@ Graphics.initialize = function (width, height, type) {
     this._setupEventHandlers();
     this._setupCssFontLoading();
     this._setupProgress();
+    this._createPixiApp();
 };
 
 Graphics._setupCssFontLoading = function () {
@@ -2018,7 +2024,7 @@ Graphics.tickStart = function () {
  * @method tickEnd
  */
 Graphics.tickEnd = function () {
-    if (this._fpsMeter && this._rendered) {
+    if (this._fpsMeter) {
         this._fpsMeter.tick();
     }
 };
@@ -2033,19 +2039,15 @@ Graphics.tickEnd = function () {
 Graphics.render = function (stage) {
     if (this._skipCount <= 0) {
         var startTime = Date.now();
-        if (stage) {
-            this._renderer.render(stage);
-            if (this._renderer.gl && this._renderer.gl.flush) {
-                this._renderer.gl.flush();
-            }
+        if (stage && this._app) {
+            this._app.stage = stage; // Set latest `stage`
+            this._app.render(); // Call Pixi v7 render
         }
         var endTime = Date.now();
         var elapsed = endTime - startTime;
         this._skipCount = Math.min(Math.floor(elapsed / 15), this._maxSkip);
-        this._rendered = true;
     } else {
         this._skipCount--;
-        this._rendered = false;
     }
     this.frameCount++;
 };
@@ -2058,7 +2060,7 @@ Graphics.render = function (stage) {
  * @return {Boolean} True if the renderer type is WebGL
  */
 Graphics.isWebGL = function () {
-    return this._renderer && this._renderer.type === PIXI.RENDERER_TYPE.WEBGL;
+    return this._app && this._app.renderer.type === 1;
 };
 
 /**
@@ -2139,7 +2141,6 @@ Graphics.startLoading = function () {
 Graphics._setupProgress = function () {
     this._progressElement = document.createElement("div");
     this._progressElement.id = "loading-progress";
-    this._progressElement.width = 600;
     this._progressElement.height = 300;
     this._progressElement.style.visibility = "hidden";
 
@@ -2151,6 +2152,7 @@ Graphics._setupProgress = function () {
     this._barElement.style.border = "5px solid white";
     this._barElement.style.borderRadius = "15px";
     this._barElement.style.marginTop = "40%";
+    this._barElement.style.boxSizing = "border-box";
 
     this._filledBarElement = document.createElement("div");
     this._filledBarElement.id = "loading-filled-bar";
@@ -2191,6 +2193,7 @@ Graphics._updateProgressCount = function (countLoaded, countLoading) {
 };
 
 Graphics._updateProgress = function () {
+    this._progressElement.width = Math.min(this._width * 0.9, 600);
     this._centerElement(this._progressElement);
 };
 
@@ -2267,7 +2270,7 @@ Graphics.eraseLoadingError = function () {
         this._errorPrinter.oncontextmenu = function () {
             return false;
         };
-        this.startLoading();
+        this._loadingCount = 0;
     }
 };
 
@@ -2346,6 +2349,7 @@ Graphics.showFps = function () {
     if (this._fpsMeter) {
         this._fpsMeter.show();
         this._modeBox.style.opacity = 1;
+        this._updateModeBoxText();
     }
 };
 
@@ -2359,6 +2363,37 @@ Graphics.hideFps = function () {
     if (this._fpsMeter) {
         this._fpsMeter.hide();
         this._modeBox.style.opacity = 0;
+    }
+};
+
+/**
+ * Updates the mode box text to show current renderer type.
+ *
+ * @static
+ * @method _updateModeBoxText
+ * @private
+ */
+Graphics._updateModeBoxText = function () {
+    if (this._modeBox) {
+        var modeText = document.getElementById("modeText");
+        if (modeText) {
+            var rendererType = "Unknown";
+            if (this._app && this._app.renderer) {
+                // PIXI.RENDERER_TYPE: UNKNOWN = 0, WEBGL = 1, CANVAS = 2
+                switch (this._app.renderer.type) {
+                    case 1:
+                        rendererType = "WebGL";
+                        break;
+                    case 2:
+                        rendererType = "Canvas";
+                        break;
+                    default:
+                        rendererType = "Unknown";
+                        break;
+                }
+            }
+            modeText.innerHTML = rendererType;
+        }
     }
 };
 
@@ -2528,15 +2563,6 @@ Graphics.isInsideCanvas = function (x, y) {
 };
 
 /**
- * Calls pixi.js garbage collector
- */
-Graphics.callGC = function () {
-    if (Graphics.isWebGL()) {
-        Graphics._renderer.textureGC.run();
-    }
-};
-
-/**
  * The width of the game screen.
  *
  * @static
@@ -2640,7 +2666,6 @@ Graphics._createAllElements = function () {
     this._createCanvas();
     this._createVideo();
     this._createUpperCanvas();
-    this._createRenderer();
     this._createFPSMeter();
     this._createModeBox();
     this._createGameFontLoader();
@@ -2984,31 +3009,35 @@ Graphics._paintUpperCanvas = function () {
     }
 };
 
-/**
- * @static
- * @method _createRenderer
- * @private
- */
-Graphics._createRenderer = function () {
-    PIXI.dontSayHello = true;
-    var width = this._width;
-    var height = this._height;
-    var options = { view: this._canvas };
+Graphics._createPixiApp = function () {
     try {
-        switch (this._rendererType) {
-            case "canvas":
-                this._renderer = new PIXI.CanvasRenderer(width, height, options);
-                break;
-            case "webgl":
-                this._renderer = new PIXI.WebGLRenderer(width, height, options);
-                break;
-            default:
-                this._renderer = PIXI.autoDetectRenderer(width, height, options);
-                break;
-        }
+        var appOptions = {
+            view: this._canvas,
+            autoStart: false, // IMPORTANT: call render() manually
+            width: this._width,
+            height: this._height,
+            backgroundColor: 0x000000, // Optional
+        };
 
-        if (this._renderer && this._renderer.textureGC) this._renderer.textureGC.maxIdle = 1;
+        // Cut 'hello' Pixi message
+        if (PIXI.settings.RENDER_OPTIONS) PIXI.settings.RENDER_OPTIONS.hello = false;
+        else if (PIXI.utils) PIXI.utils.sayHello = function () {}; // Fallback
+
+        this._app = new PIXI.Application(appOptions);
+        this._renderer = this._app.renderer; // Simpan referensi renderer
+
+        // Matikan ticker bawaan Pixi
+        this._app.ticker.stop();
+
+        // Atur GC (Garbage Collection) Pixi v7
+        if (PIXI.TextureGCSystem) {
+            PIXI.TextureGCSystem.defaultMaxIdle = 600; // Nilai MZ
+        } else if (this._renderer.textureGC) {
+            // Fallback v5
+            this._renderer.textureGC.maxIdle = 1;
+        }
     } catch (e) {
+        this._app = null;
         this._renderer = null;
     }
 };
@@ -3019,8 +3048,8 @@ Graphics._createRenderer = function () {
  * @private
  */
 Graphics._updateRenderer = function () {
-    if (this._renderer) {
-        this._renderer.resize(this._width, this._height);
+    if (this._app && this._app.renderer) {
+        this._app.renderer.resize(this._width, this._height);
     }
 };
 
@@ -3063,7 +3092,7 @@ Graphics._createModeBox = function () {
     text.style.color = "white";
     text.style.textAlign = "center";
     text.style.textShadow = "1px 1px 0 rgba(0,0,0,0.5)";
-    text.innerHTML = this.isWebGL() ? "WebGL mode" : "Canvas mode";
+    text.innerHTML = this.isWebGL() ? "WebGL" : "Canvas";
 
     document.body.appendChild(box);
     box.appendChild(text);
@@ -3620,24 +3649,15 @@ Object.defineProperty(Input, "date", {
  * @private
  */
 Input._wrapNwjsAlert = function () {
-    if (Utils.isElectronjs()) {
+    if (Utils.isNwjs()) {
         var _alert = window.alert;
         window.alert = function () {
+            var gui = require("nw.gui");
+            var win = gui.Window.get();
             _alert.apply(this, arguments);
-            require("electron").ipcRenderer.send("focusMainWindow");
+            win.focus();
             Input.clear();
         };
-    } else {
-        if (Utils.isNwjs()) {
-            var _alert = window.alert;
-            window.alert = function () {
-                var gui = require("nw.gui");
-                var win = gui.Window.get();
-                _alert.apply(this, arguments);
-                win.focus();
-                Input.clear();
-            };
-        }
     }
 };
 
@@ -4119,7 +4139,7 @@ TouchInput._setupEventHandlers = function () {
     document.addEventListener("mousedown", this._onMouseDown.bind(this));
     document.addEventListener("mousemove", this._onMouseMove.bind(this));
     document.addEventListener("mouseup", this._onMouseUp.bind(this));
-    document.addEventListener("wheel", this._onWheel.bind(this));
+    document.addEventListener("wheel", this._onWheel.bind(this), isSupportPassive ? { passive: false } : false);
     document.addEventListener(
         "touchstart",
         this._onTouchStart.bind(this),
@@ -4390,12 +4410,13 @@ function Sprite() {
 Sprite.prototype = Object.create(PIXI.Sprite.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.voidFilter = new PIXI.filters.VoidFilter();
+Sprite.voidFilter = new PIXI.filters.AlphaFilter();
 
 Sprite.prototype.initialize = function (bitmap) {
     var texture = new PIXI.Texture(new PIXI.BaseTexture());
 
-    PIXI.Sprite.call(this, texture);
+    const baseInstance = new PIXI.Sprite(texture);
+    Object.assign(this, baseInstance);
 
     this._bitmap = null;
     this._frame = new Rectangle();
@@ -4769,57 +4790,14 @@ Sprite.prototype._executeTint = function (x, y, w, h) {
 };
 
 Sprite.prototype._renderCanvas_PIXI = PIXI.Sprite.prototype._renderCanvas;
-Sprite.prototype._renderWebGL_PIXI = PIXI.Sprite.prototype._renderWebGL;
+Sprite.prototype._renderWebGL_PIXI = PIXI.Sprite.prototype._render;
 
 /**
- * @method _renderCanvas
+ * @method _render
  * @param {Object} renderer
  * @private
  */
-Sprite.prototype._renderCanvas = function (renderer) {
-    if (this.bitmap) {
-        this.bitmap.touch();
-    }
-    if (this.bitmap && !this.bitmap.isReady()) {
-        return;
-    }
-
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
-    }
-};
-
-/**
- * checks if we need to speed up custom blendmodes
- * @param renderer
- * @private
- */
-Sprite.prototype._speedUpCustomBlendModes = function (renderer) {
-    var picture = renderer.plugins.picture;
-    var blend = this.blendMode;
-    if (renderer.renderingToScreen && renderer._activeRenderTarget.root) {
-        if (picture.drawModes[blend]) {
-            var stage = renderer._lastObjectRendered;
-            var f = stage._filters;
-            if (!f || !f[0]) {
-                setTimeout(function () {
-                    var f = stage._filters;
-                    if (!f || !f[0]) {
-                        stage.filters = [Sprite.voidFilter];
-                        stage.filterArea = new PIXI.Rectangle(0, 0, Graphics.width, Graphics.height);
-                    }
-                }, 0);
-            }
-        }
-    }
-};
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-Sprite.prototype._renderWebGL = function (renderer) {
+Sprite.prototype._render = function (renderer) {
     if (this.bitmap) {
         this.bitmap.touch();
     }
@@ -4834,15 +4812,11 @@ Sprite.prototype._renderWebGL = function (renderer) {
         //copy of pixi-v4 internal code
         this.calculateVertices();
 
-        if (this.pluginName === "sprite" && this._isPicture) {
-            // use heavy renderer, which reduces artifacts and applies corrent blendMode,
-            // but does not use multitexture optimization
-            this._speedUpCustomBlendModes(renderer);
-            renderer.setObjectRenderer(renderer.plugins.picture);
-            renderer.plugins.picture.render(this);
+        if (this._isPicture) {
+            PIXI.picture.Sprite.prototype._render.apply(this, arguments);
         } else {
             // use pixi super-speed renderer
-            renderer.setObjectRenderer(renderer.plugins[this.pluginName]);
+            renderer.batch.setObjectRenderer(renderer.plugins[this.pluginName]);
             renderer.plugins[this.pluginName].render(this);
         }
     }
@@ -4952,13 +4926,12 @@ Sprite.prototype._renderWebGL = function (renderer) {
  * @param {Number} index The index to get the child from
  * @return {Object} The child that was removed
  */
-
 //-----------------------------------------------------------------------------
 /**
  * The tilemap which displays 2D tile-based game map.
  *
- * @class Tilemap
- * @constructor
+ * @class
+ * @extends PIXI.Container
  */
 function Tilemap() {
     this.initialize.apply(this, arguments);
@@ -4968,7 +4941,8 @@ Tilemap.prototype = Object.create(PIXI.Container.prototype);
 Tilemap.prototype.constructor = Tilemap;
 
 Tilemap.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    const baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
 
     this._margin = 20;
     this._width = Graphics.width + this._margin * 2;
@@ -6302,16 +6276,11 @@ Tilemap.WATERFALL_AUTOTILE_TABLE = [
 function ShaderTilemap() {
     Tilemap.apply(this, arguments);
     this.roundPixels = true;
+    this.sortableChildren = true;
 }
 
 ShaderTilemap.prototype = Object.create(Tilemap.prototype);
 ShaderTilemap.prototype.constructor = ShaderTilemap;
-
-// we need this constant for some platforms (Samsung S4, S5, Tab4, HTC One H8)
-PIXI.glCore.VertexArrayObject.FORCE_NATIVE = true;
-PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
-PIXI.tilemap.TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 
 /**
  * Uploads animation state in renderer
@@ -6330,23 +6299,12 @@ ShaderTilemap.prototype._hackRenderer = function (renderer) {
 /**
  * PIXI render method
  *
- * @method renderCanvas
+ * @method render
  * @param {Object} pixi renderer
  */
-ShaderTilemap.prototype.renderCanvas = function (renderer) {
+ShaderTilemap.prototype.render = function (renderer) {
     this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderCanvas.call(this, renderer);
-};
-
-/**
- * PIXI render method
- *
- * @method renderWebGL
- * @param {Object} pixi renderer
- */
-ShaderTilemap.prototype.renderWebGL = function (renderer) {
-    this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderWebGL.call(this, renderer);
+    PIXI.Container.prototype.render.call(this, renderer);
 };
 
 /**
@@ -6416,15 +6374,21 @@ ShaderTilemap.prototype._createLayers = function () {
 
     if (!this.lowerZLayer) {
         //@hackerham: create layers only in initialization. Doesn't depend on width/height
-        this.addChild((this.lowerZLayer = new PIXI.tilemap.ZLayer(this, 0)));
-        this.addChild((this.upperZLayer = new PIXI.tilemap.ZLayer(this, 4)));
 
         var parameters = PluginManager.parameters("ShaderTilemap");
         var useSquareShader = Number(parameters.hasOwnProperty("squareShader") ? parameters["squareShader"] : 0);
 
-        this.lowerZLayer.addChild((this.lowerLayer = new PIXI.tilemap.CompositeRectTileLayer(0, [], useSquareShader)));
+        this.lowerLayer = new PIXI.tilemap.CompositeRectTileLayer(0, [], useSquareShader);
         this.lowerLayer.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
-        this.upperZLayer.addChild((this.upperLayer = new PIXI.tilemap.CompositeRectTileLayer(4, [], useSquareShader)));
+        this.lowerLayer.zIndex = 0;
+        this.lowerZLayer = this.lowerLayer; // Alias untuk sisa kode
+
+        this.upperLayer = new PIXI.tilemap.CompositeRectTileLayer(4, [], useSquareShader);
+        this.upperLayer.zIndex = 4;
+        this.upperZLayer = this.upperLayer; // Alias untuk sisa kode
+
+        this.addChild(this.lowerZLayer);
+        this.addChild(this.upperZLayer);
     }
 };
 
@@ -6723,13 +6687,14 @@ function TilingSprite() {
     this.initialize.apply(this, arguments);
 }
 
-TilingSprite.prototype = Object.create(PIXI.extras.PictureTilingSprite.prototype);
+TilingSprite.prototype = Object.create(PIXI.TilingSprite.prototype);
 TilingSprite.prototype.constructor = TilingSprite;
 
 TilingSprite.prototype.initialize = function (bitmap) {
     var texture = new PIXI.Texture(new PIXI.BaseTexture());
 
-    PIXI.extras.PictureTilingSprite.call(this, texture);
+    const baseInstance = new PIXI.TilingSprite(texture);
+    Object.assign(this, baseInstance);
 
     this._bitmap = null;
     this._width = 0;
@@ -6745,23 +6710,6 @@ TilingSprite.prototype.initialize = function (bitmap) {
     this.origin = new Point();
 
     this.bitmap = bitmap;
-};
-
-TilingSprite.prototype._renderCanvas_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderCanvas;
-TilingSprite.prototype._renderWebGL_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderWebGL;
-
-/**
- * @method _renderCanvas
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderCanvas = function (renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
-    }
 };
 
 /**
@@ -6859,7 +6807,7 @@ TilingSprite.prototype.updateTransform = function () {
     this.updateTransformTS();
 };
 
-TilingSprite.prototype.updateTransformTS = PIXI.extras.TilingSprite.prototype.updateTransform;
+TilingSprite.prototype.updateTransformTS = PIXI.TilingSprite.prototype.updateTransform;
 
 /**
  * @method _onBitmapLoad
@@ -6883,24 +6831,6 @@ TilingSprite.prototype._refresh = function () {
     this.texture.frame = frame;
     this.texture._updateID++;
     this.tilingTexture = null;
-};
-
-TilingSprite.prototype._speedUpCustomBlendModes = Sprite.prototype._speedUpCustomBlendModes;
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function (renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-        this._bitmap.checkDirty();
-    }
-
-    this._speedUpCustomBlendModes(renderer);
-
-    this._renderWebGL_PIXI(renderer);
 };
 
 // The important members from Pixi.js
@@ -6941,8 +6871,8 @@ ScreenSprite.prototype = Object.create(PIXI.Container.prototype);
 ScreenSprite.prototype.constructor = ScreenSprite;
 
 ScreenSprite.prototype.initialize = function () {
-    PIXI.Container.call(this);
-
+    const baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
     this._graphics = new PIXI.Graphics();
     this.addChild(this._graphics);
     this.opacity = 0;
@@ -7063,7 +6993,8 @@ Window.prototype = Object.create(PIXI.Container.prototype);
 Window.prototype.constructor = Window;
 
 Window.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    var baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
 
     this._isWindow = true;
     this._windowskin = null;
@@ -7750,19 +7681,18 @@ WindowLayer.prototype = Object.create(PIXI.Container.prototype);
 WindowLayer.prototype.constructor = WindowLayer;
 
 WindowLayer.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    var baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
     this._width = 0;
     this._height = 0;
-    this._tempCanvas = null;
-    this._translationMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
     this._windowMask = new PIXI.Graphics();
     this._windowMask.beginFill(0xffffff, 1);
     this._windowMask.drawRect(0, 0, 0, 0);
     this._windowMask.endFill();
-    this._windowRect = this._windowMask.graphicsData[0].shape;
+    this._windowRect = this._windowMask.geometry.graphicsData[0].shape;
+    this._windowMaskShift = new PIXI.Point();
 
-    this._renderSprite = null;
     this.filterArea = new PIXI.Rectangle();
     this.filters = [WindowLayer.voidFilter];
 
@@ -7774,7 +7704,7 @@ WindowLayer.prototype.onRemoveAsAChild = function () {
     this.removeChildren();
 };
 
-WindowLayer.voidFilter = new PIXI.filters.VoidFilter();
+WindowLayer.voidFilter = new PIXI.filters.AlphaFilter();
 
 /**
  * The width of the window layer in pixels.
@@ -7838,120 +7768,57 @@ WindowLayer.prototype.update = function () {
 };
 
 /**
- * @method _renderCanvas
+ * @method render
  * @param {Object} renderSession
  * @private
  */
-WindowLayer.prototype.renderCanvas = function (renderer) {
-    if (!this.visible || !this.renderable) {
-        return;
-    }
+WindowLayer.prototype.render = function (renderer) {
+    if (!this.visible || !this.renderable) return;
+    if (this.children.length === 0) return;
 
-    if (!this._tempCanvas) {
-        this._tempCanvas = document.createElement("canvas");
-    }
+    // var sourceFrame = renderer.renderTexture.sourceFrame;
+    // var projectionMatrix = renderer.projection.projectionMatrix;
+    // this._windowMaskShift.x = Math.round((projectionMatrix.tx + 1) / 2 * sourceFrame.width);
+    // this._windowMaskShift.y = Math.round((projectionMatrix.ty - 1) / 2 * sourceFrame.height);
+    renderer.batch.flush();
 
-    this._tempCanvas.width = Graphics.width;
-    this._tempCanvas.height = Graphics.height;
+    const gl = renderer.gl;
+    gl.enable(gl.STENCIL_TEST);
 
-    var realCanvasContext = renderer.context;
-    var context = this._tempCanvas.getContext("2d");
-
-    context.save();
-    context.clearRect(0, 0, Graphics.width, Graphics.height);
-    context.beginPath();
-    context.rect(this.x, this.y, this.width, this.height);
-    context.closePath();
-    context.clip();
-
-    renderer.context = context;
-
-    for (var i = 0; i < this.children.length; i++) {
+    for (var i = this.children.length - 1; i >= 0; --i) {
         var child = this.children[i];
         if (child._isWindow && child.visible && child.openness > 0) {
-            this._canvasClearWindowRect(renderer, child);
-            context.save();
-            child.renderCanvas(renderer);
-            context.restore();
+            gl.stencilFunc(gl.EQUAL, 0, 0xff);
+            gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+            child.render(renderer);
+            renderer.batch.flush();
+
+            this._maskWindow(child, this._windowMaskShift);
+
+            gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+            gl.stencilOp(gl.KEEP, gl.REPLACE, gl.REPLACE);
+            gl.colorMask(false, false, false, false);
+            gl.depthMask(false);
+            this._windowMask.render(renderer);
+            renderer.batch.flush();
+            gl.colorMask(true, true, true, true);
+            gl.depthMask(true);
         }
     }
 
-    context.restore();
+    gl.clearStencil(0);
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    gl.disable(gl.STENCIL_TEST);
 
-    renderer.context = realCanvasContext;
-    renderer.context.setTransform(1, 0, 0, 1, 0, 0);
-    renderer.context.globalCompositeOperation = "source-over";
-    renderer.context.globalAlpha = 1;
-    renderer.context.drawImage(this._tempCanvas, 0, 0);
+    renderer.batch.flush();
 
     for (var j = 0; j < this.children.length; j++) {
         if (!this.children[j]._isWindow) {
-            this.children[j].renderCanvas(renderer);
-        }
-    }
-};
-
-/**
- * @method _canvasClearWindowRect
- * @param {Object} renderSession
- * @param {Window} window
- * @private
- */
-WindowLayer.prototype._canvasClearWindowRect = function (renderSession, window) {
-    var rx = this.x + window.x;
-    var ry = this.y + window.y + (window.height / 2) * (1 - window._openness / 255);
-    var rw = window.width;
-    var rh = (window.height * window._openness) / 255;
-    renderSession.context.clearRect(rx, ry, rw, rh);
-};
-
-/**
- * @method _renderWebGL
- * @param {Object} renderSession
- * @private
- */
-WindowLayer.prototype.renderWebGL = function (renderer) {
-    if (!this.visible || !this.renderable) {
-        return;
-    }
-
-    if (this.children.length == 0) {
-        return;
-    }
-
-    renderer.flush();
-    this.filterArea.copy(this);
-    renderer.filterManager.pushFilter(this, this.filters);
-    renderer.currentRenderer.start();
-
-    var shift = new PIXI.Point();
-    var rt = renderer._activeRenderTarget;
-    var projectionMatrix = rt.projectionMatrix;
-    shift.x = Math.round(((projectionMatrix.tx + 1) / 2) * rt.sourceFrame.width);
-    shift.y = Math.round(((projectionMatrix.ty + 1) / 2) * rt.sourceFrame.height);
-
-    for (var i = 0; i < this.children.length; i++) {
-        var child = this.children[i];
-        if (child._isWindow && child.visible && child.openness > 0) {
-            this._maskWindow(child, shift);
-            renderer.maskManager.pushScissorMask(this, this._windowMask);
-            renderer.clear();
-            renderer.maskManager.popScissorMask();
-            renderer.currentRenderer.start();
-            child.renderWebGL(renderer);
-            renderer.currentRenderer.flush();
+            this.children[j].render(renderer);
         }
     }
 
-    renderer.flush();
-    renderer.filterManager.popFilter();
-    renderer.maskManager.popScissorMask();
-
-    for (var j = 0; j < this.children.length; j++) {
-        if (!this.children[j]._isWindow) {
-            this.children[j].renderWebGL(renderer);
-        }
-    }
+    renderer.batch.flush();
 };
 
 /**
@@ -7960,13 +7827,15 @@ WindowLayer.prototype.renderWebGL = function (renderer) {
  * @private
  */
 WindowLayer.prototype._maskWindow = function (window, shift) {
-    this._windowMask._currentBounds = null;
-    this._windowMask.boundsDirty = true;
-    var rect = this._windowRect;
-    rect.x = this.x + shift.x + window.x;
-    rect.y = this.y + shift.y + window.y + (window.height / 2) * (1 - window._openness / 255);
-    rect.width = window.width;
-    rect.height = (window.height * window._openness) / 255;
+    this._windowMask.clear();
+    this._windowMask.beginFill(0xffffff);
+    this._windowMask.drawRect(
+        this.x + shift.x + window.x,
+        this.y + shift.y + window.y + (window.height / 2) * (1 - window._openness / 255),
+        window.width,
+        (window.height * window._openness) / 255
+    );
+    this._windowMask.endFill();
 };
 
 // The important members from Pixi.js
@@ -8047,7 +7916,8 @@ Weather.prototype = Object.create(PIXI.Container.prototype);
 Weather.prototype.constructor = Weather;
 
 Weather.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    const baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
 
     this._width = Graphics.width;
     this._height = Graphics.height;
@@ -8241,7 +8111,8 @@ Weather.prototype._rebornSprite = function (sprite) {
  * @constructor
  */
 function ToneFilter() {
-    PIXI.filters.ColorMatrixFilter.call(this);
+    var baseInstance = new PIXI.filters.ColorMatrixFilter();
+    Object.assign(this, baseInstance);
 }
 
 ToneFilter.prototype = Object.create(PIXI.filters.ColorMatrixFilter.prototype);
@@ -8303,7 +8174,8 @@ ToneSprite.prototype = Object.create(PIXI.Container.prototype);
 ToneSprite.prototype.constructor = ToneSprite;
 
 ToneSprite.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    var baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
     this.clear();
 };
 
@@ -8408,10 +8280,14 @@ Stage.prototype = Object.create(PIXI.Container.prototype);
 Stage.prototype.constructor = Stage;
 
 Stage.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    var baseInstance = new PIXI.Container();
+    Object.assign(this, baseInstance);
 
-    // The interactive flag causes a memory leak.
-    this.interactive = false;
+    this.interactive = true;
+
+    this._active = true;
+
+    this._wasActive = true;
 };
 
 /**
@@ -8671,7 +8547,7 @@ WebAudio._onHide = function () {
  */
 WebAudio._onShow = function () {
     if (this._shouldMuteOnHide()) {
-        this._fadeIn(0.5);
+        this._fadeIn(1);
     }
 };
 
@@ -8721,7 +8597,8 @@ WebAudio._fadeOut = function (duration) {
  */
 WebAudio.prototype.clear = function () {
     this.stop();
-    this._chunks = [];
+    this._buffer = null;
+    this._sourceNode = null;
     this._gainNode = null;
     this._pannerNode = null;
     this._totalTime = 0;
@@ -8732,16 +8609,13 @@ WebAudio.prototype.clear = function () {
     this._volume = 1;
     this._pitch = 1;
     this._pan = 0;
-    this._loadedTime = 0;
-    this._offset = 0;
+    this._endTimer = null;
     this._loadListeners = [];
     this._stopListeners = [];
     this._hasError = false;
     this._autoPlay = false;
-    this._isReady = false;
-    this._isPlaying = false;
-    this._loop = false;
 };
+
 /**
  * [read-only] The url of the audio file.
  *
@@ -8788,7 +8662,7 @@ Object.defineProperty(WebAudio.prototype, "pitch", {
         if (this._pitch !== value) {
             this._pitch = value;
             if (this.isPlaying()) {
-                this.play(this._loop, 0);
+                this.play(this._sourceNode.loop, 0);
             }
         }
     },
@@ -8819,7 +8693,7 @@ Object.defineProperty(WebAudio.prototype, "pan", {
  * @return {Boolean} True if the audio data is ready to play
  */
 WebAudio.prototype.isReady = function () {
-    return this._isReady;
+    return !!this._buffer;
 };
 
 /**
@@ -8839,7 +8713,7 @@ WebAudio.prototype.isError = function () {
  * @return {Boolean} True if the audio is playing
  */
 WebAudio.prototype.isPlaying = function () {
-    return this._isPlaying;
+    return !!this._sourceNode;
 };
 
 /**
@@ -8850,16 +8724,18 @@ WebAudio.prototype.isPlaying = function () {
  * @param {Number} offset The start position to play in seconds
  */
 WebAudio.prototype.play = function (loop, offset) {
-    this._autoPlay = true;
-    this._loop = loop;
-    this._offset = offset || 0;
-    if (this._loop && this._loopLength > 0) {
-        while (this._offset >= this._loopStart + this._loopLength) {
-            this._offset -= this._loopLength;
-        }
-    }
     if (this.isReady()) {
-        this._startPlaying();
+        offset = offset || 0;
+        this._startPlaying(loop, offset);
+    } else if (WebAudio._context) {
+        this._autoPlay = true;
+        this.addLoadListener(
+            function () {
+                if (this._autoPlay) {
+                    this.play(loop, offset);
+                }
+            }.bind(this)
+        );
     }
 };
 
@@ -8869,13 +8745,14 @@ WebAudio.prototype.play = function (loop, offset) {
  * @method stop
  */
 WebAudio.prototype.stop = function () {
-    const wasPlaying = this.isPlaying();
-    this._isPlaying = false;
     this._autoPlay = false;
+    this._removeEndTimer();
     this._removeNodes();
-    if (this._stopListeners && wasPlaying) {
-        this._stopListeners.forEach((listener) => listener());
-        this._stopListeners.length = 0;
+    if (this._stopListeners) {
+        while (this._stopListeners.length > 0) {
+            var listner = this._stopListeners.shift();
+            listner();
+        }
     }
 };
 
@@ -8924,9 +8801,9 @@ WebAudio.prototype.fadeOut = function (duration) {
  * @method seek
  */
 WebAudio.prototype.seek = function () {
-    if (WebAudio._context && this.isPlaying()) {
-        let pos = (WebAudio._context.currentTime - this._startTime) * this._pitch;
-        if (this._loop && this._loopLength > 0) {
+    if (WebAudio._context) {
+        var pos = (WebAudio._context.currentTime - this._startTime) * this._pitch;
+        if (this._loopLength > 0) {
             while (pos >= this._loopStart + this._loopLength) {
                 pos -= this._loopLength;
             }
@@ -8962,107 +8839,23 @@ WebAudio.prototype.addStopListener = function (listner) {
  * @param {String} url
  * @private
  */
-WebAudio.prototype._load = async function (url) {
+WebAudio.prototype._load = function (url) {
     if (WebAudio._context) {
-        if (Decrypter.hasEncryptedAudio) {
-            url = Decrypter.extToEncryptExt(url);
-        }
-        const reader = await ResourceHandler.fetchWithRetry("stream", url);
-        this._loading(reader);
-    }
-};
-
-// NEW FUNCTION
-WebAudio.prototype._loading = async function (reader) {
-    try {
-        const decode = stbvorbis.decodeStream((result) => this._onDecode(result));
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-                decode({ eof: true });
-                return;
+        var xhr = new XMLHttpRequest();
+        if (Decrypter.hasEncryptedAudio) url = Decrypter.extToEncryptExt(url);
+        xhr.open("GET", url);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function () {
+            if (xhr.status < 400) {
+                this._onXhrLoad(xhr);
             }
-            let array = value;
-            if (Decrypter.hasEncryptedAudio) {
-                array = Decrypter.decryptUint8Array(array);
-            }
-            this._readLoopComments(array);
-            decode({ data: array, eof: false });
-        }
-    } catch (error) {
-        console.error(error);
-        const autoPlay = this._autoPlay;
-        const loop = this._loop;
-        const pos = this.seek();
-        this.initialize(this._url);
-        if (autoPlay) {
-            this.play(loop, pos);
-        }
-    }
-};
-
-// NEW FUNCTION
-WebAudio.prototype._onDecode = function (result) {
-    if (result.error) {
-        console.error(result.error);
-        return;
-    }
-    if (result.eof) {
-        this._totalTime = this._loadedTime;
-        if (this._loopLength === 0) {
-            this._loopStart = 0;
-            this._loopLength = this._totalTime;
-            if (this._loop) {
-                this._createSourceNodes();
-            }
-        } else if (this._totalTime < this._loopStart + this._loopLength) {
-            this._loopLength = this._totalTime - this._loopStart;
-            if (this._loop) {
-                this._createSourceNodes();
-            }
-        }
-        if (this._totalTime <= this.seek()) {
-            this.stop();
-        }
-        return;
-    }
-    if (result.data[0].length === 0) {
-        return;
-    }
-    let buffer;
-    try {
-        buffer = WebAudio._context.createBuffer(result.data.length, result.data[0].length, result.sampleRate);
-    } catch (error) {
-        if (8000 <= result.sampleRate && result.sampleRate < 22050) {
-            result.sampleRate *= 3;
-            for (let i = 0; i < result.data.length; i++) {
-                const old = result.data[i];
-                result.data[i] = new Float32Array(result.data[i].length * 3);
-                for (let j = 0; j < old.length; j++) {
-                    result.data[i][j * 3] = old[j];
-                    result.data[i][j * 3 + 1] = old[j];
-                    result.data[i][j * 3 + 2] = old[j];
-                }
-            }
-            buffer = WebAudio._context.createBuffer(result.data.length, result.data[0].length, result.sampleRate);
-        } else {
-            throw error;
-        }
-    }
-    for (let i = 0; i < result.data.length; i++) {
-        if (buffer.copyToChannel) {
-            buffer.copyToChannel(result.data[i], i);
-        } else {
-            buffer.getChannelData(i).set(result.data[i]);
-        }
-    }
-    const chunk = { buffer, sourceNode: null, when: this._loadedTime };
-    this._chunks.push(chunk);
-    this._loadedTime += buffer.duration;
-    this._createSourceNode(chunk);
-    if (!this._isReady && this._loadedTime >= this._offset) {
-        this._isReady = true;
-        this._onLoad();
+        }.bind(this);
+        xhr.onerror =
+            this._loader ||
+            function () {
+                this._hasError = true;
+            }.bind(this);
+        xhr.send();
     }
 };
 
@@ -9098,100 +8891,20 @@ WebAudio.prototype._onXhrLoad = function (xhr) {
  * @param {Number} offset
  * @private
  */
-WebAudio.prototype._startPlaying = function () {
-    this._isPlaying = true;
-    this._startTime = WebAudio._context.currentTime - this._offset / this._pitch;
+WebAudio.prototype._startPlaying = function (loop, offset) {
+    if (this._loopLength > 0) {
+        while (offset >= this._loopStart + this._loopLength) {
+            offset -= this._loopLength;
+        }
+    }
+    this._removeEndTimer();
     this._removeNodes();
     this._createNodes();
     this._connectNodes();
-    this._createSourceNodes();
-};
-
-// NEW FUNCTION
-WebAudio.prototype._calcSourceNodeParams = function (chunk) {
-    const currentTime = WebAudio._context.currentTime;
-    const chunkEnd = chunk.when + chunk.buffer.duration;
-    const pos = this.seek();
-    let when, offset, duration;
-    if (this._loop && this._loopLength) {
-        const loopEnd = this._loopStart + this._loopLength;
-        if (pos <= chunk.when) {
-            when = currentTime + (chunk.when - pos) / this._pitch;
-        } else if (pos <= (window.AudioContext ? chunkEnd : chunkEnd - 0.0001)) {
-            when = currentTime;
-            offset = pos - chunk.when;
-        } else if (this._loopStart <= pos) {
-            when = currentTime + (chunk.when - pos + this._loopLength) / this._pitch;
-        } else {
-            return;
-        }
-        if (this._loopStart <= pos && chunk.when < this._loopStart) {
-            if (!offset) {
-                when += (this._loopStart - chunk.when) / this._pitch;
-                offset = this._loopStart - chunk.when;
-            }
-            if (chunk.buffer.duration <= offset) {
-                return;
-            }
-        }
-        if (loopEnd < chunkEnd) {
-            if (!offset) {
-                offset = 0;
-            }
-            duration = loopEnd - chunk.when - offset;
-            if (duration <= 0) {
-                return;
-            }
-        }
-    } else {
-        if (pos <= chunk.when) {
-            when = currentTime + (chunk.when - pos) / this._pitch;
-        } else if (pos <= (window.AudioContext ? chunkEnd : chunkEnd - 0.0001)) {
-            when = currentTime;
-            offset = pos - chunk.when;
-        } else {
-            return;
-        }
-    }
-    return { when, offset, duration };
-};
-
-// NEW FUNCTION
-WebAudio.prototype._createSourceNode = function (chunk) {
-    if (!this.isPlaying() || !chunk) {
-        return;
-    }
-    if (chunk.sourceNode) {
-        chunk.sourceNode.onended = null;
-        chunk.sourceNode.stop();
-        chunk.sourceNode = null;
-    }
-    const params = this._calcSourceNodeParams(chunk);
-    if (!params) {
-        if (!this._reservedSeName) {
-            this._chunks[this._chunks.indexOf(chunk)] = null;
-        }
-        return;
-    }
-    const { when, offset, duration } = params;
-    const context = WebAudio._context;
-    const sourceNode = context.createBufferSource();
-    sourceNode.onended = (_) => {
-        this._createSourceNode(chunk);
-        if (this._totalTime && this._totalTime <= this.seek()) {
-            this.stop();
-        }
-    };
-    sourceNode.buffer = chunk.buffer;
-    sourceNode.playbackRate.setValueAtTime(this._pitch, context.currentTime);
-    sourceNode.connect(this._gainNode);
-    sourceNode.start(when, offset, duration);
-    chunk.sourceNode = sourceNode;
-};
-
-// NEW FUNCTION
-WebAudio.prototype._createSourceNodes = function () {
-    this._chunks.forEach((chunk) => this._createSourceNode(chunk));
+    this._sourceNode.loop = loop;
+    this._sourceNode.start(0, offset);
+    this._startTime = WebAudio._context.currentTime - offset / this._pitch;
+    this._createEndTimer();
 };
 
 /**
@@ -9199,7 +8912,12 @@ WebAudio.prototype._createSourceNodes = function () {
  * @private
  */
 WebAudio.prototype._createNodes = function () {
-    const context = WebAudio._context;
+    var context = WebAudio._context;
+    this._sourceNode = context.createBufferSource();
+    this._sourceNode.buffer = this._buffer;
+    this._sourceNode.loopStart = this._loopStart;
+    this._sourceNode.loopEnd = this._loopStart + this._loopLength;
+    this._sourceNode.playbackRate.setValueAtTime(this._pitch, context.currentTime);
     this._gainNode = context.createGain();
     this._gainNode.gain.setValueAtTime(this._volume, context.currentTime);
     this._pannerNode = context.createPanner();
@@ -9212,6 +8930,7 @@ WebAudio.prototype._createNodes = function () {
  * @private
  */
 WebAudio.prototype._connectNodes = function () {
+    this._sourceNode.connect(this._gainNode);
     this._gainNode.connect(this._pannerNode);
     this._pannerNode.connect(WebAudio._masterGainNode);
 };
@@ -9221,17 +8940,12 @@ WebAudio.prototype._connectNodes = function () {
  * @private
  */
 WebAudio.prototype._removeNodes = function () {
-    if (this._chunks) {
-        this._chunks
-            .filter((chunk) => chunk && chunk.sourceNode)
-            .forEach((chunk) => {
-                chunk.sourceNode.onended = null;
-                chunk.sourceNode.stop();
-                chunk.sourceNode = null;
-            });
+    if (this._sourceNode) {
+        this._sourceNode.stop(0);
+        this._sourceNode = null;
+        this._gainNode = null;
+        this._pannerNode = null;
     }
-    this._gainNode = null;
-    this._pannerNode = null;
 };
 
 /**
@@ -9279,11 +8993,10 @@ WebAudio.prototype._updatePanner = function () {
  * @private
  */
 WebAudio.prototype._onLoad = function () {
-    if (this._autoPlay) {
-        this.play(this._loop, this._offset);
+    while (this._loadListeners.length > 0) {
+        var listner = this._loadListeners.shift();
+        listner();
     }
-    this._loadListeners.forEach((listener) => listener());
-    this._loadListeners.length = 0;
 };
 
 /**
@@ -9292,13 +9005,8 @@ WebAudio.prototype._onLoad = function () {
  * @private
  */
 WebAudio.prototype._readLoopComments = function (array) {
-    if (this._sampleRate === 0) {
-        this._readOgg(array);
-        if (this._loopLength > 0 && this._sampleRate > 0) {
-            this._loopStart /= this._sampleRate;
-            this._loopLength /= this._sampleRate;
-        }
-    }
+    this._readOgg(array);
+    this._readMp4(array);
 };
 
 /**
@@ -10259,22 +9967,6 @@ Decrypter.readEncryptionkey = function () {
     this._encryptionKey = $dataSystem.encryptionKey.split(/(.{2})/).filter(Boolean);
 };
 
-// NEW FUNCTION
-Decrypter.decryptUint8Array = function (uint8Array) {
-    const ref = this.SIGNATURE + this.VER + this.REMAIN;
-    for (let i = 0; i < this._headerlength; i++) {
-        if (uint8Array[i] !== parseInt("0x" + ref.substr(i * 2, 2), 16)) {
-            return uint8Array;
-        }
-    }
-    uint8Array = new Uint8Array(uint8Array.buffer, this._headerlength);
-    this.readEncryptionkey();
-    for (var i = 0; i < this._headerlength; i++) {
-        uint8Array[i] = uint8Array[i] ^ parseInt(this._encryptionKey[i], 16);
-    }
-    return uint8Array;
-};
-
 //-----------------------------------------------------------------------------
 /**
  * The static class that handles resource loading.
@@ -10326,77 +10018,5 @@ ResourceHandler.retry = function () {
             reloader();
         });
         this._reloaders.length = 0;
-    }
-};
-
-ResourceHandler.fetchWithRetry = async function (method, url, _retryCount = 0) {
-    let retry;
-    try {
-        const response = await (!window.cordova
-            ? fetch(url, { credentials: "same-origin" })
-            : new Promise((resolve, reject) => {
-                  const xhr = new XMLHttpRequest();
-                  xhr.responseType = "blob";
-                  xhr.onload = () => resolve(new Response(xhr.response, { status: xhr.status }));
-                  xhr.onerror = reject;
-                  xhr.open("GET", url);
-                  xhr.send();
-              }));
-        if (response.ok) {
-            switch (method) {
-                case "stream":
-                    if (response.body) {
-                        return response.body.getReader();
-                    }
-                    const value = new Uint8Array(await response.arrayBuffer());
-                    return {
-                        _done: false,
-                        read() {
-                            if (!this._done) {
-                                this._done = true;
-                                return Promise.resolve({ done: false, value });
-                            } else {
-                                return Promise.resolve({ done: true });
-                            }
-                        },
-                    };
-                case "arrayBuffer":
-                case "blob":
-                case "formData":
-                case "json":
-                case "text":
-                    return await response[method]();
-                default:
-                    return Promise.reject(new Error("method not allowed"));
-            }
-        } else if (response.status < 500) {
-            // client error
-            retry = false;
-        } else {
-            // server error
-            retry = true;
-        }
-    } catch (error) {
-        if (Utils.isNwjs() || window.cordova) {
-            // local file error
-            retry = false;
-        } else {
-            // network error
-            retry = true;
-        }
-    }
-    if (!retry) {
-        const error = new Error("Failed to load: " + url);
-        SceneManager.catchException(error);
-        throw error;
-    } else if (_retryCount < this._defaultRetryInterval.length) {
-        await new Promise((resolve) => setTimeout(resolve, this._defaultRetryInterval[_retryCount]));
-        return this.fetchWithRetry(method, url, _retryCount + 1);
-    } else {
-        if (this._reloaders.length === 0) {
-            Graphics.printLoadingError(url);
-            SceneManager.stop();
-        }
-        return new Promise((resolve) => this._reloaders.push(() => resolve(this.fetchWithRetry(method, url, 0))));
     }
 };

@@ -278,6 +278,7 @@
     // Manages the configuration data.
     //=========================================================================
 
+    ConfigManager.showFps = false;
     ConfigManager.windowOpacityHex = windowOpacityDefault;
     ConfigManager.windowColorRHex = windowColorRDefault;
     ConfigManager.windowColorGHex = windowColorGDefault;
@@ -291,6 +292,7 @@
     };
 
     ConfigManager.makeExtraData = function (config) {
+        config.showFps = this.showFps;
         config.windowOpacityHex = this.windowOpacityHex;
         config.windowColorRHex = this.windowColorRHex;
         config.windowColorGHex = this.windowColorGHex;
@@ -301,6 +303,7 @@
     var _AKUNOU_ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _AKUNOU_ConfigManager_applyData.call(this, config);
+        this.showFps = this.readFlag(config, "showFps", false);
         this.windowOpacityHex = this.readConfigValue(config, "windowOpacityHex", windowOpacityDefault, 0, 255);
         this.windowColorRHex = this.readConfigValue(config, "windowColorRHex", windowColorRDefault, -255, 255);
         this.windowColorGHex = this.readConfigValue(config, "windowColorGHex", windowColorGDefault, -255, 255);
@@ -373,35 +376,136 @@
     //=========================================================================
 
     Window_Options.prototype.windowWidth = function () {
-        return windowOptionsWidth;
+        return Graphics.boxWidth;
     };
 
+    // [FIX] Use fixed height based on Graphics.boxHeight like Window_MenuStatus
+    // This allows scrolling when items exceed visible area
     Window_Options.prototype.windowHeight = function () {
-        return this.fittingHeight(Math.min(this.numVisibleRows(), windowOptionsNumber));
+        return Graphics.boxHeight;
+    };
+
+    // [FIX] Override statusWidth to match HP/MP gauge width (186)
+    // statusWidth = gaugeWidth + VALUE_WIDTH + GAUGE_PADDING
+    // statusWidth = 186 + 40 + 12 = 238
+    Window_Options.prototype.statusWidth = function () {
+        return 238;
     };
 
     var _AKUNOU_Window_Options_makeCommandList = Window_Options.prototype.makeCommandList;
     Window_Options.prototype.makeCommandList = function () {
-        this.addExtraOptions();
-        _AKUNOU_Window_Options_makeCommandList.call(this);
+        // Gameplay category - default RPG Maker options
+        this.addCategoryLabel("Gameplay");
+        this.addGeneralOptions(); // Always Dash, Command Remember, etc
+
+        // Display category - window appearance options
+        this.addCategoryLabel("Display");
+        this.addDisplayOptions();
+
+        // Audio category - volume options
+        this.addCategoryLabel("Audio");
+        this.addVolumeOptions(); // Use default addVolumeOptions
+
+        // Restore Defaults button
         this.addDefaultOptions();
     };
 
-    Window_Options.prototype.addExtraOptions = function () {
+    Window_Options.prototype.addCategoryLabel = function (labelText) {
+        this.addCommand(labelText, "category");
+    };
+
+    Window_Options.prototype.addGeneralOptions = function () {
+        this.addCommand(TextManager.alwaysDash, "alwaysDash");
+        this.addCommand(TextManager.commandRemember, "commandRemember");
+        this.addCommand("Show FPS", "showFps");
+    };
+
+    Window_Options.prototype.addDisplayOptions = function () {
         this.addCommand(windowOpacityText, "windowOpacityHex");
         this.addCommand(windowColorRText, "windowColorRHex");
         this.addCommand(windowColorGText, "windowColorGHex");
         this.addCommand(windowColorBText, "windowColorBHex");
     };
 
+    Window_Options.prototype.addAudioOptions = function () {
+        // Deprecated - now using default addVolumeOptions
+    };
+    Window_Options.prototype.addExtraOptions = function () {
+        // Deprecated - moved to addDisplayOptions and addAudioOptions
+    };
+
     Window_Options.prototype.addDefaultOptions = function () {
         this.addCommand(defaultText, "default");
+    };
+
+    Window_Options.prototype.isCategorySymbol = function (symbol) {
+        return symbol === "category";
+    };
+
+    // Override isCommandEnabled to disable category labels
+    var _AKUNOU_Window_Options_isCommandEnabled = Window_Options.prototype.isCommandEnabled;
+    Window_Options.prototype.isCommandEnabled = function (index) {
+        var symbol = this.commandSymbol(index);
+        if (this.isCategorySymbol(symbol)) {
+            return false;
+        }
+        return _AKUNOU_Window_Options_isCommandEnabled.call(this, index);
+    };
+
+    // Override cursorDown to skip category labels
+    var _AKUNOU_Window_Options_cursorDown = Window_Options.prototype.cursorDown;
+    Window_Options.prototype.cursorDown = function (wrap) {
+        var index = this.index();
+        var maxItems = this.maxItems();
+        var maxCols = this.maxCols();
+        if (index < maxItems - maxCols || (wrap && maxCols === 1)) {
+            this.select((index + maxCols) % maxItems);
+            // Skip category labels
+            while (this.isCategorySymbol(this.commandSymbol(this.index()))) {
+                this.select((this.index() + maxCols) % maxItems);
+                if (this.index() === index) break; // Prevent infinite loop
+            }
+        }
+    };
+
+    // Override cursorUp to skip category labels
+    var _AKUNOU_Window_Options_cursorUp = Window_Options.prototype.cursorUp;
+    Window_Options.prototype.cursorUp = function (wrap) {
+        var index = this.index();
+        var maxItems = this.maxItems();
+        var maxCols = this.maxCols();
+        if (index >= maxCols || (wrap && maxCols === 1)) {
+            this.select((index - maxCols + maxItems) % maxItems);
+            // Skip category labels
+            while (this.isCategorySymbol(this.commandSymbol(this.index()))) {
+                this.select((this.index() - maxCols + maxItems) % maxItems);
+                if (this.index() === index) break; // Prevent infinite loop
+            }
+        }
+    };
+
+    // Draw horizontal line like Window_Status (but below the text)
+    Window_Options.prototype.drawHorzLine = function (y) {
+        const lineY = y + this.lineHeight() - 4; // Position at bottom of line, not middle
+        this.contents.paintOpacity = 48;
+        this.contents.fillRect(0, lineY, this.contentsWidth(), 2, this.normalColor());
+        this.contents.paintOpacity = 255;
     };
 
     Window_Options.prototype.drawItem = function (index) {
         const rect = this.itemRectForText(index);
         const symbol = this.commandSymbol(index);
         const enabled = this.isCommandEnabled(index);
+
+        // Untuk category label
+        if (this.isCategorySymbol(symbol)) {
+            this.resetTextColor();
+            // Draw category text in white (normal color)
+            this.drawText(this.commandName(index), rect.x, rect.y, rect.width, "center");
+            // Draw horizontal line like Window_Status
+            this.drawHorzLine(rect.y);
+            return;
+        }
 
         // Untuk command "Restore Defaults"
         if (this.isDefaultSymbol(symbol)) {
@@ -416,7 +520,7 @@
         if (isGaugeItem) {
             const GAUGE_HEIGHT = 6; // Tinggi gauge
             const GAUGE_PADDING = 12; // Jarak antara gauge dan teks nilai
-            const VALUE_WIDTH = 40; // Ruang untuk teks nilai (misal: "100", "-255")
+            const VALUE_WIDTH = 60; // Ruang untuk teks nilai (diperbesar untuk 5 digit)
 
             const statusWidth = this.statusWidth();
             const gaugeAreaX = rect.x + rect.width - statusWidth;
@@ -451,6 +555,14 @@
                 }
             }
 
+            // Gambar outline putih untuk gauge (untuk visibility di window gelap)
+            this.contents.fillRect(
+                gaugeAreaX - 1,
+                gaugeY - 1,
+                gaugeWidth + 2,
+                GAUGE_HEIGHT + 2,
+                "rgba(255, 255, 255, 0.5)"
+            );
             // Gambar latar belakang gauge
             this.contents.fillRect(gaugeAreaX, gaugeY, gaugeWidth, GAUGE_HEIGHT, this.gaugeBackColor());
             // Gambar isi gauge
@@ -496,6 +608,27 @@
         }
         if (this.isColorSymbol(symbol)) {
             this.updateTone();
+        }
+        if (symbol === "showFps") {
+            this.updateFpsDisplay(value);
+        }
+    };
+
+    Window_Options.prototype.updateFpsDisplay = function (show) {
+        if (show) {
+            // Show FPS meter
+            Graphics.showFps();
+            // Show Debug Audio Info
+            if (typeof DebugManager !== "undefined") {
+                DebugManager.show();
+            }
+        } else {
+            // Hide FPS meter
+            Graphics.hideFps();
+            // Hide Debug Audio Info
+            if (typeof DebugManager !== "undefined") {
+                DebugManager.hide();
+            }
         }
     };
 
@@ -654,7 +787,7 @@
             sprite.anchor.y = 0.5;
             sprite.visible = false;
             this._handleSprites.push(sprite);
-            this.addChild(sprite); // Tambahkan sebagai child dari window
+            this.addChild(sprite);
         }
     };
 
@@ -669,6 +802,7 @@
 
     Window_Options.prototype.updateHandles = function () {
         const topIndex = this.topIndex();
+
         for (let i = 0; i < this._handleSprites.length; i++) {
             const index = topIndex + i;
             const sprite = this._handleSprites[i];
@@ -682,7 +816,7 @@
                     // Mengambil geometri yang sama persis dari drawItem
                     const GAUGE_HEIGHT = 6;
                     const GAUGE_PADDING = 12;
-                    const VALUE_WIDTH = 40;
+                    const VALUE_WIDTH = 60;
                     const statusWidth = this.statusWidth();
                     const gaugeWidth = statusWidth - VALUE_WIDTH - GAUGE_PADDING;
                     const gaugeAreaX = rect.x + rect.width - statusWidth;
@@ -697,10 +831,15 @@
                     else if (this.isOpacitySymbol(symbol)) rate = value / 255;
                     else if (this.isColorSymbol(symbol)) rate = (value + 255) / 510;
 
-                    // --- PERBAIKAN UTAMA ADA DI DUA BARIS INI ---
-                    sprite.x = this.padding + gaugeAreaX + gaugeWidth * rate;
-                    sprite.y = this.padding + gaugeY + Math.floor(GAUGE_HEIGHT / 2);
-                    // --- AKHIR PERBAIKAN ---
+                    // [FIX] Handle center position from left edge to right edge of gauge
+                    // Shift left by half handle width for symmetry
+                    // Rate=0: handle center at gaugeAreaX - HANDLE_WIDTH/2 (half handle extends left)
+                    // Rate=1: handle center at gaugeAreaX + gaugeWidth - HANDLE_WIDTH/2 (half handle extends right)
+                    const handleX = gaugeAreaX + gaugeWidth * rate - HANDLE_WIDTH / 2;
+
+                    sprite.x = this.padding + handleX;
+                    // [FIX] Subtract origin.y for smooth vertical scrolling
+                    sprite.y = this.padding + gaugeY + Math.floor(GAUGE_HEIGHT / 2) - this.origin.y;
 
                     sprite.visible = true;
                 } else {
@@ -717,8 +856,11 @@
         if (!this.isOpenAndActive()) return;
 
         if (TouchInput.isTriggered()) {
+            // [FIX] Use canvasToLocalX for horizontal, worldTransform for vertical
             const touchPos = new Point(TouchInput.x, TouchInput.y);
-            const localPos = this.worldTransform.applyInverse(touchPos);
+            const localPosOriginal = this.worldTransform.applyInverse(touchPos);
+            const localX = this.canvasToLocalX(TouchInput.x);
+            const localPos = new Point(localX, localPosOriginal.y);
 
             for (let i = 0; i < this._handleSprites.length; i++) {
                 const sprite = this._handleSprites[i];
@@ -747,15 +889,14 @@
 
                 // Menggunakan kalkulasi geometri yang sama persis
                 const GAUGE_PADDING = 12;
-                const VALUE_WIDTH = 40;
+                const VALUE_WIDTH = 60;
                 const statusWidth = this.statusWidth();
                 const gaugeWidth = statusWidth - VALUE_WIDTH - GAUGE_PADDING;
                 const gaugeAreaX = rect.x + rect.width - statusWidth;
 
-                // --- PERBAIKAN UTAMA ADA DI DUA BARIS INI ---
+                // [FIX] Apply same calculation as in updateHandles
                 const touchX = this.canvasToLocalX(TouchInput.x);
                 const relativeX = (touchX - this.padding - gaugeAreaX).clamp(0, gaugeWidth);
-                // --- AKHIR PERBAIKAN ---
 
                 const rate = relativeX / gaugeWidth;
                 let newValue;
@@ -785,9 +926,19 @@
     // GANTI FUNGSI onTouch YANG LAMA DENGAN INI, ATAU TAMBAHKAN JIKA BELUM ADA
     var _AKUNOU_Handle_Window_Options_onTouch = Window_Options.prototype.onTouch;
     Window_Options.prototype.onTouch = function (triggered) {
-        var index = this.hitTest(TouchInput.x, TouchInput.y);
+        // [FIX] Convert coordinates using canvasToLocalX before hitTest
+        var x = this.canvasToLocalX(TouchInput.x);
+        var y = this.canvasToLocalY(TouchInput.y);
+        var index = this.hitTest(x, y);
+
         if (index >= 0) {
             var symbol = this.commandSymbol(index);
+
+            // Prevent selection of category labels
+            if (this.isCategorySymbol(symbol)) {
+                return; // Ignore clicks on category labels
+            }
+
             var isGaugeItem = this.isVolumeSymbol(symbol) || this.isHexSymbol(symbol);
 
             // Jika item yang diklik (triggered) adalah sebuah gauge
@@ -804,5 +955,27 @@
 
         // Untuk item non-gauge, atau event hover (bukan klik), jalankan logika aslinya.
         _AKUNOU_Handle_Window_Options_onTouch.call(this, triggered);
+    };
+
+    //=========================================================================
+    // Initialize FPS display on game start
+    //=========================================================================
+    var _Scene_Boot_start = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+        _Scene_Boot_start.call(this);
+        // Apply showFps setting on game start
+        if (ConfigManager.showFps) {
+            Graphics.showFps();
+            // Show Debug Audio Info
+            if (typeof DebugManager !== "undefined") {
+                DebugManager.show();
+            }
+        } else {
+            Graphics.hideFps();
+            // Hide Debug Audio Info
+            if (typeof DebugManager !== "undefined") {
+                DebugManager.hide();
+            }
+        }
     };
 })();

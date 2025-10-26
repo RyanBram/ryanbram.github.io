@@ -23,6 +23,11 @@
     let controlsHideTimeout = null;
     let lastKnownVolume = 100;
 
+    // --- Configuration ---
+    // Set to true to block mouse/touch input to game when virtual gamepad is active
+    // Set to false to allow both virtual gamepad and game input simultaneously
+    const BLOCK_GAME_INPUT_WHEN_GAMEPAD_ACTIVE = true;
+
     // --- Constants ---
     const COVER_URL = "./cover.html";
     const GAME_URL = "./game.html";
@@ -90,6 +95,9 @@
         isGamepadVisible = false;
         virtualGamepad.classList.add("hidden");
         toggleGamepadButton.setAttribute("aria-pressed", "false");
+
+        // Reset game input blocking when stopping
+        updateGameInputBlocking();
     });
 
     // --- Fullscreen and Gamepad Toggle ---
@@ -125,7 +133,24 @@
         isGamepadVisible = !isGamepadVisible;
         virtualGamepad.classList.toggle("hidden", !isGamepadVisible);
         toggleGamepadButton.setAttribute("aria-pressed", String(isGamepadVisible));
+
+        // Block or unblock game input based on configuration
+        updateGameInputBlocking();
     });
+
+    // --- Function to Block/Unblock Game Input ---
+    function updateGameInputBlocking() {
+        if (BLOCK_GAME_INPUT_WHEN_GAMEPAD_ACTIVE && isGamepadVisible) {
+            // Block mouse and touch input to game iframe
+            gameIframe.style.pointerEvents = "none";
+        } else {
+            // Allow mouse and touch input to game iframe
+            gameIframe.style.pointerEvents = "auto";
+        }
+    }
+
+    // Initialize blocking state on page load
+    updateGameInputBlocking();
 
     // --- Controls Bar Mouse Events for Auto-hide ---
     controlsHandle.addEventListener("click", showControlsAndResetHideTimer);
@@ -142,6 +167,41 @@
             controlsHideTimeout = setTimeout(hideControlsBar, 3000);
         }
     });
+
+    // --- Controls Bar Touch Events for Auto-hide ---
+    // Add touch support to prevent controls from hiding during interaction
+    controlsBar.addEventListener(
+        "touchstart",
+        () => {
+            if (isPlaying && document.fullscreenElement) {
+                clearTimeout(controlsHideTimeout); // Pause auto-hide on touch.
+            }
+        },
+        { passive: true }
+    );
+
+    controlsBar.addEventListener(
+        "touchend",
+        () => {
+            if (isPlaying && document.fullscreenElement) {
+                clearTimeout(controlsHideTimeout); // Reset timer on touch end.
+                controlsHideTimeout = setTimeout(hideControlsBar, 3000);
+            }
+        },
+        { passive: true }
+    );
+
+    // Also handle touchcancel in case touch is interrupted
+    controlsBar.addEventListener(
+        "touchcancel",
+        () => {
+            if (isPlaying && document.fullscreenElement) {
+                clearTimeout(controlsHideTimeout);
+                controlsHideTimeout = setTimeout(hideControlsBar, 3000);
+            }
+        },
+        { passive: true }
+    );
 
     // --- Volume Control Logic ---
 

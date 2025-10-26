@@ -59,7 +59,7 @@ Window_Base.prototype.textPadding = function() {
 };
 
 Window_Base.prototype.standardBackOpacity = function() {
-    return 255;
+    return 192;
 };
 
 Window_Base.prototype.loadWindowskin = function() {
@@ -5400,8 +5400,8 @@ Window_ActorCommand.prototype.numVisibleRows = function() {
 Window_ActorCommand.prototype.makeCommandList = function() {
     if (this._actor) {
         this.addAttackCommand();
-        this.addGuardCommand();
         this.addSkillCommands();
+        this.addGuardCommand();
         this.addItemCommand();
     }
 };

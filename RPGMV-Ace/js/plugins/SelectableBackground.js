@@ -35,6 +35,15 @@
 
     // NEW
     Window_Selectable.prototype.drawItemBackground = function (index) {
+        // Special handling for Window_Options category labels
+        // Category labels should not have background, but other disabled items (like "Continue") should
+        if (this.constructor === Window_Options && this.isCategorySymbol) {
+            var symbol = this.commandSymbol(index);
+            if (this.isCategorySymbol(symbol)) {
+                return; // Skip drawing background for category labels only
+            }
+        }
+
         var rect = this.itemRect(index);
         this.drawBackgroundRect(rect);
     };

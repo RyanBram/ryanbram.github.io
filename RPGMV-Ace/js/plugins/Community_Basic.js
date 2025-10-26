@@ -284,9 +284,48 @@
         15: "right", // D-pad right
     };
 
+    //=============================================================================
+    // [COMPATIBILITY] Pixi v7 Bitmap Compatibility Layer
+    // Add missing methods for older plugins
+    //=============================================================================
+
+    //* Add _setDirty method for backwards compatibility with MV plugins
+    // In Pixi v7, _setDirty was replaced with _baseTexture.update()
+    if (!Bitmap.prototype._setDirty) {
+        Bitmap.prototype._setDirty = function () {
+            if (this._baseTexture) {
+                this._baseTexture.update();
+            }
+        };
+        console.log("[Community_Basic] Added Bitmap._setDirty compatibility method for Pixi v7.");
+    }
+    /**/
+
+    //=============================================================================
+    // [FIX] MPP_ScrollBar Compatibility - Show scroll bar on window activation
+    //=============================================================================
+
+    //* Patch Window_Selectable.activate to trigger scroll bar visibility
+    // This fixes the issue where scroll bar doesn't appear when window first becomes active
+    var _Window_Selectable_activate = Window_Selectable.prototype.activate;
+    Window_Selectable.prototype.activate = function () {
+        _Window_Selectable_activate.call(this);
+        // Trigger scroll bar counter if it has scroll bar sprite
+        if (this._scrollBarSprite && typeof this._scrollBarCount !== "undefined") {
+            // Get VeiwTime from MPPlugin if available
+            var veiwTime = typeof MPPlugin !== "undefined" && MPPlugin.VeiwTime !== undefined ? MPPlugin.VeiwTime : 60;
+            this._scrollBarCount = veiwTime;
+        }
+    };
+    /**/
+
+    //-----------------------------------------------------------------------------
+
     //* 6952 - [BUG] Masking issues if UI Area Width different with Screen Width (1/3)
+    // [FIX for Pixi v7] Use Object.assign pattern instead of .call()
     WindowLayer.prototype.initialize = function () {
-        PIXI.Container.call(this);
+        var baseInstance = new PIXI.Container();
+        Object.assign(this, baseInstance);
         this._width = 0;
         this._height = 0;
 
@@ -294,7 +333,7 @@
         this._windowMask.beginFill(0xffffff, 1);
         this._windowMask.drawRect(0, 0, 0, 0);
         this._windowMask.endFill();
-        this._windowRect = this._windowMask.graphicsData[0].shape;
+        this._windowRect = this._windowMask.geometry.graphicsData[0].shape;
         this._windowMaskShift = new PIXI.Point();
 
         this.filterArea = new PIXI.Rectangle();
@@ -303,6 +342,65 @@
         //temporary fix for memory leak bug
         this.on("removed", this.onRemoveAsAChild);
     };
+
+    // [FIX for Pixi v7] Cleanup method to prevent memory leaks
+    WindowLayer.prototype.onRemoveAsAChild = function () {
+        // Disable interactivity for all children before removing
+        // This prevents "Cannot find propagation path" error in Pixi v7
+        for (var i = 0; i < this.children.length; i++) {
+            var child = this.children[i];
+            if (child) {
+                child.interactive = false;
+                child.interactiveChildren = false;
+            }
+        }
+        this.removeChildren();
+    };
+
+    // [FIX for Pixi v7] Add destroy override to properly cleanup
+    // This prevents "Cannot find propagation path to disconnected target" error
+    var _WindowLayer_destroy = WindowLayer.prototype.destroy;
+    WindowLayer.prototype.destroy = function (options) {
+        // Disable interactivity BEFORE removing to prevent event propagation errors
+        this.interactive = false;
+        this.interactiveChildren = false;
+
+        // Remove event listener before destroying
+        this.off("removed", this.onRemoveAsAChild);
+
+        // Destroy window mask graphics
+        if (this._windowMask) {
+            this._windowMask.destroy();
+            this._windowMask = null;
+        }
+
+        // Call original destroy if it exists
+        if (_WindowLayer_destroy) {
+            _WindowLayer_destroy.call(this, options);
+        } else if (PIXI.Container.prototype.destroy) {
+            PIXI.Container.prototype.destroy.call(this, options);
+        }
+    };
+    /**/
+
+    //* [FIX for Pixi v7] Add Window destroy override to prevent event propagation errors
+    // Override Window.prototype.destroy to disable interactivity before destruction
+    if (!Window.prototype._communityBasicDestroyFixed) {
+        var _Window_destroy = Window.prototype.destroy;
+        Window.prototype.destroy = function (options) {
+            // Disable interactivity to prevent "Cannot find propagation path" error
+            this.interactive = false;
+            this.interactiveChildren = false;
+
+            // Call original destroy
+            if (_Window_destroy) {
+                _Window_destroy.call(this, options);
+            } else if (PIXI.Container.prototype.destroy) {
+                PIXI.Container.prototype.destroy.call(this, options);
+            }
+        };
+        Window.prototype._communityBasicDestroyFixed = true;
+    }
     /**/
 
     //* 7113 - [BUG] Masking issues if UI Area Width different with Screen Width (2/3)
@@ -365,6 +463,177 @@
         this._windowMask.endFill();
     };
     /**/
+
+    //=============================================================================
+    // [CRITICAL FIX] Pixi v7 Event Propagation Fix
+    // Prevents "Cannot find propagation path to disconnected target" error
+    //=============================================================================
+
+    //* [ULTIMATE FIX] Patch Pixi's EventBoundary to gracefully handle disconnected targets
+    // This prevents the error from being thrown in the first place
+    if (PIXI.EventBoundary && !PIXI.EventBoundary.prototype._pixiv7PropagationPathPatched) {
+        var _original_propagationPath = PIXI.EventBoundary.prototype.propagationPath;
+        PIXI.EventBoundary.prototype.propagationPath = function (target) {
+            try {
+                return _original_propagationPath.call(this, target);
+            } catch (e) {
+                // Silently catch "Cannot find propagation path to disconnected target" error
+                // and return empty path instead of crashing
+                if (e.message && e.message.includes("Cannot find propagation path")) {
+                    console.warn(
+                        "[Community_Basic] Caught disconnected target in propagation path, returning empty path."
+                    );
+                    return [];
+                }
+                // Re-throw other errors
+                throw e;
+            }
+        };
+        PIXI.EventBoundary.prototype._pixiv7PropagationPathPatched = true;
+        console.log("[Community_Basic] Pixi v7 EventBoundary propagationPath patched.");
+    }
+
+    //* Global patch for PIXI.Container.removeChild to prevent event propagation errors
+    // This must be applied early before any scenes are created
+    if (!PIXI.Container.prototype._pixiv7EventFixApplied) {
+        var _PIXI_Container_removeChild = PIXI.Container.prototype.removeChild;
+        PIXI.Container.prototype.removeChild = function (child) {
+            if (child && typeof child === "object") {
+                // Disable interactivity immediately to prevent propagation errors
+                if ("interactive" in child) child.interactive = false;
+                if ("interactiveChildren" in child) child.interactiveChildren = false;
+
+                // Remove all pointer/mouse event listeners that cause propagation errors
+                if (typeof child.removeAllListeners === "function") {
+                    var pointerEvents = [
+                        "pointermove",
+                        "pointerover",
+                        "pointerout",
+                        "pointerdown",
+                        "pointerup",
+                        "pointerupoutside",
+                        "pointercancel",
+                        "pointertap",
+                        "mousemove",
+                        "mouseover",
+                        "mouseout",
+                        "mousedown",
+                        "mouseup",
+                        "mouseupoutside",
+                        "click",
+                        "tap",
+                        "touchstart",
+                        "touchend",
+                        "touchmove",
+                        "touchendoutside",
+                        "touchcancel",
+                    ];
+                    for (var i = 0; i < pointerEvents.length; i++) {
+                        child.removeAllListeners(pointerEvents[i]);
+                    }
+                }
+            }
+            return _PIXI_Container_removeChild.call(this, child);
+        };
+        PIXI.Container.prototype._pixiv7EventFixApplied = true;
+    }
+
+    //* Also patch removeChildren to handle bulk removal
+    if (!PIXI.Container.prototype._pixiv7RemoveChildrenFixApplied) {
+        var _PIXI_Container_removeChildren = PIXI.Container.prototype.removeChildren;
+        PIXI.Container.prototype.removeChildren = function (beginIndex, endIndex) {
+            // Disable interactivity for all children before removing
+            var children = this.children;
+            var begin = beginIndex || 0;
+            var end = typeof endIndex === "number" ? endIndex : children.length;
+
+            for (var i = begin; i < end && i < children.length; i++) {
+                var child = children[i];
+                if (child && typeof child === "object") {
+                    if ("interactive" in child) child.interactive = false;
+                    if ("interactiveChildren" in child) child.interactiveChildren = false;
+
+                    // Remove event listeners
+                    if (typeof child.removeAllListeners === "function") {
+                        var pointerEvents = [
+                            "pointermove",
+                            "pointerover",
+                            "pointerout",
+                            "pointerdown",
+                            "pointerup",
+                            "pointerupoutside",
+                            "pointercancel",
+                            "pointertap",
+                            "mousemove",
+                            "mouseover",
+                            "mouseout",
+                            "mousedown",
+                            "mouseup",
+                            "mouseupoutside",
+                            "click",
+                            "tap",
+                            "touchstart",
+                            "touchend",
+                            "touchmove",
+                            "touchendoutside",
+                            "touchcancel",
+                        ];
+                        for (var j = 0; j < pointerEvents.length; j++) {
+                            child.removeAllListeners(pointerEvents[j]);
+                        }
+                    }
+                }
+            }
+
+            return _PIXI_Container_removeChildren.call(this, beginIndex, endIndex);
+        };
+        PIXI.Container.prototype._pixiv7RemoveChildrenFixApplied = true;
+    }
+
+    //* Patch destroy method as additional safety
+    if (!PIXI.Container.prototype._pixiv7DestroyFixApplied) {
+        var _PIXI_Container_destroy = PIXI.Container.prototype.destroy;
+        PIXI.Container.prototype.destroy = function (options) {
+            // Disable interactivity before destroying
+            this.interactive = false;
+            this.interactiveChildren = false;
+
+            // Remove all pointer event listeners
+            if (typeof this.removeAllListeners === "function") {
+                var pointerEvents = [
+                    "pointermove",
+                    "pointerover",
+                    "pointerout",
+                    "pointerdown",
+                    "pointerup",
+                    "pointerupoutside",
+                    "pointercancel",
+                    "pointertap",
+                    "mousemove",
+                    "mouseover",
+                    "mouseout",
+                    "mousedown",
+                    "mouseup",
+                    "mouseupoutside",
+                    "click",
+                    "tap",
+                    "touchstart",
+                    "touchend",
+                    "touchmove",
+                    "touchendoutside",
+                    "touchcancel",
+                ];
+                for (var i = 0; i < pointerEvents.length; i++) {
+                    this.removeAllListeners(pointerEvents[i]);
+                }
+            }
+
+            return _PIXI_Container_destroy.call(this, options);
+        };
+        PIXI.Container.prototype._pixiv7DestroyFixApplied = true;
+    }
+    /**/
+
     //-----------------------------------------------------------------------------
 
     //===========================[ rpg_managers.js ]===============================
@@ -1011,6 +1280,9 @@
             var symbol = "startUpFullScreen";
             var index = this.findSymbol(symbol);
             if (index > -1) {
+                // Initialize _lastStatusText if it doesn't exist (safety check)
+                if (!this._lastStatusText) this._lastStatusText = {};
+
                 var text = this.statusText(index);
                 // Simple check if text representation has changed
                 if (this._lastStatusText[index] !== text) {
@@ -1027,6 +1299,8 @@
             this._lastStatusText[index] = this.statusText(index);
         };
     }
+
+    //-----------------------------------------------------------------------------
 
     // 4295 - Adjusting message text speed (1/1)
     var _Window_Message_clearFlags = Window_Message.prototype.clearFlags;

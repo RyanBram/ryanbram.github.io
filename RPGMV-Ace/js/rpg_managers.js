@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_managers.js v1.6.1 (community-1.3b)
+// rpg_managers.js community-2.0b (pixi v7)
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -340,7 +340,7 @@ DataManager.loadSavefileImages = function (info) {
 };
 
 DataManager.maxSavefiles = function () {
-    return 5;
+    return 20;
 };
 
 DataManager.saveGame = function (savefileId) {
@@ -778,12 +778,12 @@ StorageManager.removeWebStorage = function (savefileId) {
 
 StorageManager.localFileDirectoryPath = function () {
     var path = require("path");
-    if (Utils.isElectronjs()) {
-        var base = path.dirname(__filename);
-        return Utils.isOptionValid("test") ? path.join(base, "save/") : path.join(base, "../../save/");
-    } else {
-        var base = path.dirname(process.mainModule.filename);
+
+    var base = path.dirname(process.mainModule.filename);
+    if (this.canMakeWwwSaveDirectory()) {
         return path.join(base, "save/");
+    } else {
+        return path.join(path.dirname(base), "save/");
     }
 };
 
@@ -928,7 +928,7 @@ ImageManager.loadNormalBitmap = function (path, hue) {
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if (!bitmap) {
-        bitmap = Bitmap.load(path);
+        bitmap = Bitmap.load(decodeURIComponent(path));
         this._callCreationHook(bitmap);
 
         bitmap.addLoadListener(function () {
@@ -1381,15 +1381,22 @@ AudioManager.fadeInBgs = function (duration) {
 AudioManager.playMe = function (me) {
     this.stopMe();
     if (me.name) {
+        // Cek apakah ME diawali dengan '!' untuk looping
+        var isLoopingMe = me.name.charAt(0) === "!";
+
         if (this._bgmBuffer && this._currentBgm) {
             this._currentBgm.pos = this._bgmBuffer.seek();
             this._bgmBuffer.stop();
         }
-        var isLoopingMe = me.name.charAt(0) === '!';
         this._meBuffer = this.createBuffer("me", me.name);
         this.updateMeParameters(me);
-        this._meBuffer.play(isLoopingMe);
-        if (!isLoopingMe) {
+
+        // Jika ME diawali '!', mainkan dengan loop seperti BGM
+        if (isLoopingMe) {
+            this._meBuffer.play(true); // true = loop
+            // Tidak menambahkan stopListener agar tidak auto-stop
+        } else {
+            this._meBuffer.play(false); // false = play once
             this._meBuffer.addStopListener(this.stopMe.bind(this));
         }
     }
@@ -1539,7 +1546,13 @@ AudioManager.updateBufferParameters = function (buffer, configVolume, audio) {
 };
 
 AudioManager.audioFileExt = function () {
-    return ".ogg";
+    if (WebAudio.canPlayOgg() && !Utils.isMobileDevice()) {
+        return ".ogg";
+    } else if (WebAudio.canPlayM4a()) {
+        return ".m4a";
+    } else {
+        return "ogg";
+    }
 };
 
 AudioManager.shouldUseHtml5Audio = function () {
@@ -1847,6 +1860,8 @@ SceneManager._getTimeInMsWithoutMobileSafari = function () {
     return performance.now();
 };
 
+SceneManager._isUsableTimeInMs = !!window.performance && !!window.performance.now;
+
 SceneManager._scene = null;
 SceneManager._nextScene = null;
 SceneManager._stack = [];
@@ -1860,7 +1875,7 @@ SceneManager._screenHeight = 624;
 SceneManager._boxWidth = 816;
 SceneManager._boxHeight = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
-if (!Utils.isMobileSafari()) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
+if (SceneManager._isUsableTimeInMs) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
 SceneManager._accumulator = 0.0;
 SceneManager._frameCount = 0;
 
@@ -1875,13 +1890,12 @@ SceneManager.run = function (sceneClass) {
 };
 
 SceneManager.initialize = function () {
+    this.initProgressWatcher();
     this.initGraphics();
     this.checkFileAccess();
     this.initAudio();
     this.initInput();
-    if (!Utils.isElectronjs()) {
-        this.initNwjs();
-    }
+    this.initNwjs();
     this.checkPluginErrors();
     this.setupErrorHandlers();
 };
@@ -1985,7 +1999,7 @@ SceneManager.requestUpdate = function () {
 SceneManager.update = function () {
     try {
         this.tickStart();
-        if (Utils.isMobileSafari()) {
+        if (!this._isUsableTimeInMs) {
             this.updateInputData();
         }
         this.updateManagers();
@@ -2016,23 +2030,13 @@ SceneManager.onKeyDown = function (event) {
     if (!event.ctrlKey && !event.altKey) {
         switch (event.keyCode) {
             case 116: // F5
-                if (Utils.isElectronjs()) {
+                if (Utils.isNwjs()) {
                     location.reload();
-                } else {
-                    if (Utils.isNwjs()) {
-                        location.reload();
-                    }
                 }
                 break;
             case 119: // F8
-                if (Utils.isElectronjs()) {
-                    if (Utils.isOptionValid("test")) {
-                        require("electron").ipcRenderer.send("openDevTools");
-                    }
-                } else {
-                    if (Utils.isNwjs() && Utils.isOptionValid("test")) {
-                        require("nw.gui").Window.get().showDevTools();
-                    }
+                if (Utils.isNwjs() && Utils.isOptionValid("test")) {
+                    require("nw.gui").Window.get().showDevTools();
                 }
                 break;
         }
@@ -2065,7 +2069,7 @@ SceneManager.updateInputData = function () {
 };
 
 SceneManager.updateMain = function () {
-    if (Utils.isMobileSafari()) {
+    if (!this._isUsableTimeInMs) {
         this.changeScene();
         this.updateScene();
     } else {
@@ -2097,6 +2101,7 @@ SceneManager.updateManagers = function () {
 SceneManager.changeScene = function () {
     if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
         if (this._scene) {
+            this._scene.eventMode = "none";
             this._scene.terminate();
             this._scene.detachReservation();
             this._previousClass = this._scene.constructor;
@@ -2228,7 +2233,7 @@ SceneManager.backgroundBitmap = function () {
 SceneManager.resume = function () {
     this._stopped = false;
     this.requestUpdate();
-    if (!Utils.isMobileSafari()) {
+    if (this._isUsableTimeInMs) {
         this._currentTime = this._getTimeInMsWithoutMobileSafari();
         this._accumulator = 0;
     }

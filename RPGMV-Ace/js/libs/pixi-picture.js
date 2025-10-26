@@ -1,428 +1,614 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var shaderLib = [
-            {
-                vertUniforms: "",
-                vertCode: "vTextureCoord = aTextureCoord;",
-                fragUniforms: "uniform vec4 uTextureClamp;",
-                fragCode: "vec2 textureCoord = clamp(vTextureCoord, uTextureClamp.xy, uTextureClamp.zw);"
-            },
-            {
-                vertUniforms: "uniform mat3 uTransform;",
-                vertCode: "vTextureCoord = (uTransform * vec3(aTextureCoord, 1.0)).xy;",
-                fragUniforms: "",
-                fragCode: "vec2 textureCoord = vTextureCoord;"
-            },
-            {
-                vertUniforms: "uniform mat3 uTransform;",
-                vertCode: "vTextureCoord = (uTransform * vec3(aTextureCoord, 1.0)).xy;",
-                fragUniforms: "uniform mat3 uMapCoord;\nuniform vec4 uClampFrame;\nuniform vec2 uClampOffset;",
-                fragCode: "vec2 textureCoord = mod(vTextureCoord - uClampOffset, vec2(1.0, 1.0)) + uClampOffset;" +
-                    "\ntextureCoord = (uMapCoord * vec3(textureCoord, 1.0)).xy;" +
-                    "\ntextureCoord = clamp(textureCoord, uClampFrame.xy, uClampFrame.zw);"
-            }
-        ];
-        var PictureShader = (function (_super) {
-            __extends(PictureShader, _super);
-            function PictureShader(gl, vert, frag, tilingMode) {
-                var lib = shaderLib[tilingMode];
-                _super.call(this, gl, vert.replace(/%SPRITE_UNIFORMS%/gi, lib.vertUniforms)
-                    .replace(/%SPRITE_CODE%/gi, lib.vertCode), frag.replace(/%SPRITE_UNIFORMS%/gi, lib.fragUniforms)
-                    .replace(/%SPRITE_CODE%/gi, lib.fragCode));
-                this.bind();
-                this.tilingMode = tilingMode;
-                this.tempQuad = new PIXI.Quad(gl);
-                this.tempQuad.initVao(this);
-                this.uniforms.uColor = new Float32Array([1, 1, 1, 1]);
-                this.uniforms.uSampler = [0, 1];
-            }
-            PictureShader.blendVert = "\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform mat3 projectionMatrix;\nuniform mat3 mapMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vMapCoord;\n%SPRITE_UNIFORMS%\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n    %SPRITE_CODE%\n    vMapCoord = (mapMatrix * vec3(aVertexPosition, 1.0)).xy;\n}\n";
-            return PictureShader;
-        }(PIXI.Shader));
-        extras.PictureShader = PictureShader;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var overlayFrag = "\nvarying vec2 vTextureCoord;\nvarying vec2 vMapCoord;\nvarying vec4 vColor;\n\nuniform sampler2D uSampler[2];\nuniform vec4 uColor;\n%SPRITE_UNIFORMS%\n\nvoid main(void)\n{\n    %SPRITE_CODE%\n    vec4 source = texture2D(uSampler[0], textureCoord) * uColor;\n    vec4 target = texture2D(uSampler[1], vMapCoord);\n\n    //reverse hardlight\n    if (source.a == 0.0) {\n        gl_FragColor = vec4(0, 0, 0, 0);\n        return;\n    }\n    //yeah, premultiplied\n    vec3 Cb = source.rgb/source.a, Cs;\n    if (target.a > 0.0) {\n        Cs = target.rgb / target.a;\n    }\n    vec3 multiply = Cb * Cs * 2.0;\n    vec3 Cs2 = Cs * 2.0 - 1.0;\n    vec3 screen = Cb + Cs2 - Cb * Cs2;\n    vec3 B;\n    if (Cb.r <= 0.5) {\n        B.r = multiply.r;\n    } else {\n        B.r = screen.r;\n    }\n    if (Cb.g <= 0.5) {\n        B.g = multiply.g;\n    } else {\n        B.g = screen.g;\n    }\n    if (Cb.b <= 0.5) {\n        B.b = multiply.b;\n    } else {\n        B.b = screen.b;\n    }\n    vec4 res;\n    res.xyz = (1.0 - source.a) * Cs + source.a * B;\n    res.a = source.a + target.a * (1.0-source.a);\n    gl_FragColor = vec4(res.xyz * res.a, res.a);\n}\n";
-        var HardLightShader = (function (_super) {
-            __extends(HardLightShader, _super);
-            function HardLightShader(gl, tilingMode) {
-                _super.call(this, gl, extras.PictureShader.blendVert, overlayFrag, tilingMode);
-            }
-            return HardLightShader;
-        }(extras.PictureShader));
-        extras.HardLightShader = HardLightShader;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        function mapFilterBlendModesToPixi(gl, array) {
-            if (array === void 0) { array = []; }
-            array[PIXI.BLEND_MODES.OVERLAY] = [new extras.OverlayShader(gl, 0), new extras.OverlayShader(gl, 1), new extras.OverlayShader(gl, 2)];
-            array[PIXI.BLEND_MODES.HARD_LIGHT] = [new extras.HardLightShader(gl, 0), new extras.HardLightShader(gl, 1), new extras.HardLightShader(gl, 2)];
-            return array;
-        }
-        extras.mapFilterBlendModesToPixi = mapFilterBlendModesToPixi;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var normalFrag = "\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform sampler2D uSampler[2];\nuniform vec4 uColor;\n%SPRITE_UNIFORMS%\n\nvoid main(void)\n{\n    %SPRITE_CODE%\n\n    vec4 sample = texture2D(uSampler[0], textureCoord);\n    gl_FragColor = sample * uColor;\n}\n";
-        var normalVert = "\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\n%SPRITE_UNIFORMS%\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n    %SPRITE_CODE%\n}\n";
-        var NormalShader = (function (_super) {
-            __extends(NormalShader, _super);
-            function NormalShader(gl, tilingMode) {
-                _super.call(this, gl, normalVert, normalFrag, tilingMode);
-            }
-            return NormalShader;
-        }(extras.PictureShader));
-        extras.NormalShader = NormalShader;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var overlayFrag = "\nvarying vec2 vTextureCoord;\nvarying vec2 vMapCoord;\nvarying vec4 vColor;\n\nuniform sampler2D uSampler[2];\nuniform vec4 uColor;\n%SPRITE_UNIFORMS%\n\nvoid main(void)\n{\n    %SPRITE_CODE%\n    vec4 source = texture2D(uSampler[0], textureCoord) * uColor;\n    vec4 target = texture2D(uSampler[1], vMapCoord);\n\n    //reverse hardlight\n    if (source.a == 0.0) {\n        gl_FragColor = vec4(0, 0, 0, 0);\n        return;\n    }\n    //yeah, premultiplied\n    vec3 Cb = source.rgb/source.a, Cs;\n    if (target.a > 0.0) {\n        Cs = target.rgb / target.a;\n    }\n    vec3 multiply = Cb * Cs * 2.0;\n    vec3 Cb2 = Cb * 2.0 - 1.0;\n    vec3 screen = Cb2 + Cs - Cb2 * Cs;\n    vec3 B;\n    if (Cs.r <= 0.5) {\n        B.r = multiply.r;\n    } else {\n        B.r = screen.r;\n    }\n    if (Cs.g <= 0.5) {\n        B.g = multiply.g;\n    } else {\n        B.g = screen.g;\n    }\n    if (Cs.b <= 0.5) {\n        B.b = multiply.b;\n    } else {\n        B.b = screen.b;\n    }\n    vec4 res;\n    res.xyz = (1.0 - source.a) * Cs + source.a * B;\n    res.a = source.a + target.a * (1.0-source.a);\n    gl_FragColor = vec4(res.xyz * res.a, res.a);\n}\n";
-        var OverlayShader = (function (_super) {
-            __extends(OverlayShader, _super);
-            function OverlayShader(gl, tilingMode) {
-                _super.call(this, gl, extras.PictureShader.blendVert, overlayFrag, tilingMode);
-            }
-            return OverlayShader;
-        }(extras.PictureShader));
-        extras.OverlayShader = OverlayShader;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        function nextPow2(v) {
-            v += (v === 0) ? 1 : 0;
-            --v;
-            v |= v >>> 1;
-            v |= v >>> 2;
-            v |= v >>> 4;
-            v |= v >>> 8;
-            v |= v >>> 16;
-            return v + 1;
-        }
-        var PictureRenderer = (function (_super) {
-            __extends(PictureRenderer, _super);
-            function PictureRenderer(renderer) {
-                _super.call(this, renderer);
-            }
-            PictureRenderer.prototype.onContextChange = function () {
-                var gl = this.renderer.gl;
-                this.drawModes = extras.mapFilterBlendModesToPixi(gl);
-                this.normalShader = [new extras.NormalShader(gl, 0), new extras.NormalShader(gl, 1), new extras.NormalShader(gl, 2)];
-                this._tempClamp = new Float32Array(4);
-                this._tempColor = new Float32Array(4);
-                this._tempRect = new PIXI.Rectangle();
-                this._tempRect2 = new PIXI.Rectangle();
-                this._tempRect3 = new PIXI.Rectangle();
-                this._tempMatrix = new PIXI.Matrix();
-                this._tempMatrix2 = new PIXI.Matrix();
-                this._bigBuf = new Uint8Array(1 << 20);
-                this._renderTexture = new PIXI.BaseRenderTexture(1024, 1024);
-            };
-            PictureRenderer.prototype.start = function () {
-            };
-            PictureRenderer.prototype.flush = function () {
-            };
-            PictureRenderer.prototype._getRenderTexture = function (minWidth, minHeight) {
-                if (this._renderTexture.width < minWidth ||
-                    this._renderTexture.height < minHeight) {
-                    minHeight = nextPow2(minWidth);
-                    minHeight = nextPow2(minHeight);
-                    this._renderTexture.resize(minWidth, minHeight);
-                }
-                return this._renderTexture;
-            };
-            PictureRenderer.prototype._getBuf = function (size) {
-                var buf = this._bigBuf;
-                if (buf.length < size) {
-                    size = nextPow2(size);
-                    buf = new Uint8Array(size);
-                    this._bigBuf = buf;
-                }
-                return buf;
-            };
-            PictureRenderer.prototype.render = function (sprite) {
-                if (!sprite.texture.valid) {
-                    return;
-                }
-                var tilingMode = 0;
-                if (sprite.tileTransform) {
-                    tilingMode = this._isSimpleSprite(sprite) ? 1 : 2;
-                }
-                var blendShader = this.drawModes[sprite.blendMode];
-                if (blendShader) {
-                    this._renderBlend(sprite, blendShader[tilingMode]);
-                }
-                else {
-                    this._renderNormal(sprite, this.normalShader[tilingMode]);
-                }
-            };
-            PictureRenderer.prototype._renderNormal = function (sprite, shader) {
-                var renderer = this.renderer;
-                renderer.bindShader(shader);
-                renderer.state.setBlendMode(sprite.blendMode);
-                this._renderInner(sprite, shader);
-            };
-            PictureRenderer.prototype._renderBlend = function (sprite, shader) {
-                var renderer = this.renderer;
-                var spriteBounds = sprite.getBounds();
-                var renderTarget = renderer._activeRenderTarget;
-                var matrix = renderTarget.projectionMatrix;
-                var flipX = matrix.a < 0;
-                var flipY = matrix.d < 0;
-                var resolution = renderTarget.resolution;
-                var screen = this._tempRect;
-                var fr = renderTarget.sourceFrame || renderTarget.destinationFrame;
-                screen.x = 0;
-                screen.y = 0;
-                screen.width = fr.width;
-                screen.height = fr.height;
-                var bounds = this._tempRect2;
-                var fbw = fr.width * resolution, fbh = fr.height * resolution;
-                bounds.x = (spriteBounds.x + matrix.tx / matrix.a) * resolution + fbw / 2;
-                bounds.y = (spriteBounds.y + matrix.ty / matrix.d) * resolution + fbh / 2;
-                bounds.width = spriteBounds.width * resolution;
-                bounds.height = spriteBounds.height * resolution;
-                if (flipX) {
-                    bounds.y = fbw - bounds.width - bounds.x;
-                }
-                if (flipY) {
-                    bounds.y = fbh - bounds.height - bounds.y;
-                }
-                var screenBounds = this._tempRect3;
-                var x_1 = Math.floor(Math.max(screen.x, bounds.x));
-                var x_2 = Math.ceil(Math.min(screen.x + screen.width, bounds.x + bounds.width));
-                var y_1 = Math.floor(Math.max(screen.y, bounds.y));
-                var y_2 = Math.ceil(Math.min(screen.y + screen.height, bounds.y + bounds.height));
-                var pixelsWidth = x_2 - x_1;
-                var pixelsHeight = y_2 - y_1;
-                if (pixelsWidth <= 0 || pixelsHeight <= 0) {
-                    return;
-                }
-                var rt = this._getRenderTexture(pixelsWidth, pixelsHeight);
-                renderer.bindTexture(rt, 1, true);
-                var gl = renderer.gl;
-                if (renderer.renderingToScreen && renderTarget.root) {
-                    var buf = this._getBuf(pixelsWidth * pixelsHeight * 4);
-                    gl.readPixels(x_1, y_1, pixelsWidth, pixelsHeight, gl.RGBA, gl.UNSIGNED_BYTE, this._bigBuf);
-                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, pixelsWidth, pixelsHeight, gl.RGBA, gl.UNSIGNED_BYTE, this._bigBuf);
-                }
-                else {
-                    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, x_1, y_1, pixelsWidth, pixelsHeight);
-                }
-                renderer.bindShader(shader);
-                renderer.state.setBlendMode(PIXI.BLEND_MODES.NORMAL);
-                if (shader.uniforms.mapMatrix) {
-                    var mapMatrix = this._tempMatrix;
-                    mapMatrix.a = bounds.width / rt.width / spriteBounds.width;
-                    if (flipX) {
-                        mapMatrix.a = -mapMatrix.a;
-                        mapMatrix.tx = (bounds.x - x_1) / rt.width - (spriteBounds.x + spriteBounds.width) * mapMatrix.a;
-                    }
-                    else {
-                        mapMatrix.tx = (bounds.x - x_1) / rt.width - spriteBounds.x * mapMatrix.a;
-                    }
-                    mapMatrix.d = bounds.height / rt.height / spriteBounds.height;
-                    if (flipY) {
-                        mapMatrix.d = -mapMatrix.d;
-                        mapMatrix.ty = (bounds.y - y_1) / rt.height - (spriteBounds.y + spriteBounds.height) * mapMatrix.d;
-                    }
-                    else {
-                        mapMatrix.ty = (bounds.y - y_1) / rt.height - spriteBounds.y * mapMatrix.d;
-                    }
-                    shader.uniforms.mapMatrix = mapMatrix.toArray(true);
-                }
-                this._renderInner(sprite, shader);
-            };
-            PictureRenderer.prototype._renderInner = function (sprite, shader) {
-                var renderer = this.renderer;
-                if (shader.tilingMode > 0) {
-                    this._renderWithShader(sprite, shader.tilingMode === 1, shader);
-                }
-                else {
-                    this._renderSprite(sprite, shader);
-                }
-            };
-            PictureRenderer.prototype._renderWithShader = function (ts, isSimple, shader) {
-                var quad = shader.tempQuad;
-                var renderer = this.renderer;
-                renderer.bindVao(quad.vao);
-                var vertices = quad.vertices;
-                var _width = ts._width;
-                var _height = ts._height;
-                var _anchorX = ts._anchor._x;
-                var _anchorY = ts._anchor._y;
-                var w0 = _width * (1 - _anchorX);
-                var w1 = _width * -_anchorX;
-                var h0 = _height * (1 - _anchorY);
-                var h1 = _height * -_anchorY;
-                var wt = ts.transform.worldTransform;
-                var a = wt.a;
-                var b = wt.b;
-                var c = wt.c;
-                var d = wt.d;
-                var tx = wt.tx;
-                var ty = wt.ty;
-                vertices[0] = (a * w1) + (c * h1) + tx;
-                vertices[1] = (d * h1) + (b * w1) + ty;
-                vertices[2] = (a * w0) + (c * h1) + tx;
-                vertices[3] = (d * h1) + (b * w0) + ty;
-                vertices[4] = (a * w0) + (c * h0) + tx;
-                vertices[5] = (d * h0) + (b * w0) + ty;
-                vertices[6] = (a * w1) + (c * h0) + tx;
-                vertices[7] = (d * h0) + (b * w1) + ty;
-                vertices = quad.uvs;
-                vertices[0] = vertices[6] = -ts.anchor.x;
-                vertices[1] = vertices[3] = -ts.anchor.y;
-                vertices[2] = vertices[4] = 1.0 - ts.anchor.x;
-                vertices[5] = vertices[7] = 1.0 - ts.anchor.y;
-                quad.upload();
-                var tex = ts._texture;
-                var lt = ts.tileTransform.localTransform;
-                var uv = ts.uvTransform;
-                var mapCoord = uv.mapCoord;
-                var uClampFrame = uv.uClampFrame;
-                var uClampOffset = uv.uClampOffset;
-                var w = tex.width;
-                var h = tex.height;
-                var W = _width;
-                var H = _height;
-                var tempMat = this._tempMatrix2;
-                tempMat.set(lt.a * w / W, lt.b * w / H, lt.c * h / W, lt.d * h / H, lt.tx / W, lt.ty / H);
-                tempMat.invert();
-                if (isSimple) {
-                    tempMat.append(mapCoord);
-                }
-                else {
-                    shader.uniforms.uMapCoord = mapCoord.toArray(true);
-                    shader.uniforms.uClampFrame = uClampFrame;
-                    shader.uniforms.uClampOffset = uClampOffset;
-                }
-                shader.uniforms.uTransform = tempMat.toArray(true);
-                var color = this._tempColor;
-                var alpha = ts.worldAlpha;
-                PIXI.utils.hex2rgb(ts.tint, color);
-                color[0] *= alpha;
-                color[1] *= alpha;
-                color[2] *= alpha;
-                color[3] = alpha;
-                shader.uniforms.uColor = color;
-                renderer.bindTexture(tex, 0, true);
-                quad.vao.draw(this.renderer.gl.TRIANGLES, 6, 0);
-            };
-            PictureRenderer.prototype._renderSprite = function (sprite, shader) {
-                var renderer = this.renderer;
-                var quad = shader.tempQuad;
-                renderer.bindVao(quad.vao);
-                var uvs = sprite.texture._uvs;
-                var vertices = quad.vertices;
-                var vd = sprite.vertexData;
-                for (var i = 0; i < 8; i++) {
-                    quad.vertices[i] = vd[i];
-                }
-                quad.uvs[0] = uvs.x0;
-                quad.uvs[1] = uvs.y0;
-                quad.uvs[2] = uvs.x1;
-                quad.uvs[3] = uvs.y1;
-                quad.uvs[4] = uvs.x2;
-                quad.uvs[5] = uvs.y2;
-                quad.uvs[6] = uvs.x3;
-                quad.uvs[7] = uvs.y3;
-                quad.upload();
-                var frame = sprite.texture.frame;
-                var base = sprite.texture.baseTexture;
-                var clamp = this._tempClamp;
-                var eps = 0.5 / base.resolution;
-                clamp[0] = (frame.x + eps) / base.width;
-                clamp[1] = (frame.y + eps) / base.height;
-                clamp[2] = (frame.x + frame.width - eps) / base.width;
-                clamp[3] = (frame.y + frame.height - eps) / base.height;
-                shader.uniforms.uTextureClamp = clamp;
-                var color = this._tempColor;
-                PIXI.utils.hex2rgb(sprite.tint, color);
-                var alpha = sprite.worldAlpha;
-                color[0] *= alpha;
-                color[1] *= alpha;
-                color[2] *= alpha;
-                color[3] = alpha;
-                shader.uniforms.uColor = color;
-                renderer.bindTexture(base, 0, true);
-                quad.vao.draw(this.renderer.gl.TRIANGLES, 6, 0);
-            };
-            PictureRenderer.prototype._isSimpleSprite = function (ts) {
-                var renderer = this.renderer;
-                var tex = ts._texture;
-                var baseTex = tex.baseTexture;
-                var isSimple = baseTex.isPowerOfTwo && tex.frame.width === baseTex.width && tex.frame.height === baseTex.height;
-                if (isSimple) {
-                    if (!baseTex._glTextures[renderer.CONTEXT_UID]) {
-                        if (baseTex.wrapMode === PIXI.WRAP_MODES.CLAMP) {
-                            baseTex.wrapMode = PIXI.WRAP_MODES.REPEAT;
-                        }
-                    }
-                    else {
-                        isSimple = baseTex.wrapMode !== PIXI.WRAP_MODES.CLAMP;
-                    }
-                }
-                return isSimple;
-            };
-            return PictureRenderer;
-        }(PIXI.ObjectRenderer));
-        extras.PictureRenderer = PictureRenderer;
-        PIXI.WebGLRenderer.registerPlugin('picture', PictureRenderer);
-        PIXI.CanvasRenderer.registerPlugin('picture', PIXI.CanvasSpriteRenderer);
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var PictureSprite = (function (_super) {
-            __extends(PictureSprite, _super);
-            function PictureSprite(texture) {
-                _super.call(this, texture);
-                this.pluginName = 'picture';
-            }
-            return PictureSprite;
-        }(PIXI.Sprite));
-        extras.PictureSprite = PictureSprite;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var extras;
-    (function (extras) {
-        var PictureTilingSprite = (function (_super) {
-            __extends(PictureTilingSprite, _super);
-            function PictureTilingSprite(texture) {
-                _super.call(this, texture);
-                this.pluginName = 'picture';
-            }
-            return PictureTilingSprite;
-        }(extras.TilingSprite));
-        extras.PictureTilingSprite = PictureTilingSprite;
-    })(extras = PIXI.extras || (PIXI.extras = {}));
-})(PIXI || (PIXI = {}));
-//# sourceMappingURL=pixi-picture.js.map
+/* eslint-disable */
+ 
+/*!
+ * @pixi/picture - v3.0.1
+ * Compiled Tue, 01 Jun 2021 13:49:52 UTC
+ *
+ * @pixi/picture is licensed under the MIT License.
+ * http://www.opensource.org/licenses/mit-license
+ * 
+ * Copyright 2017-2021, Ivan Popelyshev, All Rights Reserved
+ */
+this.PIXI = this.PIXI || {};
+this.PIXI.picture = this.PIXI.picture || {};
+(function (global, factory) {
+   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@pixi/core'), require('@pixi/constants'), require('@pixi/sprite'), require('@pixi/sprite-tiling'), require('@pixi/math')) :
+   typeof define === 'function' && define.amd ? define(['exports', '@pixi/core', '@pixi/constants', '@pixi/sprite', '@pixi/sprite-tiling', '@pixi/math'], factory) :
+   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global._pixi_picture = {}, global.PIXI, global.PIXI, global.PIXI, global.PIXI, global.PIXI));
+}(this, (function (exports, core, constants, sprite, spriteTiling, math) { 'use strict';
+
+   class BackdropFilter extends core.Filter {
+       constructor() {
+           super(...arguments);
+           this.backdropUniformName = null;
+           this._backdropActive = false;
+           this.clearColor = null;
+       }
+   }
+   const filterFrag = `
+varying vec2 vTextureCoord;
+
+uniform sampler2D uSampler;
+uniform sampler2D uBackdrop;
+uniform vec2 uBackdrop_flipY;
+
+%UNIFORM_CODE%
+
+void main(void)
+{
+   vec2 backdropCoord = vec2(vTextureCoord.x, uBackdrop_flipY.x + uBackdrop_flipY.y * vTextureCoord.y);
+   vec4 b_src = texture2D(uSampler, vTextureCoord);
+   vec4 b_dest = texture2D(uBackdrop, backdropCoord);
+   vec4 b_res = b_dest;
+   
+   %BLEND_CODE%
+
+   gl_FragColor = b_res;
+}`;
+   class BlendFilter extends BackdropFilter {
+       constructor(shaderParts) {
+           let fragCode = filterFrag;
+           fragCode = fragCode.replace('%UNIFORM_CODE%', shaderParts.uniformCode || "");
+           fragCode = fragCode.replace('%BLEND_CODE%', shaderParts.blendCode || "");
+           super(undefined, fragCode, shaderParts.uniforms);
+           this.backdropUniformName = 'uBackdrop';
+       }
+   }
+
+   const vert = `
+attribute vec2 aVertexPosition;
+
+uniform mat3 projectionMatrix;
+
+varying vec2 vTextureCoord;
+
+uniform vec4 inputSize;
+uniform vec4 outputFrame;
+uniform vec2 flipY;
+
+vec4 filterVertexPosition( void )
+{
+    vec2 position = aVertexPosition * max(outputFrame.zw, vec2(0.)) + outputFrame.xy;
+
+    return vec4((projectionMatrix * vec3(position, 1.0)).xy, 0.0, 1.0);
+}
+
+vec2 filterTextureCoord( void )
+{
+    return aVertexPosition * (outputFrame.zw * inputSize.zw);
+}
+
+void main(void)
+{
+    gl_Position = filterVertexPosition();
+    vTextureCoord = filterTextureCoord();
+    vTextureCoord.y = flipY.x + flipY.y * vTextureCoord.y;
+}
+
+`;
+   class FlipYFilter extends core.Filter {
+       constructor(frag, uniforms) {
+           const uni = uniforms || {};
+           if (!uni.flipY) {
+               uni.flipY = new Float32Array([0.0, 1.0]);
+           }
+           super(vert, frag, uni);
+       }
+   }
+
+   exports.MASK_CHANNEL = void 0;
+   (function (MASK_CHANNEL) {
+       MASK_CHANNEL[MASK_CHANNEL["RED"] = 0] = "RED";
+       MASK_CHANNEL[MASK_CHANNEL["GREEN"] = 1] = "GREEN";
+       MASK_CHANNEL[MASK_CHANNEL["BLUE"] = 2] = "BLUE";
+       MASK_CHANNEL[MASK_CHANNEL["ALPHA"] = 3] = "ALPHA";
+   })(exports.MASK_CHANNEL || (exports.MASK_CHANNEL = {}));
+   class MaskConfig {
+       constructor(maskBefore = false, channel = exports.MASK_CHANNEL.ALPHA) {
+           this.maskBefore = maskBefore;
+           this.uniformCode = 'uniform vec4 uChannel;';
+           this.uniforms = {
+               uChannel: new Float32Array([0, 0, 0, 0]),
+           };
+           this.blendCode = `b_res = dot(b_src, uChannel) * b_dest;`;
+           this.safeFlipY = false;
+           this.uniforms.uChannel[channel] = 1.0;
+       }
+   }
+   const tmpArray = new Float32Array([0, 1]);
+   class MaskFilter extends BlendFilter {
+       constructor(baseFilter, config = new MaskConfig()) {
+           super(config);
+           this.baseFilter = baseFilter;
+           this.config = config;
+           this.padding = baseFilter.padding;
+           this.safeFlipY = config.safeFlipY;
+       }
+       apply(filterManager, input, output, clearMode) {
+           const target = filterManager.getFilterTexture(input);
+           if (this.config.maskBefore) {
+               const { blendMode } = this.state;
+               this.state.blendMode = constants.BLEND_MODES.NONE;
+               filterManager.applyFilter(this, input, target, constants.CLEAR_MODES.YES);
+               this.baseFilter.blendMode = blendMode;
+               this.baseFilter.apply(filterManager, target, output, clearMode);
+               this.state.blendMode = blendMode;
+           }
+           else {
+               const { uBackdrop, uBackdrop_flipY } = this.uniforms;
+               if (uBackdrop_flipY[1] > 0 || this.safeFlipY) {
+                   this.baseFilter.apply(filterManager, uBackdrop, target, constants.CLEAR_MODES.YES);
+               }
+               else {
+                   const targetFlip = filterManager.getFilterTexture(input);
+                   if (!MaskFilter._flipYFilter) {
+                       MaskFilter._flipYFilter = new FlipYFilter();
+                   }
+                   MaskFilter._flipYFilter.uniforms.flipY[0] = uBackdrop_flipY[0];
+                   MaskFilter._flipYFilter.uniforms.flipY[1] = uBackdrop_flipY[1];
+                   MaskFilter._flipYFilter.apply(filterManager, uBackdrop, targetFlip, constants.CLEAR_MODES.YES);
+                   this.baseFilter.apply(filterManager, targetFlip, target, constants.CLEAR_MODES.YES);
+                   filterManager.returnFilterTexture(targetFlip);
+                   this.uniforms.uBackdrop_flipY = tmpArray;
+               }
+               this.uniforms.uBackdrop = target;
+               filterManager.applyFilter(this, input, output, clearMode);
+               this.uniforms.uBackdrop = uBackdrop;
+               this.uniforms.uBackdrop_flipY = uBackdrop_flipY;
+           }
+           filterManager.returnFilterTexture(target);
+       }
+   }
+   MaskFilter._flipYFilter = null;
+
+   const NPM_BLEND = `if (b_src.a == 0.0) {
+gl_FragColor = vec4(0, 0, 0, 0);
+return;
+}
+vec3 Cb = b_src.rgb / b_src.a, Cs;
+if (b_dest.a > 0.0) {
+Cs = b_dest.rgb / b_dest.a;
+}
+%NPM_BLEND%
+b_res.a = b_src.a + b_dest.a * (1.0-b_src.a);
+b_res.rgb = (1.0 - b_src.a) * Cs + b_src.a * B;
+b_res.rgb *= b_res.a;
+`;
+   const OVERLAY_PART = `vec3 multiply = Cb * Cs * 2.0;
+vec3 Cb2 = Cb * 2.0 - 1.0;
+vec3 screen = Cb2 + Cs - Cb2 * Cs;
+vec3 B;
+if (Cs.r <= 0.5) {
+B.r = multiply.r;
+} else {
+B.r = screen.r;
+}
+if (Cs.g <= 0.5) {
+B.g = multiply.g;
+} else {
+B.g = screen.g;
+}
+if (Cs.b <= 0.5) {
+B.b = multiply.b;
+} else {
+B.b = screen.b;
+}
+`;
+   const HARDLIGHT_PART = `vec3 multiply = Cb * Cs * 2.0;
+vec3 Cs2 = Cs * 2.0 - 1.0;
+vec3 screen = Cb + Cs2 - Cb * Cs2;
+vec3 B;
+if (Cb.r <= 0.5) {
+B.r = multiply.r;
+} else {
+B.r = screen.r;
+}
+if (Cb.g <= 0.5) {
+B.g = multiply.g;
+} else {
+B.g = screen.g;
+}
+if (Cb.b <= 0.5) {
+B.b = multiply.b;
+} else {
+B.b = screen.b;
+}
+`;
+   const SOFTLIGHT_PART = `vec3 first = Cb - (1.0 - 2.0 * Cs) * Cb * (1.0 - Cb);
+vec3 B;
+vec3 D;
+if (Cs.r <= 0.5)
+{
+B.r = first.r;
+}
+else
+{
+if (Cb.r <= 0.25)
+{
+D.r = ((16.0 * Cb.r - 12.0) * Cb.r + 4.0) * Cb.r;    
+}
+else
+{
+D.r = sqrt(Cb.r);
+}
+B.r = Cb.r + (2.0 * Cs.r - 1.0) * (D.r - Cb.r);
+}
+if (Cs.g <= 0.5)
+{
+B.g = first.g;
+}
+else
+{
+if (Cb.g <= 0.25)
+{
+D.g = ((16.0 * Cb.g - 12.0) * Cb.g + 4.0) * Cb.g;    
+}
+else
+{
+D.g = sqrt(Cb.g);
+}
+B.g = Cb.g + (2.0 * Cs.g - 1.0) * (D.g - Cb.g);
+}
+if (Cs.b <= 0.5)
+{
+B.b = first.b;
+}
+else
+{
+if (Cb.b <= 0.25)
+{
+D.b = ((16.0 * Cb.b - 12.0) * Cb.b + 4.0) * Cb.b;    
+}
+else
+{
+D.b = sqrt(Cb.b);
+}
+B.b = Cb.b + (2.0 * Cs.b - 1.0) * (D.b - Cb.b);
+}
+`;
+   const MULTIPLY_FULL = `if (dest.a > 0.0) {
+b_res.rgb = (dest.rgb / dest.a) * ((1.0 - src.a) + src.rgb);
+b_res.a = min(src.a + dest.a - src.a * dest.a, 1.0);
+b_res.rgb *= mult.a;
+}
+`;
+   const OVERLAY_FULL = NPM_BLEND.replace(`%NPM_BLEND%`, OVERLAY_PART);
+   const HARDLIGHT_FULL = NPM_BLEND.replace(`%NPM_BLEND%`, HARDLIGHT_PART);
+   const SOFTLIGHT_FULL = NPM_BLEND.replace(`%NPM_BLEND%`, SOFTLIGHT_PART);
+   const blendFullArray = [];
+   blendFullArray[constants.BLEND_MODES.MULTIPLY] = MULTIPLY_FULL;
+   blendFullArray[constants.BLEND_MODES.OVERLAY] = OVERLAY_FULL;
+   blendFullArray[constants.BLEND_MODES.HARD_LIGHT] = HARDLIGHT_FULL;
+   blendFullArray[constants.BLEND_MODES.SOFT_LIGHT] = SOFTLIGHT_FULL;
+   let filterCache = [];
+   let filterCacheArray = [];
+   function getBlendFilter(blendMode) {
+       if (!blendFullArray[blendMode]) {
+           return null;
+       }
+       if (!filterCache[blendMode]) {
+           filterCache[blendMode] = new BlendFilter({ blendCode: blendFullArray[blendMode] });
+       }
+       return filterCache[blendMode];
+   }
+   function getBlendFilterArray(blendMode) {
+       if (!blendFullArray[blendMode]) {
+           return null;
+       }
+       if (!filterCacheArray[blendMode]) {
+           filterCacheArray[blendMode] = [getBlendFilter(blendMode)];
+       }
+       return filterCacheArray[blendMode];
+   }
+
+   class Sprite extends sprite.Sprite {
+       _render(renderer) {
+           const texture = this._texture;
+           if (!texture || !texture.valid) {
+               return;
+           }
+           const blendFilterArray = getBlendFilterArray(this.blendMode);
+           if (blendFilterArray) {
+               renderer.batch.flush();
+               if (!renderer.filter.pushWithCheck(this, blendFilterArray)) {
+                   return;
+               }
+           }
+           this.calculateVertices();
+           renderer.batch.setObjectRenderer(renderer.plugins[this.pluginName]);
+           renderer.plugins[this.pluginName].render(this);
+           if (blendFilterArray) {
+               renderer.batch.flush();
+               renderer.filter.pop();
+           }
+       }
+   }
+
+   class TilingSprite extends spriteTiling.TilingSprite {
+       _render(renderer) {
+           const texture = this._texture;
+           if (!texture || !texture.valid) {
+               return;
+           }
+           const blendFilterArray = getBlendFilterArray(this.blendMode);
+           if (blendFilterArray) {
+               renderer.batch.flush();
+               if (!renderer.filter.pushWithCheck(this, blendFilterArray)) {
+                   return;
+               }
+           }
+           this.tileTransform.updateLocalTransform();
+           this.uvMatrix.update();
+           renderer.batch.setObjectRenderer(renderer.plugins[this.pluginName]);
+           renderer.plugins[this.pluginName].render(this);
+           if (blendFilterArray) {
+               renderer.batch.flush();
+               renderer.filter.pop();
+           }
+       }
+   }
+
+   function containsRect(rectOut, rectIn) {
+       let r1 = rectIn.x + rectIn.width;
+       let b1 = rectIn.y + rectIn.height;
+       let r2 = rectOut.x + rectOut.width;
+       let b2 = rectOut.y + rectOut.height;
+       return (rectIn.x >= rectOut.x) &&
+           (rectIn.x <= r2) &&
+           (rectIn.y >= rectOut.y) &&
+           (rectIn.y <= b2) &&
+           (r1 >= rectOut.x) &&
+           (r1 <= r2) &&
+           (b1 >= rectOut.y) &&
+           (b1 <= b2);
+   }
+   function bindForceLocation(texture, location = 0) {
+       const { gl } = this;
+       if (this.currentLocation !== location) {
+           this.currentLocation = location;
+           gl.activeTexture(gl.TEXTURE0 + location);
+       }
+       this.bind(texture, location);
+   }
+   const tempMatrix = new math.Matrix();
+   function pushWithCheck(target, filters, checkEmptyBounds = true) {
+       const renderer = this.renderer;
+       const filterStack = this.defaultFilterStack;
+       const state = this.statePool.pop() || new core.FilterState();
+       const renderTextureSystem = this.renderer.renderTexture;
+       let resolution = filters[0].resolution;
+       let padding = filters[0].padding;
+       let autoFit = filters[0].autoFit;
+       let legacy = filters[0].legacy;
+       for (let i = 1; i < filters.length; i++) {
+           const filter = filters[i];
+           resolution = Math.min(resolution, filter.resolution);
+           padding = this.useMaxPadding
+               ? Math.max(padding, filter.padding)
+               : padding + filter.padding;
+           autoFit = autoFit && filter.autoFit;
+           legacy = legacy || filter.legacy;
+       }
+       if (filterStack.length === 1) {
+           this.defaultFilterStack[0].renderTexture = renderTextureSystem.current;
+       }
+       filterStack.push(state);
+       state.resolution = resolution;
+       state.legacy = legacy;
+       state.target = target;
+       state.sourceFrame.copyFrom(target.filterArea || target.getBounds(true));
+       state.sourceFrame.pad(padding);
+       let canUseBackdrop = true;
+       if (autoFit) {
+           const sourceFrameProjected = this.tempRect.copyFrom(renderTextureSystem.sourceFrame);
+           if (renderer.projection.transform) {
+               this.transformAABB(tempMatrix.copyFrom(renderer.projection.transform).invert(), sourceFrameProjected);
+           }
+           state.sourceFrame.fit(sourceFrameProjected);
+       }
+       else {
+           canUseBackdrop = containsRect(this.renderer.renderTexture.sourceFrame, state.sourceFrame);
+       }
+       if (checkEmptyBounds && state.sourceFrame.width <= 1 && state.sourceFrame.height <= 1) {
+           filterStack.pop();
+           state.clear();
+           this.statePool.push(state);
+           return false;
+       }
+       this.roundFrame(state.sourceFrame, renderTextureSystem.current ? renderTextureSystem.current.resolution : renderer.resolution, renderTextureSystem.sourceFrame, renderTextureSystem.destinationFrame, renderer.projection.transform);
+       state.sourceFrame.ceil(resolution);
+       if (canUseBackdrop) {
+           let backdrop = null;
+           let backdropFlip = null;
+           for (let i = 0; i < filters.length; i++) {
+               const bName = filters[i].backdropUniformName;
+               if (bName) {
+                   const { uniforms } = filters[i];
+                   if (!uniforms[bName + '_flipY']) {
+                       uniforms[bName + '_flipY'] = new Float32Array([0.0, 1.0]);
+                   }
+                   const flip = uniforms[bName + '_flipY'];
+                   if (backdrop === null) {
+                       backdrop = this.prepareBackdrop(state.sourceFrame, flip);
+                       backdropFlip = flip;
+                   }
+                   else {
+                       flip[0] = backdropFlip[0];
+                       flip[1] = backdropFlip[1];
+                   }
+                   uniforms[bName] = backdrop;
+                   if (backdrop) {
+                       filters[i]._backdropActive = true;
+                   }
+               }
+           }
+       }
+       state.renderTexture = this.getOptimalFilterTexture(state.sourceFrame.width, state.sourceFrame.height, resolution);
+       state.filters = filters;
+       state.destinationFrame.width = state.renderTexture.width;
+       state.destinationFrame.height = state.renderTexture.height;
+       const destinationFrame = this.tempRect;
+       destinationFrame.x = 0;
+       destinationFrame.y = 0;
+       destinationFrame.width = state.sourceFrame.width;
+       destinationFrame.height = state.sourceFrame.height;
+       state.renderTexture.filterFrame = state.sourceFrame;
+       state.bindingSourceFrame.copyFrom(renderTextureSystem.sourceFrame);
+       state.bindingDestinationFrame.copyFrom(renderTextureSystem.destinationFrame);
+       state.transform = renderer.projection.transform;
+       renderer.projection.transform = null;
+       renderTextureSystem.bind(state.renderTexture, state.sourceFrame, destinationFrame);
+       const cc = filters[filters.length - 1].clearColor;
+       if (cc) {
+           renderer.framebuffer.clear(cc[0], cc[1], cc[2], cc[3]);
+       }
+       else {
+           renderer.framebuffer.clear(0, 0, 0, 0);
+       }
+       return true;
+   }
+   function push(target, filters) {
+       return this.pushWithCheck(target, filters, false);
+   }
+   function pop() {
+       const filterStack = this.defaultFilterStack;
+       const state = filterStack.pop();
+       const filters = state.filters;
+       this.activeState = state;
+       const globalUniforms = this.globalUniforms.uniforms;
+       globalUniforms.outputFrame = state.sourceFrame;
+       globalUniforms.resolution = state.resolution;
+       const inputSize = globalUniforms.inputSize;
+       const inputPixel = globalUniforms.inputPixel;
+       const inputClamp = globalUniforms.inputClamp;
+       inputSize[0] = state.destinationFrame.width;
+       inputSize[1] = state.destinationFrame.height;
+       inputSize[2] = 1.0 / inputSize[0];
+       inputSize[3] = 1.0 / inputSize[1];
+       inputPixel[0] = inputSize[0] * state.resolution;
+       inputPixel[1] = inputSize[1] * state.resolution;
+       inputPixel[2] = 1.0 / inputPixel[0];
+       inputPixel[3] = 1.0 / inputPixel[1];
+       inputClamp[0] = 0.5 * inputPixel[2];
+       inputClamp[1] = 0.5 * inputPixel[3];
+       inputClamp[2] = (state.sourceFrame.width * inputSize[2]) - (0.5 * inputPixel[2]);
+       inputClamp[3] = (state.sourceFrame.height * inputSize[3]) - (0.5 * inputPixel[3]);
+       if (state.legacy) {
+           const filterArea = globalUniforms.filterArea;
+           filterArea[0] = state.destinationFrame.width;
+           filterArea[1] = state.destinationFrame.height;
+           filterArea[2] = state.sourceFrame.x;
+           filterArea[3] = state.sourceFrame.y;
+           globalUniforms.filterClamp = globalUniforms.inputClamp;
+       }
+       this.globalUniforms.update();
+       const lastState = filterStack[filterStack.length - 1];
+       if (state.renderTexture.framebuffer.multisample > 1) {
+           this.renderer.framebuffer.blit();
+       }
+       if (filters.length === 1) {
+           filters[0].apply(this, state.renderTexture, lastState.renderTexture, constants.CLEAR_MODES.BLEND, state);
+           this.returnFilterTexture(state.renderTexture);
+       }
+       else {
+           let flip = state.renderTexture;
+           let flop = this.getOptimalFilterTexture(flip.width, flip.height, state.resolution);
+           flop.filterFrame = flip.filterFrame;
+           let i = 0;
+           for (i = 0; i < filters.length - 1; ++i) {
+               filters[i].apply(this, flip, flop, constants.CLEAR_MODES.CLEAR, state);
+               const t = flip;
+               flip = flop;
+               flop = t;
+           }
+           filters[i].apply(this, flip, lastState.renderTexture, constants.CLEAR_MODES.BLEND, state);
+           this.returnFilterTexture(flip);
+           this.returnFilterTexture(flop);
+       }
+       let backdropFree = false;
+       for (let i = 0; i < filters.length; i++) {
+           if (filters[i]._backdropActive) {
+               const bName = filters[i].backdropUniformName;
+               if (!backdropFree) {
+                   this.returnFilterTexture(filters[i].uniforms[bName]);
+                   backdropFree = true;
+               }
+               filters[i].uniforms[bName] = null;
+               filters[i]._backdropActive = false;
+           }
+       }
+       state.clear();
+       this.statePool.push(state);
+   }
+   let hadBackbufferError = false;
+   function prepareBackdrop(bounds, flipY) {
+       const renderer = this.renderer;
+       const renderTarget = renderer.renderTexture.current;
+       const fr = this.renderer.renderTexture.sourceFrame;
+       const tf = renderer.projection.transform || math.Matrix.IDENTITY;
+       let resolution = 1;
+       if (renderTarget) {
+           resolution = renderTarget.baseTexture.resolution;
+           flipY[1] = 1.0;
+       }
+       else {
+           if (!renderer.useContextAlpha) {
+               if (!hadBackbufferError) {
+                   hadBackbufferError = true;
+                   console.warn('pixi-picture: you are trying to use Blend Filter on main framebuffer! That wont work.');
+               }
+               return null;
+           }
+           resolution = renderer.resolution;
+           flipY[1] = -1.0;
+       }
+       const x = Math.round((bounds.x - fr.x + tf.tx) * resolution);
+       const dy = bounds.y - fr.y + tf.ty;
+       const y = Math.round((flipY[1] < 0.0 ? fr.height - (dy + bounds.height) : dy) * resolution);
+       const w = Math.round(bounds.width * resolution);
+       const h = Math.round(bounds.height * resolution);
+       const gl = renderer.gl;
+       const rt = this.getOptimalFilterTexture(w, h, 1);
+       if (flipY[1] < 0) {
+           flipY[0] = h / rt.height;
+       }
+       rt.filterFrame = fr;
+       renderer.texture.bindForceLocation(rt.baseTexture, 0);
+       gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, x, y, w, h);
+       return rt;
+   }
+   function applyMixins() {
+       core.TextureSystem.prototype.bindForceLocation = bindForceLocation;
+       core.FilterSystem.prototype.push = push;
+       core.FilterSystem.prototype.pushWithCheck = pushWithCheck;
+       core.FilterSystem.prototype.pop = pop;
+       core.FilterSystem.prototype.prepareBackdrop = prepareBackdrop;
+   }
+
+   applyMixins();
+
+   exports.BackdropFilter = BackdropFilter;
+   exports.BlendFilter = BlendFilter;
+   exports.FlipYFilter = FlipYFilter;
+   exports.HARDLIGHT_FULL = HARDLIGHT_FULL;
+   exports.HARDLIGHT_PART = HARDLIGHT_PART;
+   exports.MULTIPLY_FULL = MULTIPLY_FULL;
+   exports.MaskConfig = MaskConfig;
+   exports.MaskFilter = MaskFilter;
+   exports.NPM_BLEND = NPM_BLEND;
+   exports.OVERLAY_FULL = OVERLAY_FULL;
+   exports.OVERLAY_PART = OVERLAY_PART;
+   exports.SOFTLIGHT_FULL = SOFTLIGHT_FULL;
+   exports.SOFTLIGHT_PART = SOFTLIGHT_PART;
+   exports.Sprite = Sprite;
+   exports.TilingSprite = TilingSprite;
+   exports.applyMixins = applyMixins;
+   exports.blendFullArray = blendFullArray;
+   exports.getBlendFilter = getBlendFilter;
+   exports.getBlendFilterArray = getBlendFilterArray;
+
+   Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
+if (typeof _pixi_picture !== 'undefined') { Object.assign(this.PIXI.picture, _pixi_picture); }
+//# sourceMappingURL=pixi-picture.umd.js.map
