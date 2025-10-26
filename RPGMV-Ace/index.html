@@ -313,11 +313,15 @@
 
             /* --- Responsive Design Adjustments --- */
 
-            /* Hide button labels on smaller screens to save space */
-            @media (max-width: 800px) {
+            /* Hide button labels only in portrait mode to save space */
+            @media (orientation: portrait) {
                 .button-label {
                     display: none;
                 }
+            }
+
+            /* Adjust control buttons for portrait */
+            @media (orientation: portrait) {
                 .control-button {
                     padding: 8px;
                     min-width: 36px;
