@@ -175,15 +175,9 @@
     updateGameInputBlocking();
 
     // --- Controls Bar Mouse Events for Auto-hide ---
+    // Only handle can show controls (mouse or touch)
     controlsHandle.addEventListener("click", () => {
         showControlsAndResetHideTimer();
-    });
-
-    // Add mouse move to game screen area to trigger control bar visibility
-    playerContainer.addEventListener("mousemove", () => {
-        if (isPlaying && document.fullscreenElement) {
-            showControlsAndResetHideTimer();
-        }
     });
 
     controlsBar.addEventListener("mouseenter", () => {
@@ -200,7 +194,7 @@
     });
 
     // --- Controls Bar Touch Events for Auto-hide ---
-    // Add touch support to prevent controls from hiding during interaction
+    // Only handle can show controls on touch (game screen touch is blocked to avoid interference)
 
     // Touch on handle to show controls
     controlsHandle.addEventListener(
@@ -211,22 +205,26 @@
         { passive: true }
     );
 
-    // Touch anywhere on player container (including game screen) to show controls
-    playerContainer.addEventListener(
+    // Touch on control bar itself pauses auto-hide completely until touch ends
+    let controlBarTouchActive = false;
+
+    controlsBar.addEventListener(
         "touchstart",
         () => {
             if (isPlaying && document.fullscreenElement) {
-                showControlsAndResetHideTimer();
+                controlBarTouchActive = true;
+                clearTimeout(controlsHideTimeout); // Pause auto-hide while touching.
             }
         },
         { passive: true }
     );
 
     controlsBar.addEventListener(
-        "touchstart",
+        "touchmove",
         () => {
             if (isPlaying && document.fullscreenElement) {
-                clearTimeout(controlsHideTimeout); // Pause auto-hide on touch.
+                // Keep clearing timeout while dragging (e.g., volume slider)
+                clearTimeout(controlsHideTimeout);
             }
         },
         { passive: true }
@@ -236,7 +234,8 @@
         "touchend",
         () => {
             if (isPlaying && document.fullscreenElement) {
-                clearTimeout(controlsHideTimeout); // Reset timer on touch end.
+                controlBarTouchActive = false;
+                clearTimeout(controlsHideTimeout); // Reset timer after touch ends.
                 controlsHideTimeout = setTimeout(hideControlsBar, 3000);
             }
         },
@@ -248,6 +247,7 @@
         "touchcancel",
         () => {
             if (isPlaying && document.fullscreenElement) {
+                controlBarTouchActive = false;
                 clearTimeout(controlsHideTimeout);
                 controlsHideTimeout = setTimeout(hideControlsBar, 3000);
             }
