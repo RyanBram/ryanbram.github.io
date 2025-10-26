@@ -336,7 +336,7 @@ Window_Base.prototype.processCharacter = function (textState) {
 Window_Base.prototype.processNormalCharacter = function (textState) {
     var c = textState.text[textState.index++];
     var w = this.textWidth(c);
-    this.contents.drawText(c, Math.round(textState.x), Math.round(textState.y), w * 2, textState.height);
+    this.contents.drawText(c, textState.x, textState.y, w * 2, textState.height);
     textState.x += w;
 };
 
@@ -458,8 +458,8 @@ Window_Base.prototype.drawFace = function (faceName, faceIndex, x, y, width, hei
     var sh = Math.min(height, ph);
     var dx = Math.floor(x + Math.max(width - pw, 0) / 2);
     var dy = Math.floor(y + Math.max(height - ph, 0) / 2);
-    var sx = Math.round((faceIndex % 4) * pw + (pw - sw) / 2);
-    var sy = Math.round(Math.floor(faceIndex / 4) * ph + (ph - sh) / 2);
+    var sx = (faceIndex % 4) * pw + (pw - sw) / 2;
+    var sy = Math.floor(faceIndex / 4) * ph + (ph - sh) / 2;
     this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy);
 };
 
@@ -469,16 +469,16 @@ Window_Base.prototype.drawCharacter = function (characterName, characterIndex, x
     var pw = bitmap.width / (big ? 3 : 12);
     var ph = bitmap.height / (big ? 4 : 8);
     var n = big ? 0 : characterIndex;
-    var sx = Math.round(((n % 4) * 3 + 1) * pw);
-    var sy = Math.round(Math.floor(n / 4) * 4 * ph);
-    this.contents.blt(bitmap, sx, sy, pw, ph, Math.round(x - pw / 2), Math.round(y - ph));
+    var sx = ((n % 4) * 3 + 1) * pw;
+    var sy = Math.floor(n / 4) * 4 * ph;
+    this.contents.blt(bitmap, sx, sy, pw, ph, x - pw / 2, y - ph);
 };
 
 Window_Base.prototype.drawGauge = function (x, y, width, rate, color1, color2) {
     var fillW = Math.floor(width * rate);
-    var gaugeY = Math.round(y + this.lineHeight() - 8);
-    this.contents.fillRect(Math.round(x), gaugeY, Math.round(width), 6, this.gaugeBackColor());
-    this.contents.gradientFillRect(Math.round(x), gaugeY, fillW, 6, color1, color2);
+    var gaugeY = y + this.lineHeight() - 8;
+    this.contents.fillRect(x, gaugeY, width, 6, this.gaugeBackColor());
+    this.contents.gradientFillRect(x, gaugeY, fillW, 6, color1, color2);
 };
 
 Window_Base.prototype.hpColor = function (actor) {
@@ -536,7 +536,7 @@ Window_Base.prototype.drawActorIcons = function (actor, x, y, width) {
     width = width || 144;
     var icons = actor.allIcons().slice(0, Math.floor(width / Window_Base._iconWidth));
     for (var i = 0; i < icons.length; i++) {
-        this.drawIcon(icons[i], Math.round(x + Window_Base._iconWidth * i), Math.round(y + 2));
+        this.drawIcon(icons[i], x + Window_Base._iconWidth * i, y + 2);
     }
 };
 
@@ -868,15 +868,15 @@ Window_Selectable.prototype.itemRect = function (index) {
     var maxCols = this.maxCols();
     rect.width = this.itemWidth();
     rect.height = this.itemHeight();
-    rect.x = Math.round((index % maxCols) * (rect.width + this.spacing()) - this._scrollX);
-    rect.y = Math.round(Math.floor(index / maxCols) * rect.height - this._scrollY);
+    rect.x = (index % maxCols) * (rect.width + this.spacing()) - this._scrollX;
+    rect.y = Math.floor(index / maxCols) * rect.height - this._scrollY;
     return rect;
 };
 
 Window_Selectable.prototype.itemRectForText = function (index) {
     var rect = this.itemRect(index);
-    rect.x += Math.round(this.textPadding());
-    rect.width -= Math.round(this.textPadding() * 2);
+    rect.x += this.textPadding();
+    rect.width -= this.textPadding() * 2;
     return rect;
 };
 

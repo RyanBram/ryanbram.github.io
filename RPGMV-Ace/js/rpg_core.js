@@ -1214,17 +1214,6 @@ Bitmap.prototype.resize = function (width, height) {
 Bitmap.prototype.blt = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     dw = dw || sw;
     dh = dh || sh;
-
-    // Round all parameters to integer pixel positions
-    sx = Math.round(sx);
-    sy = Math.round(sy);
-    sw = Math.round(sw);
-    sh = Math.round(sh);
-    dx = Math.round(dx);
-    dy = Math.round(dy);
-    dw = Math.round(dw);
-    dh = Math.round(dh);
-
     if (
         sx >= 0 &&
         sy >= 0 &&
@@ -1260,17 +1249,6 @@ Bitmap.prototype.blt = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
 Bitmap.prototype.bltImage = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
     dw = dw || sw;
     dh = dh || sh;
-
-    // Round all parameters to integer pixel positions
-    sx = Math.round(sx);
-    sy = Math.round(sy);
-    sw = Math.round(sw);
-    sh = Math.round(sh);
-    dx = Math.round(dx);
-    dy = Math.round(dy);
-    dw = Math.round(dw);
-    dh = Math.round(dh);
-
     if (
         sx >= 0 &&
         sy >= 0 &&
@@ -1447,16 +1425,16 @@ Bitmap.prototype.drawText = function (text, x, y, maxWidth, lineHeight, align) {
             this.drawSmallText(text, x, y, maxWidth, lineHeight, align);
             return;
         }
-        var tx = Math.round(x);
-        var ty = Math.round(y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2));
+        var tx = x;
+        var ty = y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2);
         var context = this._context;
         var alpha = context.globalAlpha;
         maxWidth = maxWidth || 0xffffffff;
         if (align === "center") {
-            tx += Math.round(maxWidth / 2);
+            tx += maxWidth / 2;
         }
         if (align === "right") {
-            tx += Math.round(maxWidth);
+            tx += maxWidth;
         }
         context.save();
         context.font = this._makeFontNameText();
@@ -1696,7 +1674,7 @@ Bitmap.prototype.addLoadListener = function (listner) {
  * @private
  */
 Bitmap.prototype._makeFontNameText = function () {
-    return (this.fontItalic ? "Italic " : "") + Math.round(this.fontSize) + "px " + this.fontFace;
+    return (this.fontItalic ? "Italic " : "") + this.fontSize + "px " + this.fontFace;
 };
 
 /**
@@ -3051,7 +3029,7 @@ Graphics._createPixiApp = function () {
             height: this._height,
             backgroundColor: 0x000000, // Optional
             // CHROME
-            antialias: true, // Enable anti-aliasing for smoother rendering
+            // antialias: true, // Enable anti-aliasing for smoother rendering
             // resolution: window.devicePixelRatio || 1, // Use device pixel ratio for crisp rendering
             // autoDensity: true, // Automatically adjust CSS size
             // CHROME
@@ -7300,11 +7278,11 @@ Window.prototype.update = function () {
  * @param {Number} height The height of the window
  */
 Window.prototype.move = function (x, y, width, height) {
-    this.x = Math.round(x || 0);
-    this.y = Math.round(y || 0);
+    this.x = x || 0;
+    this.y = y || 0;
     if (this._width !== width || this._height !== height) {
-        this._width = Math.round(width || 0);
-        this._height = Math.round(height || 0);
+        this._width = width || 0;
+        this._height = height || 0;
         this._refreshAllParts();
     }
 };
@@ -7498,10 +7476,10 @@ Window.prototype._refreshFrame = function () {
  */
 Window.prototype._refreshCursor = function () {
     var pad = this._padding;
-    var x = Math.round(this._cursorRect.x + pad - this.origin.x);
-    var y = Math.round(this._cursorRect.y + pad - this.origin.y);
-    var w = Math.round(this._cursorRect.width);
-    var h = Math.round(this._cursorRect.height);
+    var x = this._cursorRect.x + pad - this.origin.x;
+    var y = this._cursorRect.y + pad - this.origin.y;
+    var w = this._cursorRect.width;
+    var h = this._cursorRect.height;
     var m = 4;
     var x2 = Math.max(x, pad);
     var y2 = Math.max(y, pad);
@@ -7554,12 +7532,12 @@ Window.prototype._refreshArrows = function () {
     this._downArrowSprite.anchor.x = 0.5;
     this._downArrowSprite.anchor.y = 0.5;
     this._downArrowSprite.setFrame(sx + q, sy + q + p, p, q);
-    this._downArrowSprite.move(Math.round(w / 2), h - q);
+    this._downArrowSprite.move(w / 2, h - q);
     this._upArrowSprite.bitmap = this._windowskin;
     this._upArrowSprite.anchor.x = 0.5;
     this._upArrowSprite.anchor.y = 0.5;
     this._upArrowSprite.setFrame(sx + q, sy, p, q);
-    this._upArrowSprite.move(Math.round(w / 2), q);
+    this._upArrowSprite.move(w / 2, q);
 };
 
 /**
