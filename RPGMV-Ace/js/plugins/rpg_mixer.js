@@ -106,26 +106,6 @@
  * @decimals 3
  * @default 0.025
  *
- * @param --- Performance Settings ---
- *
- * @param autoDetectLowEnd
- * @text Auto Detect Low-End Device
- * @desc Otomatis deteksi low-end device dan terapkan optimasi.
- * @type boolean
- * @default true
- *
- * @param midiVoiceLimit
- * @text MIDI Voice Limit
- * @desc Batasi jumlah suara MIDI simultan. 0=unlimited, 32-64=low-end, 128=normal.
- * @type number
- * @default 0
- *
- * @param disableEffectsOnLowEnd
- * @text Disable Effects on Low-End
- * @desc Matikan Chorus/Reverb otomatis pada low-end device untuk performa.
- * @type boolean
- * @default true
- *
  */
 
 "use strict";
@@ -133,43 +113,6 @@
 (function () {
     const pluginName = "Rpg_Mixer";
     const parameters = PluginManager.parameters(pluginName);
-
-    // --- Device Performance Detection ---
-    const DeviceDetector = {
-        isLowEnd: false,
-
-        detect: function () {
-            const autoDetect = parameters["autoDetectLowEnd"] !== "false";
-            if (!autoDetect) {
-                console.log("[Rpg_Mixer] Auto-detect disabled.");
-                return false;
-            }
-
-            // Deteksi berdasarkan hardware concurrency (CPU cores)
-            const cores = navigator.hardwareConcurrency || 4;
-
-            // Deteksi memory (jika tersedia)
-            const memory = navigator.deviceMemory || 4; // GB
-
-            // Deteksi mobile device
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            // Kriteria low-end:
-            // - Mobile dengan <= 2 cores ATAU <= 2GB RAM
-            // - Desktop dengan <= 2 cores
-            this.isLowEnd = (isMobile && (cores <= 2 || memory <= 2)) || (!isMobile && cores <= 2);
-
-            if (this.isLowEnd) {
-                console.warn("[Rpg_Mixer] LOW-END DEVICE DETECTED!");
-                console.log(`[Rpg_Mixer] - Cores: ${cores}, Memory: ${memory}GB, Mobile: ${isMobile}`);
-                console.log("[Rpg_Mixer] Applying performance optimizations...");
-            } else {
-                console.log(`[Rpg_Mixer] Normal device detected (Cores: ${cores}, Memory: ${memory}GB)`);
-            }
-
-            return this.isLowEnd;
-        },
-    };
 
     // --- Global Effects Manager ---
     const EffectsManager = {
@@ -182,8 +125,6 @@
             enableReverb: parameters["enableReverb"] === "true",
             reverbMix: parseFloat(parameters["reverbMix"] || 0.3),
             reverbIRFile: parameters["reverbIRFile"],
-            midiVoiceLimit: parseInt(parameters["midiVoiceLimit"] || 0),
-            disableEffectsOnLowEnd: parameters["disableEffectsOnLowEnd"] !== "false",
         },
         _context: null,
         _chorus: null,
@@ -209,10 +150,7 @@
             this._outputNode = this._context.createGain();
             let lastNode = this._inputNode;
 
-            // Cek apakah efek harus dimatikan di low-end device
-            const shouldDisableEffects = DeviceDetector.isLowEnd && this._pluginParameters.disableEffectsOnLowEnd;
-
-            if (this._pluginParameters.enableChorus && !shouldDisableEffects) {
+            if (this._pluginParameters.enableChorus) {
                 try {
                     const chorusConfig = {
                         depth: this._pluginParameters.chorusDepth,
@@ -229,7 +167,7 @@
             }
 
             // --- LOGIKA REVERB DIPERBARUI ---
-            if (this._pluginParameters.enableReverb && !shouldDisableEffects) {
+            if (this._pluginParameters.enableReverb) {
                 const reverbMixLevel = this._pluginParameters.reverbMix;
                 console.log("[Rpg_Mixer] Reverb enabled. Mix parameter from plugin:", reverbMixLevel);
 
@@ -486,26 +424,16 @@
                         await this._waitForSpessaLibrary();
                         if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
                     }
-
-                    // Buat AudioContext dengan optimasi berdasarkan device
-                    let audioContextOptions = {};
-
-                    if (DeviceDetector.isLowEnd) {
-                        // Low-end: Prioritaskan performa dengan buffer lebih besar
-                        audioContextOptions = {
-                            latencyHint: "playback", // Buffer lebih besar = performa lebih baik
-                            sampleRate: 22050, // Sample rate lebih rendah untuk hemat CPU
-                        };
-                        console.log("[Rpg_Mixer] Using low-end audio settings (22kHz, playback mode)");
-                    } else {
-                        // Normal device: Kualitas standar
-                        audioContextOptions = {
-                            latencyHint: "playback",
-                            sampleRate: 44100,
-                        };
-                    }
-
-                    const audioContext = WebAudio._context || new AudioContext(audioContextOptions);
+                    const audioContext = WebAudio._context || new AudioContext();
+                    // Create AudioContext with optimized settings for Chrome
+                    /*
+                    const audioContext =
+                        WebAudio._context ||
+                        new AudioContext({
+                            latencyHint: "playback", // Optimize for playback quality over latency
+                            sampleRate: 44100, // Standard sample rate for better compatibility
+                        });
+                        */
                     if (audioContext.state === "suspended") await audioContext.resume();
 
                     EffectsManager.initialize(this._spessa.lib, audioContext);
@@ -850,18 +778,6 @@
 
         this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
         this._synthesizer.setMasterParameter("masterGain", 2);
-
-        // Optimasi untuk low-end device: batasi voice polyphony
-        const voiceLimit = EffectsManager._pluginParameters.midiVoiceLimit;
-        if (voiceLimit > 0) {
-            console.log(`[Rpg_Mixer] Limiting MIDI voices to ${voiceLimit}`);
-            this._synthesizer.setVoiceLimit(voiceLimit);
-        } else if (DeviceDetector.isLowEnd) {
-            // Auto-limit ke 64 voices untuk low-end
-            console.log("[Rpg_Mixer] Low-end device: Auto-limiting MIDI voices to 64");
-            this._synthesizer.setVoiceLimit(64);
-        }
-
         this._gainNode = this._context.createGain();
         this._gainNode.gain.value = this._volume;
 
@@ -932,8 +848,8 @@
 
         const config = {
             repeatCount: this._loop ? -1 : 0,
-            stereoSeparation: DeviceDetector.isLowEnd ? 50 : 100, // Kurangi stereo separation di low-end
-            interpolationFilter: DeviceDetector.isLowEnd ? 0 : 0, // 0 = no interpolation (fastest)
+            stereoSeparation: 100,
+            interpolationFilter: 0,
         };
         this._workletNode.port.postMessage({ cmd: "config", val: config });
         this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
@@ -1301,7 +1217,6 @@
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function () {
         _Scene_Boot_start.call(this);
-        DeviceDetector.detect(); // Deteksi device performance
         DebugManager.initialize();
     };
 
