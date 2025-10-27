@@ -1,7 +1,7 @@
+// HTML5 Game Player - Iframe-based (Simple & Robust)
 // Self-invoking anonymous function to encapsulate the script and avoid global scope pollution.
 (function () {
     // --- DOM Element References ---
-    const gameIframe = document.getElementById("gameIframe");
     const playReloadButton = document.getElementById("playReloadButton");
     const playButtonLabel = document.getElementById("playButtonLabel");
     const playButtonIcon = document.getElementById("playButtonIcon");
@@ -16,6 +16,10 @@
     const muteButton = document.getElementById("muteButton");
     const volumeIcon = document.getElementById("volumeIcon");
     const muteIcon = document.getElementById("muteIcon");
+    const gameCoverOverlay = document.getElementById("gameCoverOverlay");
+    const playOverlayButton = document.getElementById("playOverlayButton");
+    const coverArtImage = document.getElementById("coverArtImage");
+    const gameScreen = document.getElementById("gameScreen");
 
     // --- State Variables ---
     let isPlaying = false;
@@ -24,19 +28,54 @@
     let lastKnownVolume = 100;
 
     // --- Configuration ---
-    // Set to true to block mouse/touch input to game when virtual gamepad is active
-    // Set to false to allow both virtual gamepad and game input simultaneously
     const BLOCK_GAME_INPUT_WHEN_GAMEPAD_ACTIVE = true;
+    const GAME_HTML_TEMPLATE = document.getElementById("gameTemplate"); // Embedded game HTML
+    const COVER_IMAGE_FORMATS = ["cover.png", "cover.jpg", "cover.jpeg", "cover.webp", "cover.gif"];
 
     // --- Constants ---
-    const COVER_URL = "./cover.html";
-    const GAME_URL = "./game.html";
     const PLAY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>`;
     const RELOAD_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
 
-    // --- Controls Bar Visibility Logic ---
+    // --- Cover Art Loading ---
+    function loadCoverArt() {
+        let currentFormatIndex = 0;
 
-    // Hides the control bar, typically in fullscreen mode after a delay.
+        function tryLoadNextFormat() {
+            if (currentFormatIndex >= COVER_IMAGE_FORMATS.length) {
+                coverArtImage.classList.add("no-image");
+                return;
+            }
+
+            const coverPath = "./" + COVER_IMAGE_FORMATS[currentFormatIndex];
+            const testImage = new Image();
+
+            testImage.onload = () => {
+                coverArtImage.src = coverPath;
+                coverArtImage.classList.remove("no-image");
+            };
+
+            testImage.onerror = () => {
+                currentFormatIndex++;
+                tryLoadNextFormat();
+            };
+
+            testImage.src = coverPath;
+        }
+
+        tryLoadNextFormat();
+    }
+
+    function showCoverOverlay() {
+        gameCoverOverlay.classList.remove("hidden");
+    }
+
+    function hideCoverOverlay() {
+        gameCoverOverlay.classList.add("hidden");
+    }
+
+    loadCoverArt();
+
+    // --- Controls Bar Visibility Logic ---
     function hideControlsBar() {
         if (isPlaying && document.fullscreenElement) {
             controlsBar.classList.add("controls-bar--hidden");
@@ -44,51 +83,102 @@
         }
     }
 
-    // Shows the control bar and resets the auto-hide timer.
     function showControlsAndResetHideTimer() {
         controlsHandle.classList.add("hidden");
         controlsBar.classList.remove("controls-bar--hidden");
         clearTimeout(controlsHideTimeout);
         if (isPlaying && document.fullscreenElement) {
-            controlsHideTimeout = setTimeout(hideControlsBar, 3000); // Hide after 3 seconds of inactivity.
+            controlsHideTimeout = setTimeout(hideControlsBar, 3000);
         }
     }
 
     // --- Core Player Event Listeners ---
-
-    // Handles the Play/Reload button click.
     playReloadButton.addEventListener("click", () => {
-        gameIframe.src = GAME_URL; // Load or reload the game.
+        hideCoverOverlay();
+        const iframe = document.getElementById("gameIframe");
+
+        // Load embedded HTML from template
+        if (GAME_HTML_TEMPLATE) {
+            const gameHTML = GAME_HTML_TEMPLATE.innerHTML.trim();
+            iframe.srcdoc = gameHTML;
+        }
+
         if (!isPlaying) {
             isPlaying = true;
             playButtonLabel.textContent = "Reload";
             playReloadButton.title = "Reload";
             playButtonIcon.innerHTML = RELOAD_ICON_SVG;
             playReloadButton.setAttribute("aria-pressed", "true");
-            showControlsAndResetHideTimer(); // Start the auto-hide logic.
+            showControlsAndResetHideTimer();
         }
-        gameIframe.addEventListener(
+        iframe.addEventListener(
             "load",
             () => {
                 focusGameIframe();
-                // Set and send the initial volume value to the game.
                 updateVolume(volumeSlider.value);
             },
             { once: true }
         );
     });
 
-    // Handles the Stop button click.
+    playOverlayButton.addEventListener("click", () => {
+        hideCoverOverlay();
+        const iframe = document.getElementById("gameIframe");
+
+        // Load embedded HTML from template
+        if (GAME_HTML_TEMPLATE) {
+            const gameHTML = GAME_HTML_TEMPLATE.innerHTML.trim();
+            iframe.srcdoc = gameHTML;
+        }
+
+        isPlaying = true;
+        playButtonLabel.textContent = "Reload";
+        playReloadButton.title = "Reload";
+        playButtonIcon.innerHTML = RELOAD_ICON_SVG;
+        playReloadButton.setAttribute("aria-pressed", "true");
+        showControlsAndResetHideTimer();
+
+        iframe.addEventListener(
+            "load",
+            () => {
+                focusGameIframe();
+                updateVolume(volumeSlider.value);
+            },
+            { once: true }
+        );
+    });
+
     stopButton.addEventListener("click", () => {
-        gameIframe.src = COVER_URL;
+        showCoverOverlay();
+
+        const iframe = document.getElementById("gameIframe");
+        const parent = iframe.parentNode;
+
+        // Try to stop audio before destroying iframe
+        try {
+            if (iframe.contentWindow && iframe.contentWindow.AudioManager) {
+                iframe.contentWindow.AudioManager.stopAll();
+            }
+        } catch (e) {
+            console.warn("Failed to stop audio:", e);
+        }
+
+        setTimeout(() => {
+            const newIframe = document.createElement("iframe");
+            newIframe.id = "gameIframe";
+            newIframe.style.cssText = "width: 100%; height: 100%; border: 0; display: block;";
+            newIframe.allow = "autoplay; fullscreen";
+            newIframe.allowFullscreen = true;
+
+            parent.replaceChild(newIframe, iframe);
+        }, 100);
+
         isPlaying = false;
         playButtonLabel.textContent = "Play";
         playReloadButton.title = "Play";
         playButtonIcon.innerHTML = PLAY_ICON_SVG;
         playReloadButton.setAttribute("aria-pressed", "false");
-        postMessageToGame({ type: "player-stop" });
 
-        // Ensure controls are visible and the hide timer is cleared when stopping.
         clearTimeout(controlsHideTimeout);
         controlsBar.classList.remove("controls-bar--hidden");
         controlsHandle.classList.add("hidden");
@@ -96,25 +186,21 @@
         virtualGamepad.classList.add("hidden");
         toggleGamepadButton.setAttribute("aria-pressed", "false");
 
-        // Reset game input blocking when stopping
         updateGameInputBlocking();
     });
 
-    // --- Fullscreen and Gamepad Toggle ---
-
-    // Handles the Fullscreen button click.
+    // --- Fullscreen Toggle ---
     fullscreenButton.addEventListener("click", async () => {
         if (!document.fullscreenElement) {
             try {
                 await playerContainer.requestFullscreen();
 
-                // Force landscape orientation on mobile devices
                 if (screen.orientation && screen.orientation.lock) {
                     try {
                         await screen.orientation.lock("landscape");
                         console.log("Screen locked to landscape");
                     } catch (err) {
-                        console.warn("Orientation lock failed (may need user gesture):", err);
+                        console.warn("Orientation lock failed:", err);
                     }
                 }
             } catch (e) {
@@ -123,7 +209,6 @@
         } else {
             document.exitFullscreen();
 
-            // Unlock orientation when exiting fullscreen
             if (screen.orientation && screen.orientation.unlock) {
                 try {
                     screen.orientation.unlock();
@@ -135,20 +220,17 @@
         }
     });
 
-    // Adjusts control bar visibility when fullscreen state changes.
     document.addEventListener("fullscreenchange", () => {
         if (document.fullscreenElement) {
-            // Entered fullscreen
             showControlsAndResetHideTimer();
         } else {
-            // Exited fullscreen
             clearTimeout(controlsHideTimeout);
             controlsBar.classList.remove("controls-bar--hidden");
             controlsHandle.classList.add("hidden");
         }
     });
 
-    // Toggles the visibility of the virtual gamepad.
+    // --- Gamepad Toggle ---
     toggleGamepadButton.addEventListener("click", () => {
         if (!isPlaying) return;
 
@@ -156,10 +238,8 @@
         virtualGamepad.classList.toggle("hidden", !isGamepadVisible);
         toggleGamepadButton.setAttribute("aria-pressed", String(isGamepadVisible));
 
-        // Block or unblock game input based on configuration
         updateGameInputBlocking();
 
-        // Reset auto-hide timer after toggling gamepad in fullscreen
         if (isPlaying && document.fullscreenElement) {
             showControlsAndResetHideTimer();
         }
@@ -167,41 +247,36 @@
 
     // --- Function to Block/Unblock Game Input ---
     function updateGameInputBlocking() {
+        const iframe = document.getElementById("gameIframe");
+        if (!iframe) return;
+
         if (BLOCK_GAME_INPUT_WHEN_GAMEPAD_ACTIVE && isGamepadVisible) {
-            // Block mouse and touch input to game iframe
-            gameIframe.style.pointerEvents = "none";
+            iframe.style.pointerEvents = "none";
         } else {
-            // Allow mouse and touch input to game iframe
-            gameIframe.style.pointerEvents = "auto";
+            iframe.style.pointerEvents = "auto";
         }
     }
 
-    // Initialize blocking state on page load
     updateGameInputBlocking();
 
-    // --- Controls Bar Mouse Events for Auto-hide ---
-    // Only handle can show controls (mouse or touch)
+    // --- Controls Bar Auto-hide Events ---
     controlsHandle.addEventListener("click", () => {
         showControlsAndResetHideTimer();
     });
 
     controlsBar.addEventListener("mouseenter", () => {
         if (isPlaying && document.fullscreenElement) {
-            clearTimeout(controlsHideTimeout); // Pause auto-hide on hover.
+            clearTimeout(controlsHideTimeout);
         }
     });
 
     controlsBar.addEventListener("mouseleave", () => {
         if (isPlaying && document.fullscreenElement) {
-            clearTimeout(controlsHideTimeout); // Reset timer on mouse leave.
+            clearTimeout(controlsHideTimeout);
             controlsHideTimeout = setTimeout(hideControlsBar, 3000);
         }
     });
 
-    // --- Controls Bar Touch Events for Auto-hide ---
-    // Only handle can show controls on touch (game screen touch is blocked to avoid interference)
-
-    // Touch on handle to show controls
     controlsHandle.addEventListener(
         "touchend",
         () => {
@@ -210,7 +285,6 @@
         { passive: true }
     );
 
-    // Touch on control bar itself pauses auto-hide completely until touch ends
     let controlBarTouchActive = false;
 
     controlsBar.addEventListener(
@@ -218,7 +292,7 @@
         () => {
             if (isPlaying && document.fullscreenElement) {
                 controlBarTouchActive = true;
-                clearTimeout(controlsHideTimeout); // Pause auto-hide while touching.
+                clearTimeout(controlsHideTimeout);
             }
         },
         { passive: true }
@@ -228,7 +302,6 @@
         "touchmove",
         () => {
             if (isPlaying && document.fullscreenElement) {
-                // Keep clearing timeout while dragging (e.g., volume slider)
                 clearTimeout(controlsHideTimeout);
             }
         },
@@ -240,14 +313,13 @@
         () => {
             if (isPlaying && document.fullscreenElement) {
                 controlBarTouchActive = false;
-                clearTimeout(controlsHideTimeout); // Reset timer after touch ends.
+                clearTimeout(controlsHideTimeout);
                 controlsHideTimeout = setTimeout(hideControlsBar, 3000);
             }
         },
         { passive: true }
     );
 
-    // Also handle touchcancel in case touch is interrupted
     controlsBar.addEventListener(
         "touchcancel",
         () => {
@@ -261,83 +333,105 @@
     );
 
     // --- Volume Control Logic ---
-
-    // Updates volume, UI elements, and sends a message to the game.
     function updateVolume(volume) {
         const numericVolume = parseInt(volume, 10);
-        // Store the last non-zero volume for unmuting.
+
         if (numericVolume > 0) {
             lastKnownVolume = numericVolume;
         }
+
         volumeSlider.value = numericVolume;
-        postMessageToGame({ type: "volume", value: numericVolume });
-        // Toggle mute/unmute icons.
+
+        // Direct access to game iframe (same-origin via srcdoc)
+        try {
+            const iframe = document.getElementById("gameIframe");
+            if (iframe && iframe.contentWindow) {
+                const gameWindow = iframe.contentWindow;
+
+                // Try to access AudioManager directly (RPG Maker MV/MZ)
+                if (gameWindow.AudioManager) {
+                    gameWindow.AudioManager.masterVolume = numericVolume / 100;
+                }
+                // Fallback for older RPG Maker versions
+                else if (gameWindow.WebAudio && gameWindow.WebAudio._masterVolume !== undefined) {
+                    gameWindow.WebAudio._masterVolume = numericVolume / 100;
+                }
+            }
+        } catch (e) {
+            console.warn("Direct volume control failed:", e);
+        }
+
         volumeIcon.classList.toggle("hidden", numericVolume === 0);
         muteIcon.classList.toggle("hidden", numericVolume > 0);
         muteButton.title = numericVolume === 0 ? "Unmute" : "Mute";
     }
 
-    // Listener for the volume slider input.
     volumeSlider.addEventListener("input", () => {
         updateVolume(volumeSlider.value);
     });
 
-    // Listener for the mute button click.
     muteButton.addEventListener("click", () => {
         const currentVolume = parseInt(volumeSlider.value, 10);
         if (currentVolume === 0) {
-            updateVolume(lastKnownVolume); // Unmute to the last known volume.
+            updateVolume(lastKnownVolume);
         } else {
-            updateVolume(0); // Mute the volume.
+            updateVolume(0);
         }
     });
 
-    // --- Communication with Game Iframe ---
-
-    // Sends a message to the game iframe via postMessage.
-    function postMessageToGame(message) {
+    // --- Communication with Game Iframe (Direct Access - Same Origin) ---
+    function sendKeyToGame(key, isDown = true) {
         try {
-            gameIframe.contentWindow.postMessage(message, "*");
-        } catch (e) {
-            console.warn("postMessage to iframe failed:", e);
-        }
-    }
+            const iframe = document.getElementById("gameIframe");
+            if (!iframe || !iframe.contentWindow) return;
 
-    // Dispatches a synthetic KeyboardEvent to the game iframe.
-    function dispatchKeyEventToIframe(key, eventType = "keydown") {
-        try {
-            const contentWin = gameIframe.contentWindow;
-            if (!contentWin) return;
-            const keyboardEvent = new KeyboardEvent(eventType, { key, bubbles: true });
-            contentWin.dispatchEvent(keyboardEvent);
-        } catch (e) {
-            // This can fail due to cross-origin restrictions, which is expected.
-        }
-    }
+            const gameWindow = iframe.contentWindow;
 
-    // Primary function to send a key event, using both postMessage and dispatchEvent.
-    function sendKeyEvent(key, isDown = true) {
-        const eventType = isDown ? "keydown" : "keyup";
-        postMessageToGame({ type: "key", key, keyEvent: eventType });
-        dispatchKeyEventToIframe(key, eventType);
+            // Direct access to RPG Maker Input system
+            if (gameWindow.Input && gameWindow.Input.keyMapper) {
+                const keyCodeMap = {
+                    ArrowUp: 38,
+                    ArrowDown: 40,
+                    ArrowLeft: 37,
+                    ArrowRight: 39,
+                    Enter: 13,
+                    Escape: 27,
+                    Shift: 16,
+                    Space: 32,
+                    PageUp: 33,
+                    PageDown: 34,
+                };
+
+                const keyCode = keyCodeMap[key];
+                if (!keyCode) return;
+
+                const buttonName = gameWindow.Input.keyMapper[keyCode];
+                if (!buttonName) return;
+
+                if (isDown) {
+                    gameWindow.Input._currentState[buttonName] = true;
+                } else {
+                    gameWindow.Input._currentState[buttonName] = false;
+                }
+            }
+        } catch (e) {
+            console.warn("Direct key input failed:", e);
+        }
     }
 
     // --- Virtual Gamepad Multitouch Logic ---
     let activeTouches = [];
-    const pressedKeys = new Set(); // Tracks keys currently held down by touch.
+    const pressedKeys = new Set();
 
-    // Updates the list of active touches.
     function handleTouchUpdate(event) {
         event.preventDefault();
         activeTouches = event.touches;
     }
 
-    // Main loop to process gamepad state based on active touches.
     function processGamepadState() {
-        // If gamepad is not visible, release all keys and stop processing.
         if (!isGamepadVisible) {
             if (pressedKeys.size > 0) {
-                for (const key of pressedKeys) sendKeyEvent(key, false);
+                for (const key of pressedKeys) sendKeyToGame(key, false);
                 pressedKeys.clear();
                 virtualGamepad.querySelectorAll("button.active").forEach((btn) => btn.classList.remove("active"));
             }
@@ -345,10 +439,9 @@
             return;
         }
 
-        const keysThisFrame = new Set(); // Keys that should be pressed this frame.
-        const buttonsToActivate = new Set(); // UI buttons to highlight.
+        const keysThisFrame = new Set();
+        const buttonsToActivate = new Set();
 
-        // Determine which buttons are being touched.
         for (let i = 0; i < activeTouches.length; i++) {
             const touch = activeTouches[i];
             const element = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -356,7 +449,6 @@
             const button = element.closest("button[data-key], button[data-key-diag]");
             if (!button) continue;
 
-            // Handle diagonal buttons by adding both cardinal directions.
             if (button.dataset.keyDiag) {
                 const diagonalKeys = button.dataset.keyDiag.split(",");
                 diagonalKeys.forEach((key) => {
@@ -370,38 +462,34 @@
             }
         }
 
-        // Release keys that are no longer touched.
         for (const key of pressedKeys) {
             if (!keysThisFrame.has(key)) {
-                sendKeyEvent(key, false);
+                sendKeyToGame(key, false);
                 pressedKeys.delete(key);
             }
         }
 
-        // Press new keys that are now touched.
         for (const key of keysThisFrame) {
             if (!pressedKeys.has(key)) {
-                sendKeyEvent(key, true);
+                sendKeyToGame(key, true);
                 pressedKeys.add(key);
             }
         }
 
-        // Update the visual state (highlight) of the gamepad buttons.
         virtualGamepad.querySelectorAll("button[data-key]").forEach((btn) => {
             btn.classList.toggle("active", buttonsToActivate.has(btn));
         });
 
-        requestAnimationFrame(processGamepadState); // Continue the loop.
+        requestAnimationFrame(processGamepadState);
     }
 
-    // Attach touch event listeners to the gamepad area.
     virtualGamepad.addEventListener("touchstart", handleTouchUpdate, { passive: false });
     virtualGamepad.addEventListener("touchmove", handleTouchUpdate, { passive: false });
     virtualGamepad.addEventListener("touchend", handleTouchUpdate, { passive: false });
     virtualGamepad.addEventListener("touchcancel", handleTouchUpdate, { passive: false });
-    virtualGamepad.addEventListener("contextmenu", (ev) => ev.preventDefault()); // Prevent right-click menu.
+    virtualGamepad.addEventListener("contextmenu", (ev) => ev.preventDefault());
 
-    requestAnimationFrame(processGamepadState); // Start the gamepad processing loop.
+    requestAnimationFrame(processGamepadState);
 
     // --- Physical Keyboard Input Forwarding ---
     const allowedKeys = [
@@ -417,38 +505,37 @@
         "PageDown",
     ];
 
-    // Capture keydown events and forward them to the game.
     window.addEventListener(
         "keydown",
         (ev) => {
             if (!isPlaying || !allowedKeys.includes(ev.key)) return;
             ev.preventDefault();
-            sendKeyEvent(ev.key, true);
+            sendKeyToGame(ev.key, true);
         },
         { capture: true }
     );
 
-    // Capture keyup events and forward them to the game.
     window.addEventListener(
         "keyup",
         (ev) => {
             if (!isPlaying || !allowedKeys.includes(ev.key)) return;
             ev.preventDefault();
-            sendKeyEvent(ev.key, false);
+            sendKeyToGame(ev.key, false);
         },
         { capture: true }
     );
 
     // --- Utility Functions ---
-    // Attempts to focus the game iframe to allow direct keyboard input.
     function focusGameIframe() {
         try {
-            gameIframe.contentWindow.focus();
+            const iframe = document.getElementById("gameIframe");
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.focus();
+            }
         } catch (e) {
-            // This can fail due to cross-origin restrictions, which is expected.
+            // Cross-origin restrictions expected
         }
     }
 
-    // Add a click listener to the screen area to focus the iframe.
-    document.getElementById("gameScreen").addEventListener("click", focusGameIframe);
+    gameScreen.addEventListener("click", focusGameIframe);
 })();

@@ -439,8 +439,8 @@
                     EffectsManager.initialize(this._spessa.lib, audioContext);
 
                     if (!this._spessa.workletLoaded) {
-                        // Gunakan fungsi built-in dari SpessaSynthLib untuk membuat Blob URL dari kode inline
-                        const workletUrl = this._spessa.lib.createWorkletBlobURL();
+                        const workletBlob = await this._fetchScriptAsBlob("js/libs/spessasynth_processor.js");
+                        const workletUrl = URL.createObjectURL(workletBlob);
                         await audioContext.audioWorklet.addModule(workletUrl);
                         URL.revokeObjectURL(workletUrl);
                         this._spessa.workletLoaded = true;

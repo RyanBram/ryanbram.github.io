@@ -1,5 +1,5 @@
 /*:
- * @plugindesc (v2.4.0) A unified dynamic audio mixer for RPG Maker MV to play external formats like MIDI and MOD with effects and smart preloading.
+ * @plugindesc (v2.3.3) A unified dynamic audio mixer for RPG Maker MV to play external formats like MIDI and MOD with effects.
  * @author RyanBram
  * @license Apache License
  * @target MV
@@ -8,39 +8,16 @@
  * ==============================================================================
  * Rpg_Mixer - A Unified Dynamic Audio Player
  * ==============================================================================
- * Version 2.4.0: Added smart preloading system for web deployment.
+ * Version 2.3.3: Revised Reverb implementation to support built-in default sound.
  *
  * --- Introduction ---
  * This plugin acts as a central mixer to play various external audio formats.
- * It now features DYNAMIC LOADING, global effects for MIDI, and SMART PRELOADING.
- *
- * --- Smart Preloading (NEW!) ---
- * Plugin sekarang otomatis men-scan semua audio yang digunakan di game dan
- * melakukan preloading backend (MIDI/MOD) saat boot. Ini memastikan:
- * - Title screen BGM akan langsung play tanpa delay
- * - Battle BGM dan Victory ME sudah siap saat pertarungan dimulai
- * - Tidak ada bottleneck saat pertama kali play MIDI/MOD
- * - Backend hanya di-load sekali, sehingga perpindahan antar audio smooth
- *
- * Preloading mencakup:
- * 1. System Audio: Title BGM, Battle BGM, Victory/Defeat ME
- * 2. Map Events: Scan playBGM/playME commands di semua event
- * 3. Backend Libraries: SpessaSynth + Soundfont, libopenmpt
+ * It now features DYNAMIC LOADING and global effects for MIDI.
  *
  * --- MIDI Effects (Chorus & Reverb) ---
  * You can now enable global Chorus and Reverb effects for all MIDI files.
  *
  * - Chorus Parameters: (See previous version for details)
- *
- * - Reverb (Gema):
- * - Reverb IR File (Opsional): Anda bisa menggunakan file Impulse
- * Response (.wav) kustom untuk suara gema yang unik (misal: gema gereja,
- * gua, dll.). Tempatkan file di folder /audio/.
- * - JIKA DIKOSONGKAN: Reverb akan tetap berfungsi menggunakan
- * suara gema default yang sudah ada di dalam library.
- *
- * --- License ---
- * Released under the MIT license.
  *
  * - Reverb (Gema):
  * - Reverb IR File (Opsional): Anda bisa menggunakan file Impulse
@@ -123,14 +100,11 @@
             chorusRate: parseFloat(parameters["chorusRate"] || 1.5),
             chorusDelay: parseFloat(parameters["chorusDelay"] || 0.025),
             enableReverb: parameters["enableReverb"] === "true",
-            reverbMix: parseFloat(parameters["reverbMix"] || 0.3),
             reverbIRFile: parameters["reverbIRFile"],
         },
         _context: null,
         _chorus: null,
         _reverb: null,
-        _reverbDryGain: null,
-        _reverbWetGain: null,
         _inputNode: null,
         _outputNode: null,
 
@@ -166,75 +140,50 @@
                 }
             }
 
+            const reverbMixLevel = parseFloat(this._pluginParameters.reverbMix || 0.3); // Baca parameter baru
+
             // --- LOGIKA REVERB DIPERBARUI ---
             if (this._pluginParameters.enableReverb) {
-                const reverbMixLevel = this._pluginParameters.reverbMix;
-                console.log("[Rpg_Mixer] Reverb enabled. Mix parameter from plugin:", reverbMixLevel);
-
-                // Buat gain nodes untuk wet/dry mixing
-                this._reverbDryGain = this._context.createGain();
-                this._reverbWetGain = this._context.createGain();
-
-                // Set gain values berdasarkan reverbMixLevel
-                // dry = 1 - mix, wet = mix
-                this._reverbDryGain.gain.value = 1.0 - reverbMixLevel;
-                this._reverbWetGain.gain.value = reverbMixLevel;
-
-                console.log(
-                    "[Rpg_Mixer] Reverb Mix - Dry:",
-                    this._reverbDryGain.gain.value,
-                    "Wet:",
-                    this._reverbWetGain.gain.value
-                );
-
                 // Jika ada file IR yang ditentukan, muat file tersebut
                 if (this._pluginParameters.reverbIRFile) {
-                    this._loadImpulseResponse().then((impulseResponse) => {
-                        if (impulseResponse) {
-                            try {
-                                const reverbConfig = { impulseResponse: impulseResponse };
-                                this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
-
-                                // Setup routing: input -> [dry path, wet path] -> output
-                                // Dry path: lastNode -> dryGain -> output
-                                lastNode.connect(this._reverbDryGain);
-                                this._reverbDryGain.connect(this._outputNode);
-
-                                // Wet path: lastNode -> reverb -> wetGain -> output
-                                lastNode.connect(this._reverb.input);
-                                this._reverb.output.connect(this._reverbWetGain);
-                                this._reverbWetGain.connect(this._outputNode);
-
-                                console.log("[Rpg_Mixer] Global Reverb enabled with custom IR. Mix:", reverbMixLevel);
-                            } catch (e) {
-                                console.error("[Rpg_Mixer] Failed to create ReverbProcessor with custom IR.", e);
+                    this._loadImpulseResponse()
+                        .then((impulseResponse) => {
+                            if (impulseResponse) {
+                                try {
+                                    // Tambahkan 'mix' ke config
+                                    const reverbConfig = { impulseResponse: impulseResponse, mix: reverbMixLevel };
+                                    this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
+                                    lastNode.connect(this._reverb.input);
+                                    this._reverb.output.connect(this._outputNode);
+                                    console.log(
+                                        "[Rpg_Mixer] Global Reverb enabled with custom IR. Mix:",
+                                        reverbMixLevel
+                                    );
+                                } catch (e) {
+                                    console.error("[Rpg_Mixer] Failed to create ReverbProcessor with custom IR.", e);
+                                    lastNode.connect(this._outputNode);
+                                }
+                            } else {
+                                console.warn("[Rpg_Mixer] Impulse Response failed to load. Reverb disabled.");
                                 lastNode.connect(this._outputNode);
                             }
-                        } else {
-                            console.error("[Rpg_Mixer] Failed to load impulse response, connecting directly.");
+                        })
+                        .catch((error) => {
+                            console.error("[Rpg_Mixer] Error loading Impulse Response.", error);
                             lastNode.connect(this._outputNode);
-                        }
-                    });
+                        });
                 }
                 // Jika tidak ada file IR, gunakan reverb default
                 else {
                     try {
-                        const reverbConfig = {};
+                        // Tambahkan 'mix' ke config
+                        const reverbConfig = { mix: reverbMixLevel };
                         this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
-
-                        // Setup routing: input -> [dry path, wet path] -> output
-                        // Dry path: lastNode -> dryGain -> output
-                        lastNode.connect(this._reverbDryGain);
-                        this._reverbDryGain.connect(this._outputNode);
-
-                        // Wet path: lastNode -> reverb -> wetGain -> output
                         lastNode.connect(this._reverb.input);
-                        this._reverb.output.connect(this._reverbWetGain);
-                        this._reverbWetGain.connect(this._outputNode);
-
+                        this._reverb.output.connect(this._outputNode);
                         console.log("[Rpg_Mixer] Global Reverb enabled with default sound. Mix:", reverbMixLevel);
                     } catch (e) {
-                        console.error("[Rpg_Mixer] Failed to create default ReverbProcessor.", e);
+                        console.error("[Rpg_Mixer] Failed to create ReverbProcessor with default sound.", e);
                         lastNode.connect(this._outputNode);
                     }
                 }
@@ -305,39 +254,12 @@
         },
 
         cycleMode: function () {
-            // Cycle through: Off -> Mode 1 -> Mode 2 -> Off
-            this.debugMode = (this.debugMode + 1) % 3;
-
+            this.debugMode = (this.debugMode + 1) % 3; // Cycle 0 -> 1 -> 2 -> 0
             if (this.debugDiv) {
                 this.debugDiv.style.display = this.debugMode > 0 ? "block" : "none";
             }
-
             if (this.debugMode > 0) {
-                this.updateInfo(this.lastAudioInfo);
-            }
-        },
-
-        show: function () {
-            // Initialize if not yet initialized
-            if (!this.isInitialized) {
-                this.initialize();
-            }
-            // Set to mode 1 if currently off
-            if (this.debugMode === 0) {
-                this.debugMode = 1;
-            }
-            if (this.debugDiv) {
-                this.debugDiv.style.display = "block";
-                if (this.lastAudioInfo) {
-                    this.updateInfo(this.lastAudioInfo);
-                }
-            }
-        },
-
-        hide: function () {
-            // Don't change debugMode, just hide
-            if (this.debugDiv) {
-                this.debugDiv.style.display = "none";
+                this.updateInfo(this.lastAudioInfo); // Showing last mode
             }
         },
 
@@ -424,23 +346,15 @@
                         await this._waitForSpessaLibrary();
                         if (!this._spessa.lib) throw new Error("SpessaSynthLib not found on window.");
                     }
+
                     const audioContext = WebAudio._context || new AudioContext();
-                    // Create AudioContext with optimized settings for Chrome
-                    /*
-                    const audioContext =
-                        WebAudio._context ||
-                        new AudioContext({
-                            latencyHint: "playback", // Optimize for playback quality over latency
-                            sampleRate: 44100, // Standard sample rate for better compatibility
-                        });
-                        */
                     if (audioContext.state === "suspended") await audioContext.resume();
 
                     EffectsManager.initialize(this._spessa.lib, audioContext);
 
                     if (!this._spessa.workletLoaded) {
-                        // Gunakan fungsi built-in dari SpessaSynthLib untuk membuat Blob URL dari kode inline
-                        const workletUrl = this._spessa.lib.createWorkletBlobURL();
+                        const workletBlob = await this._fetchScriptAsBlob("js/libs/spessasynth_processor.js");
+                        const workletUrl = URL.createObjectURL(workletBlob);
                         await audioContext.audioWorklet.addModule(workletUrl);
                         URL.revokeObjectURL(workletUrl);
                         this._spessa.workletLoaded = true;
@@ -776,32 +690,80 @@
             return;
         }
 
-        this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
-        this._synthesizer.setMasterParameter("masterGain", 2);
-        this._gainNode = this._context.createGain();
-        this._gainNode.gain.value = this._volume;
-
-        const effectsInput = EffectsManager.getInputNode();
-        const effectsOutput = EffectsManager.getOutputNode();
-        if (effectsInput && effectsOutput) {
-            this._synthesizer.connect(effectsInput);
-            effectsOutput.connect(this._gainNode);
-        } else {
-            this._synthesizer.connect(this._gainNode);
+        // Check AudioContext state
+        if (this._context.state === "suspended") {
+            console.warn("[Rpg_Mixer] AudioContext is suspended. Attempting to resume...");
+            this._context
+                .resume()
+                .then(() => {
+                    console.log("[Rpg_Mixer] AudioContext resumed successfully.");
+                })
+                .catch((error) => {
+                    console.error("[Rpg_Mixer] Failed to resume AudioContext:", error);
+                });
         }
-        this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
 
-        this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
+        try {
+            console.log("[Rpg_Mixer] Creating WorkletSynthesizer...");
+            this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
+            this._synthesizer.setMasterParameter("masterGain", 2);
+            this._gainNode = this._context.createGain();
+            this._gainNode.gain.value = this._volume;
 
-        this._synthesizer.soundBankManager.addSoundBank(soundfont.slice(0), "default").then(() => {
-            const startTime = performance.now();
-            this._sequencer.loadNewSongList([{ binary: this._buffer }]);
-            this._decodeTime = performance.now() - startTime;
-            this._sequencer.loopCount = this._loop ? Infinity : 0;
-            this._sequencer.currentTime = offset || 0;
-            this._sequencer.play();
-            this._reportDebugInfo();
-        });
+            console.log(`[Rpg_Mixer] MIDI volume set to: ${this._volume}`);
+
+            const effectsInput = EffectsManager.getInputNode();
+            const effectsOutput = EffectsManager.getOutputNode();
+            if (effectsInput && effectsOutput) {
+                this._synthesizer.connect(effectsInput);
+                effectsOutput.connect(this._gainNode);
+                console.log("[Rpg_Mixer] Synthesizer connected through effects chain.");
+            } else {
+                this._synthesizer.connect(this._gainNode);
+                console.log("[Rpg_Mixer] Synthesizer connected directly (no effects).");
+            }
+            this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
+
+            this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
+            console.log("[Rpg_Mixer] Sequencer created.");
+
+            this._synthesizer.soundBankManager
+                .addSoundBank(soundfont.slice(0), "default")
+                .then(() => {
+                    try {
+                        console.log("[Rpg_Mixer] Soundbank added successfully. Loading MIDI...");
+                        const startTime = performance.now();
+                        this._sequencer.loadNewSongList([{ binary: this._buffer }]);
+                        this._decodeTime = performance.now() - startTime;
+                        this._sequencer.loopCount = this._loop ? Infinity : 0;
+                        this._sequencer.currentTime = offset || 0;
+
+                        console.log(`[Rpg_Mixer] Starting MIDI playback (loop: ${this._loop}, offset: ${offset || 0})`);
+                        this._sequencer.play();
+
+                        // Verify playback started
+                        setTimeout(() => {
+                            if (this._sequencer && this._sequencer.isPlaying) {
+                                console.log("[Rpg_Mixer] ✓ MIDI playback confirmed active.");
+                            } else {
+                                console.warn("[Rpg_Mixer] ⚠ MIDI sequencer exists but not playing!");
+                            }
+                        }, 100);
+
+                        this._reportDebugInfo();
+                    } catch (error) {
+                        console.error("[Rpg_Mixer] Error loading or playing MIDI:", error);
+                        this._stopMidi();
+                    }
+                })
+                .catch((error) => {
+                    console.error("[Rpg_Mixer] Error adding soundbank:", error);
+                    this._stopMidi();
+                });
+        } catch (error) {
+            console.error("[Rpg_Mixer] Error initializing MIDI playback:", error);
+            this._stopMidi();
+        }
     };
 
     ExternalAudio.prototype._stopMidi = function () {
@@ -825,38 +787,46 @@
         const pos = offset || 0;
         this._currentPosition = pos;
 
-        const startTime = performance.now();
-        this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
-            numberOfInputs: 0,
-            numberOfOutputs: 1,
-            outputChannelCount: [2],
-        });
-        this._workletNode.port.onmessage = (msg) => {
-            const data = msg.data;
-            if (data.cmd === "pos") {
-                this._currentPosition = data.pos;
-            } else if (data.cmd === "meta" && pos > 0) {
-                this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
-            } else if (data.cmd === "end") {
-                if (this._loop) {
-                    this.play(this._loop, 0);
-                } else {
-                    this.stop();
+        try {
+            const startTime = performance.now();
+            this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
+                numberOfInputs: 0,
+                numberOfOutputs: 1,
+                outputChannelCount: [2],
+            });
+            this._workletNode.port.onmessage = (msg) => {
+                const data = msg.data;
+                if (data.cmd === "pos") {
+                    this._currentPosition = data.pos;
+                } else if (data.cmd === "meta" && pos > 0) {
+                    this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
+                } else if (data.cmd === "end") {
+                    if (this._loop) {
+                        this.play(this._loop, 0);
+                    } else {
+                        this.stop();
+                    }
+                } else if (data.cmd === "error") {
+                    console.error("[Rpg_Mixer] MOD Worklet error:", data.message);
+                    this._stopMod();
                 }
-            }
-        };
+            };
 
-        const config = {
-            repeatCount: this._loop ? -1 : 0,
-            stereoSeparation: 100,
-            interpolationFilter: 0,
-        };
-        this._workletNode.port.postMessage({ cmd: "config", val: config });
-        this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
-        this._decodeTime = performance.now() - startTime;
-        this._setupModWebAudioNodes();
-        this._workletNode.connect(this._gainNode);
-        this._reportDebugInfo();
+            const config = {
+                repeatCount: this._loop ? -1 : 0,
+                stereoSeparation: 100,
+                interpolationFilter: 0,
+            };
+            this._workletNode.port.postMessage({ cmd: "config", val: config });
+            this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
+            this._decodeTime = performance.now() - startTime;
+            this._setupModWebAudioNodes();
+            this._workletNode.connect(this._gainNode);
+            this._reportDebugInfo();
+        } catch (error) {
+            console.error("[Rpg_Mixer] Error initializing MOD playback:", error);
+            this._stopMod();
+        }
     };
 
     ExternalAudio.prototype._stopMod = function () {
@@ -979,267 +949,9 @@
         return savedBgs;
     };
 
-    //=============================================================================
-    // PreloadManager - Smart preloading untuk MIDI/MOD backends
-    //=============================================================================
-    const PreloadManager = {
-        _backendsLoaded: {
-            midi: false,
-            mod: false,
-        },
-        _preloadedAudio: new Set(),
-        _preloadPromises: [],
-
-        /**
-         * Scan semua audio yang digunakan di game
-         */
-        scanGameAudio: function () {
-            const audioFiles = new Set();
-
-            // 1. Scan System Audio (Title, Battle, Victory, Defeat, etc.)
-            if ($dataSystem) {
-                // Title BGM
-                if ($dataSystem.titleBgm && $dataSystem.titleBgm.name) {
-                    audioFiles.add({ name: $dataSystem.titleBgm.name, type: "bgm" });
-                }
-                // Battle BGM
-                if ($dataSystem.battleBgm && $dataSystem.battleBgm.name) {
-                    audioFiles.add({ name: $dataSystem.battleBgm.name, type: "bgm" });
-                }
-                // Victory ME
-                if ($dataSystem.victoryMe && $dataSystem.victoryMe.name) {
-                    audioFiles.add({ name: $dataSystem.victoryMe.name, type: "me" });
-                }
-                // Defeat ME
-                if ($dataSystem.defeatMe && $dataSystem.defeatMe.name) {
-                    audioFiles.add({ name: $dataSystem.defeatMe.name, type: "me" });
-                }
-            }
-
-            // 2. Scan Map Audio
-            if ($dataMapInfos) {
-                for (let i = 1; i < $dataMapInfos.length; i++) {
-                    const mapInfo = $dataMapInfos[i];
-                    if (mapInfo) {
-                        // Load map data untuk scan event audio
-                        this._scanMapData(i, audioFiles);
-                    }
-                }
-            }
-
-            console.log("[Rpg_Mixer] Scanned audio files:", Array.from(audioFiles));
-            return audioFiles;
-        },
-
-        /**
-         * Scan audio dari map data tertentu
-         */
-        _scanMapData: function (mapId, audioFiles) {
-            // Ini akan dipanggil async, scan event commands untuk playBGM/playME
-            const xhr = new XMLHttpRequest();
-            const url = "data/Map%1.json".format(mapId.padZero(3));
-            xhr.open("GET", url, false); // Synchronous untuk simplicity saat scan
-            xhr.overrideMimeType("application/json");
-            try {
-                xhr.send(null);
-                if (xhr.status === 200) {
-                    const mapData = JSON.parse(xhr.responseText);
-                    if (mapData && mapData.events) {
-                        for (const event of mapData.events) {
-                            if (!event) continue;
-                            for (const page of event.pages) {
-                                for (const command of page.list) {
-                                    // 241: Play BGM, 249: Play ME
-                                    if (command.code === 241 && command.parameters[0]) {
-                                        audioFiles.add({ name: command.parameters[0].name, type: "bgm" });
-                                    } else if (command.code === 249 && command.parameters[0]) {
-                                        audioFiles.add({ name: command.parameters[0].name, type: "me" });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e) {
-                // Ignore error, map mungkin belum ada
-            }
-        },
-
-        /**
-         * Deteksi format audio dari nama file
-         */
-        getAudioFormat: function (filename) {
-            const formatHandlers = ExternalAudio.formatHandlers;
-            for (const format in formatHandlers) {
-                const handler = formatHandlers[format];
-                for (const ext of handler.extensions) {
-                    if (filename.endsWith(ext)) {
-                        return format;
-                    }
-                }
-            }
-            return null;
-        },
-
-        /**
-         * Preload backends yang diperlukan
-         */
-        preloadBackends: async function (audioFiles) {
-            const needsMidi = Array.from(audioFiles).some((file) => {
-                const format = this.getAudioFormat(file.name);
-                return format === "mid";
-            });
-
-            const needsMod = Array.from(audioFiles).some((file) => {
-                const format = this.getAudioFormat(file.name);
-                return format === "mod";
-            });
-
-            const promises = [];
-
-            if (needsMidi && !this._backendsLoaded.midi) {
-                console.log("[Rpg_Mixer] Preloading MIDI backend...");
-                promises.push(
-                    this._preloadMidiBackend().then(() => {
-                        this._backendsLoaded.midi = true;
-                        console.log("[Rpg_Mixer] MIDI backend preloaded successfully.");
-                    })
-                );
-            }
-
-            if (needsMod && !this._backendsLoaded.mod) {
-                console.log("[Rpg_Mixer] Preloading MOD backend...");
-                promises.push(
-                    this._preloadModBackend().then(() => {
-                        this._backendsLoaded.mod = true;
-                        console.log("[Rpg_Mixer] MOD backend preloaded successfully.");
-                    })
-                );
-            }
-
-            return Promise.all(promises);
-        },
-
-        /**
-         * Preload MIDI backend (SpessaSynth + Soundfont)
-         */
-        _preloadMidiBackend: async function () {
-            // Trigger lazy loading untuk MIDI
-            const dummyUrl = "audio/dummy.mid";
-            const dummyAudio = new ExternalAudio(dummyUrl, "mid");
-            // Wait sampai engine ready
-            if (dummyAudio._engine && dummyAudio._engine.isReady) {
-                await dummyAudio._engine.isReady;
-            }
-        },
-
-        /**
-         * Preload MOD backend (libopenmpt)
-         */
-        _preloadModBackend: async function () {
-            // Trigger lazy loading untuk MOD
-            const dummyUrl = "audio/dummy.mod";
-            const dummyAudio = new ExternalAudio(dummyUrl, "mod");
-            // Wait sampai engine ready
-            if (dummyAudio._engine && dummyAudio._engine.isReady) {
-                await dummyAudio._engine.isReady;
-            }
-        },
-
-        /**
-         * Preload audio files (download tapi belum decode)
-         */
-        preloadAudioFiles: async function (audioFiles) {
-            const promises = [];
-
-            for (const file of audioFiles) {
-                const format = this.getAudioFormat(file.name);
-                // Hanya preload MIDI dan MOD karena tidak bisa streaming
-                if ((format === "mid" || format === "mod") && !this._preloadedAudio.has(file.name)) {
-                    console.log(`[Rpg_Mixer] Preloading ${file.name}...`);
-                    const promise = this._preloadSingleFile(file.name, file.type, format).then(() => {
-                        this._preloadedAudio.add(file.name);
-                    });
-                    promises.push(promise);
-                }
-            }
-
-            return Promise.all(promises);
-        },
-
-        /**
-         * Preload single file
-         */
-        _preloadSingleFile: async function (filename, type, format) {
-            const folder = type === "bgm" ? "bgm" : type === "me" ? "me" : "bgs";
-            const url = `audio/${folder}/${filename}.ogg`;
-
-            try {
-                const response = await fetch(url);
-                if (response.ok) {
-                    // Cache response untuk nanti
-                    await response.arrayBuffer();
-                    console.log(`[Rpg_Mixer] Preloaded: ${filename}`);
-                }
-            } catch (e) {
-                console.warn(`[Rpg_Mixer] Failed to preload ${filename}:`, e);
-            }
-        },
-
-        /**
-         * Initialize preloading saat boot
-         */
-        initialize: async function () {
-            console.log("[Rpg_Mixer] Starting preload process...");
-
-            // Scan audio yang digunakan
-            const audioFiles = this.scanGameAudio();
-
-            // Preload backends yang diperlukan
-            await this.preloadBackends(audioFiles);
-
-            // Preload audio files (opsional, bisa di-comment jika terlalu berat)
-            // await this.preloadAudioFiles(audioFiles);
-
-            console.log("[Rpg_Mixer] Preload process completed.");
-        },
-
-        /**
-         * Check jika backend sudah ready
-         */
-        isBackendReady: function (format) {
-            if (format === "mid") return this._backendsLoaded.midi;
-            if (format === "mod") return this._backendsLoaded.mod;
-            return true; // Format lain selalu ready
-        },
-    };
-
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function () {
         _Scene_Boot_start.call(this);
         DebugManager.initialize();
-    };
-
-    // Hook Scene_Boot untuk preload sebelum masuk Title
-    const _Scene_Boot_isReady = Scene_Boot.prototype.isReady;
-    Scene_Boot.prototype.isReady = function () {
-        if (!this._preloadInitialized) {
-            this._preloadInitialized = true;
-            this._preloadComplete = false;
-
-            // Start preloading async
-            PreloadManager.initialize()
-                .then(() => {
-                    this._preloadComplete = true;
-                    console.log("[Rpg_Mixer] All preloading complete, game ready.");
-                })
-                .catch((err) => {
-                    console.error("[Rpg_Mixer] Preload error:", err);
-                    this._preloadComplete = true; // Continue anyway
-                });
-        }
-
-        // Wait sampai preload selesai
-        return _Scene_Boot_isReady.call(this) && this._preloadComplete;
     };
 })();

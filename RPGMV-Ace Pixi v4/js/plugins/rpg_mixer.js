@@ -146,20 +146,32 @@
             if (this._pluginParameters.enableReverb) {
                 // Jika ada file IR yang ditentukan, muat file tersebut
                 if (this._pluginParameters.reverbIRFile) {
-                    this._loadImpulseResponse().then((impulseResponse) => {
-                        if (impulseResponse) {
-                            try {
-                                // Tambahkan 'mix' ke config
-                                const reverbConfig = { impulseResponse: impulseResponse, mix: reverbMixLevel };
-                                this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
-                                lastNode.connect(this._reverb.input);
-                                this._reverb.output.connect(this._outputNode);
-                                console.log("[Rpg_Mixer] Global Reverb enabled with custom IR. Mix:", reverbMixLevel);
-                            } catch (e) {
-                                // ... (error handling)
+                    this._loadImpulseResponse()
+                        .then((impulseResponse) => {
+                            if (impulseResponse) {
+                                try {
+                                    // Tambahkan 'mix' ke config
+                                    const reverbConfig = { impulseResponse: impulseResponse, mix: reverbMixLevel };
+                                    this._reverb = new SpessaLib.ReverbProcessor(this._context, reverbConfig);
+                                    lastNode.connect(this._reverb.input);
+                                    this._reverb.output.connect(this._outputNode);
+                                    console.log(
+                                        "[Rpg_Mixer] Global Reverb enabled with custom IR. Mix:",
+                                        reverbMixLevel
+                                    );
+                                } catch (e) {
+                                    console.error("[Rpg_Mixer] Failed to create ReverbProcessor with custom IR.", e);
+                                    lastNode.connect(this._outputNode);
+                                }
+                            } else {
+                                console.warn("[Rpg_Mixer] Impulse Response failed to load. Reverb disabled.");
+                                lastNode.connect(this._outputNode);
                             }
-                        } // ... (error handling)
-                    });
+                        })
+                        .catch((error) => {
+                            console.error("[Rpg_Mixer] Error loading Impulse Response.", error);
+                            lastNode.connect(this._outputNode);
+                        });
                 }
                 // Jika tidak ada file IR, gunakan reverb default
                 else {
@@ -171,7 +183,8 @@
                         this._reverb.output.connect(this._outputNode);
                         console.log("[Rpg_Mixer] Global Reverb enabled with default sound. Mix:", reverbMixLevel);
                     } catch (e) {
-                        // ... (error handling)
+                        console.error("[Rpg_Mixer] Failed to create ReverbProcessor with default sound.", e);
+                        lastNode.connect(this._outputNode);
                     }
                 }
             } else {
@@ -340,8 +353,8 @@
                     EffectsManager.initialize(this._spessa.lib, audioContext);
 
                     if (!this._spessa.workletLoaded) {
-                        const workletBlob = await this._fetchScriptAsBlob("js/libs/spessasynth_processor.js");
-                        const workletUrl = URL.createObjectURL(workletBlob);
+                        // Gunakan fungsi built-in dari SpessaSynthLib untuk membuat Blob URL dari kode inline
+                        const workletUrl = this._spessa.lib.createWorkletBlobURL();
                         await audioContext.audioWorklet.addModule(workletUrl);
                         URL.revokeObjectURL(workletUrl);
                         this._spessa.workletLoaded = true;
@@ -677,32 +690,80 @@
             return;
         }
 
-        this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
-        this._synthesizer.setMasterParameter("masterGain", 2);
-        this._gainNode = this._context.createGain();
-        this._gainNode.gain.value = this._volume;
-
-        const effectsInput = EffectsManager.getInputNode();
-        const effectsOutput = EffectsManager.getOutputNode();
-        if (effectsInput && effectsOutput) {
-            this._synthesizer.connect(effectsInput);
-            effectsOutput.connect(this._gainNode);
-        } else {
-            this._synthesizer.connect(this._gainNode);
+        // Check AudioContext state
+        if (this._context.state === "suspended") {
+            console.warn("[Rpg_Mixer] AudioContext is suspended. Attempting to resume...");
+            this._context
+                .resume()
+                .then(() => {
+                    console.log("[Rpg_Mixer] AudioContext resumed successfully.");
+                })
+                .catch((error) => {
+                    console.error("[Rpg_Mixer] Failed to resume AudioContext:", error);
+                });
         }
-        this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
 
-        this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
+        try {
+            console.log("[Rpg_Mixer] Creating WorkletSynthesizer...");
+            this._synthesizer = new SpessaLib.WorkletSynthesizer(this._context);
+            this._synthesizer.setMasterParameter("masterGain", 2);
+            this._gainNode = this._context.createGain();
+            this._gainNode.gain.value = this._volume;
 
-        this._synthesizer.soundBankManager.addSoundBank(soundfont.slice(0), "default").then(() => {
-            const startTime = performance.now();
-            this._sequencer.loadNewSongList([{ binary: this._buffer }]);
-            this._decodeTime = performance.now() - startTime;
-            this._sequencer.loopCount = this._loop ? Infinity : 0;
-            this._sequencer.currentTime = offset || 0;
-            this._sequencer.play();
-            this._reportDebugInfo();
-        });
+            console.log(`[Rpg_Mixer] MIDI volume set to: ${this._volume}`);
+
+            const effectsInput = EffectsManager.getInputNode();
+            const effectsOutput = EffectsManager.getOutputNode();
+            if (effectsInput && effectsOutput) {
+                this._synthesizer.connect(effectsInput);
+                effectsOutput.connect(this._gainNode);
+                console.log("[Rpg_Mixer] Synthesizer connected through effects chain.");
+            } else {
+                this._synthesizer.connect(this._gainNode);
+                console.log("[Rpg_Mixer] Synthesizer connected directly (no effects).");
+            }
+            this._gainNode.connect(WebAudio._masterGainNode || this._context.destination);
+
+            this._sequencer = new SpessaLib.Sequencer(this._synthesizer);
+            console.log("[Rpg_Mixer] Sequencer created.");
+
+            this._synthesizer.soundBankManager
+                .addSoundBank(soundfont.slice(0), "default")
+                .then(() => {
+                    try {
+                        console.log("[Rpg_Mixer] Soundbank added successfully. Loading MIDI...");
+                        const startTime = performance.now();
+                        this._sequencer.loadNewSongList([{ binary: this._buffer }]);
+                        this._decodeTime = performance.now() - startTime;
+                        this._sequencer.loopCount = this._loop ? Infinity : 0;
+                        this._sequencer.currentTime = offset || 0;
+
+                        console.log(`[Rpg_Mixer] Starting MIDI playback (loop: ${this._loop}, offset: ${offset || 0})`);
+                        this._sequencer.play();
+
+                        // Verify playback started
+                        setTimeout(() => {
+                            if (this._sequencer && this._sequencer.isPlaying) {
+                                console.log("[Rpg_Mixer] ✓ MIDI playback confirmed active.");
+                            } else {
+                                console.warn("[Rpg_Mixer] ⚠ MIDI sequencer exists but not playing!");
+                            }
+                        }, 100);
+
+                        this._reportDebugInfo();
+                    } catch (error) {
+                        console.error("[Rpg_Mixer] Error loading or playing MIDI:", error);
+                        this._stopMidi();
+                    }
+                })
+                .catch((error) => {
+                    console.error("[Rpg_Mixer] Error adding soundbank:", error);
+                    this._stopMidi();
+                });
+        } catch (error) {
+            console.error("[Rpg_Mixer] Error initializing MIDI playback:", error);
+            this._stopMidi();
+        }
     };
 
     ExternalAudio.prototype._stopMidi = function () {
@@ -726,38 +787,46 @@
         const pos = offset || 0;
         this._currentPosition = pos;
 
-        const startTime = performance.now();
-        this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
-            numberOfInputs: 0,
-            numberOfOutputs: 1,
-            outputChannelCount: [2],
-        });
-        this._workletNode.port.onmessage = (msg) => {
-            const data = msg.data;
-            if (data.cmd === "pos") {
-                this._currentPosition = data.pos;
-            } else if (data.cmd === "meta" && pos > 0) {
-                this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
-            } else if (data.cmd === "end") {
-                if (this._loop) {
-                    this.play(this._loop, 0);
-                } else {
-                    this.stop();
+        try {
+            const startTime = performance.now();
+            this._workletNode = new AudioWorkletNode(this._context, "libopenmpt-processor", {
+                numberOfInputs: 0,
+                numberOfOutputs: 1,
+                outputChannelCount: [2],
+            });
+            this._workletNode.port.onmessage = (msg) => {
+                const data = msg.data;
+                if (data.cmd === "pos") {
+                    this._currentPosition = data.pos;
+                } else if (data.cmd === "meta" && pos > 0) {
+                    this._workletNode.port.postMessage({ cmd: "setPos", val: pos });
+                } else if (data.cmd === "end") {
+                    if (this._loop) {
+                        this.play(this._loop, 0);
+                    } else {
+                        this.stop();
+                    }
+                } else if (data.cmd === "error") {
+                    console.error("[Rpg_Mixer] MOD Worklet error:", data.message);
+                    this._stopMod();
                 }
-            }
-        };
+            };
 
-        const config = {
-            repeatCount: this._loop ? -1 : 0,
-            stereoSeparation: 100,
-            interpolationFilter: 0,
-        };
-        this._workletNode.port.postMessage({ cmd: "config", val: config });
-        this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
-        this._decodeTime = performance.now() - startTime;
-        this._setupModWebAudioNodes();
-        this._workletNode.connect(this._gainNode);
-        this._reportDebugInfo();
+            const config = {
+                repeatCount: this._loop ? -1 : 0,
+                stereoSeparation: 100,
+                interpolationFilter: 0,
+            };
+            this._workletNode.port.postMessage({ cmd: "config", val: config });
+            this._workletNode.port.postMessage({ cmd: "play", val: this._buffer });
+            this._decodeTime = performance.now() - startTime;
+            this._setupModWebAudioNodes();
+            this._workletNode.connect(this._gainNode);
+            this._reportDebugInfo();
+        } catch (error) {
+            console.error("[Rpg_Mixer] Error initializing MOD playback:", error);
+            this._stopMod();
+        }
     };
 
     ExternalAudio.prototype._stopMod = function () {
