@@ -15,7 +15,7 @@ echo Waiting for server to start...
 timeout /t 3 /nobreak >nul
 
 echo Opening browser with cache disabled...
-start msedge --new-window --disable-cache --disable-application-cache --disable-gpu-shader-disk-cache --disk-cache-size=1 "http://localhost:8000/index.html?nocache=%random%"
+start msedge -inprivate "http://localhost:8000/index.html?nocache=%random%"
 
 echo.
 echo Server is running. Press Ctrl+C in the Python window to stop.

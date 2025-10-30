@@ -1,0 +1,12 @@
+          <svg width="150px" height="150px" viewBox="0 0 360 360" role="img" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <path d="M110.216797,6.20848083 C103.047587,61.3349457 126.510061,86.4045461 180.604218,81.4172821 C188.798492,27.84375 165.336019,2.77414958 110.216797,6.20848083 Z" id="leaf" fill="#E2E88C"></path>
+              <path d="M224,20 C197.370495,43.0551255 182.588777,63.992417 179.654846,82.8118744" id="stem" stroke="#9C7139" stroke-width="7" stroke-linecap="round"></path>
+              <circle id="body" fill="#C6D463" cx="180.5" cy="216.5" r="136.5"></circle>
+              <g id="inner-arrows" transform="translate(98.000000, 128.000000)">
+                  <path d="M45.461416,15.3806786 C18.5263801,28.6815682 0,56.4272501 0,88.5 C0,127.434063 27.3009424,159.99165 63.8034577,168.07339 M114.442312,163.067984 C143.043604,150.414054 163,121.78756 163,88.5 C163,49.4875564 135.589025,16.877289 98.975975,8.87809813" id="arrow-shafts" stroke="#FFFFFF" stroke-width="10"></path>
+                  <polygon id="upper-arrowhead" fill="#FFFFFF" points="74.1479522 6.71488903 48.5649141 37.0735443 34.5106701 0.0341895418"></polygon>
+                  <polygon id="lower-arrowhead" fill="#FFFFFF" points="114.131066 141.198605 124.993679 179.384249 86.4276286 170.323601"></polygon>
+              </g>
+            </g>
+          </svg>

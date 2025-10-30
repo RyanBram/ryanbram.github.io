@@ -1,0 +1,104 @@
+{
+    "enid": {
+        "model": { "name": "models/tiny/enid/model.enid.intgemm.alphas.bin" },
+        "vocab": { "name": "models/tiny/enid/vocab.enid.spm" },
+        "lex": { "name": "models/tiny/enid/lex.50.50.enid.s2t.bin" }
+    },
+    "iden": {
+        "model": { "name": "models/tiny/iden/model.iden.intgemm.alphas.bin" },
+        "vocab": { "name": "models/tiny/iden/vocab.iden.spm" },
+        "lex": { "name": "models/tiny/iden/lex.50.50.iden.s2t.bin" }
+    },
+    "ruen": {
+        "model": { "name": "models/tiny/ruen/model.ruen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/tiny/ruen/vocab.ruen.spm" },
+        "lex": { "name": "models/tiny/ruen/lex.50.50.ruen.s2t.bin" }
+    },
+    "enja": {
+        "model": { "name": "models/base/enja/model.enja.intgemm.alphas.bin" },
+        "srcvocab": { "name": "models/base/enja/srcvocab.enja.spm" },
+        "trgvocab": { "name": "models/base/enja/trgvocab.enja.spm" },
+        "lex": { "name": "models/base/enja/lex.50.50.enja.s2t.bin" }
+    },
+    "jaen": {
+        "model": { "name": "models/base/jaen/model.jaen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/jaen/vocab.jaen.spm" },
+        "lex": { "name": "models/base/jaen/lex.50.50.jaen.s2t.bin" }
+    },
+    "aren": {
+        "model": { "name": "models/base/aren/model.aren.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/aren/vocab.aren.spm" },
+        "lex": { "name": "models/base/aren/lex.50.50.aren.s2t.bin" }
+    },
+    "deen": {
+        "model": { "name": "models/base/deen/model.deen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/deen/vocab.deen.spm" },
+        "lex": { "name": "models/base/deen/lex.50.50.deen.s2t.bin" }
+    },
+    "enar": {
+        "model": { "name": "models/base/enar/model.enar.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/enar/vocab.enar.spm" },
+        "lex": { "name": "models/base/enar/lex.50.50.enar.s2t.bin" }
+    },
+    "enko": {
+        "model": { "name": "models/base/enko/model.enko.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/enko/vocab.enko.spm" },
+        "lex": { "name": "models/base/enko/lex.50.50.enko.s2t.bin" }
+    },
+    "enru": {
+        "model": { "name": "models/base/enru/model.enru.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/enru/vocab.enru.spm" },
+        "lex": { "name": "models/base/enru/lex.50.50.enru.s2t.bin" }
+    },
+    "enzh": {
+        "model": { "name": "models/base/enzh/model.enzh.intgemm.alphas.bin" },
+        "srcvocab": { "name": "models/base/enzh/srcvocab.enzh.spm" },
+        "trgvocab": { "name": "models/base/enzh/trgvocab.enzh.spm" },
+        "lex": { "name": "models/base/enzh/lex.50.50.enzh.s2t.bin" }
+    },
+    "koen": {
+        "model": { "name": "models/base/koen/model.koen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/koen/vocab.koen.spm" },
+        "lex": { "name": "models/base/koen/lex.50.50.koen.s2t.bin" }
+    },
+    "zhen": {
+        "model": { "name": "models/base/zhen/model.zhen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base/zhen/vocab.zhen.spm" },
+        "lex": { "name": "models/base/zhen/lex.50.50.zhen.s2t.bin" }
+    },
+    "ende": {
+        "model": { "name": "models/base-memory/ende/model.ende.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/ende/vocab.ende.spm" },
+        "lex": { "name": "models/base-memory/ende/lex.50.50.ende.s2t.bin" }
+    },
+    "enes": {
+        "model": { "name": "models/base-memory/enes/model.enes.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/enes/vocab.enes.spm" },
+        "lex": { "name": "models/base-memory/enes/lex.50.50.enes.s2t.bin" }
+    },
+    "enfr": {
+        "model": { "name": "models/base-memory/enfr/model.enfr.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/enfr/vocab.enfr.spm" },
+        "lex": { "name": "models/base-memory/enfr/lex.50.50.enfr.s2t.bin" }
+    },
+    "enpt": {
+        "model": { "name": "models/base-memory/enpt/model.enpt.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/enpt/vocab.enpt.spm" },
+        "lex": { "name": "models/base-memory/enpt/lex.50.50.enpt.s2t.bin" }
+    },
+    "esen": {
+        "model": { "name": "models/base-memory/esen/model.esen.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/esen/vocab.esen.spm" },
+        "lex": { "name": "models/base-memory/esen/lex.50.50.esen.s2t.bin" }
+    },
+    "fren": {
+        "model": { "name": "models/base-memory/fren/model.fren.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/fren/vocab.fren.spm" },
+        "lex": { "name": "models/base-memory/fren/lex.50.50.fren.s2t.bin" }
+    },
+    "pten": {
+        "model": { "name": "models/base-memory/pten/model.pten.intgemm.alphas.bin" },
+        "vocab": { "name": "models/base-memory/pten/vocab.pten.spm" },
+        "lex": { "name": "models/base-memory/pten/lex.50.50.pten.s2t.bin" }
+    }
+}
