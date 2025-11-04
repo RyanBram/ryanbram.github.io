@@ -12,9 +12,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
     // --- State Management ---
     let sourceJsonData = null;
+    let targetJsonData = null; // NEW: Target language JSON for comparison
     let existingI18nData = null;
     let textPaths = [];
     let sourceFilename = "";
+    let targetFilename = ""; // NEW: Track target filename
+    let targetLanguageCode = null; // NEW: Detected language from target JSON
     let downloadUrl = null;
     let activeSync = null;
     let selectedLanguages = [{ code: "en", order: 1 }]; // Default: English
@@ -69,6 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         sourceDropZone: document.getElementById("source-drop-zone"),
         sourceFileInput: document.getElementById("source-file-input"),
         sourceBadge: document.getElementById("source-badge"),
+
+        // Target file upload (NEW)
+        targetDropZone: document.getElementById("target-drop-zone"),
+        targetFileInput: document.getElementById("target-file-input"),
+        targetBadge: document.getElementById("target-badge"),
 
         // i18n file upload
         i18nDropZone: document.getElementById("i18n-drop-zone"),
@@ -139,6 +147,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     ui.sourceFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
             processSourceFile(e.target.files[0]);
+        }
+    });
+
+    // ============================================
+    // Event Listeners: Target File Upload (NEW)
+    // ============================================
+
+    ui.targetDropZone.addEventListener("click", () => ui.targetFileInput.click());
+
+    ui.targetDropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        ui.targetDropZone.classList.add("drag-over");
+    });
+
+    ui.targetDropZone.addEventListener("dragleave", () => {
+        ui.targetDropZone.classList.remove("drag-over");
+    });
+
+    ui.targetDropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        ui.targetDropZone.classList.remove("drag-over");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            processTargetFile(files[0]);
+        }
+    });
+
+    ui.targetFileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+            processTargetFile(e.target.files[0]);
         }
     });
 
@@ -705,19 +743,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const newFilename = file.name;
         const isFileTypeChange = sourceFilename && sourceFilename !== newFilename;
 
-        if (isFileTypeChange) {
+        if (isFileTypeChange && existingI18nData) {
             const proceed = confirm(
                 `⚠️ FILE TYPE CHANGE DETECTED!\n\n` +
                     `You are switching from: ${sourceFilename}\n` +
                     `To: ${newFilename}\n\n` +
-                    `This will CLEAR ALL existing data to prevent conflicts.\n\n` +
+                    `This will CLEAR existing i18n data to prevent conflicts.\n\n` +
                     `Continue? (Recommended: Start fresh for new file types)`
             );
 
             if (!proceed) return;
 
-            // Clear all existing data to prevent conflicts
-            clearAllDataWithoutConfirm();
+            // Clear existing i18n data to prevent conflicts
+            resetI18nState();
         }
 
         sourceFilename = newFilename;
@@ -776,6 +814,186 @@ document.addEventListener("DOMContentLoaded", async () => {
             ui.buildStatus.textContent = `❌ Extraction failed: ${error.message}`;
             resetSourceState();
         }
+    }
+
+    // ============================================
+    // Core Functions: Target File Processing (NEW)
+    // ============================================
+
+    function processTargetFile(file) {
+        if (!file || !file.name.endsWith(".json")) {
+            ui.targetBadge.innerHTML =
+                '<span class="status-badge" style="background:#f8d7da;color:#721c24">Invalid</span>';
+            return;
+        }
+
+        targetFilename = file.name;
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            try {
+                targetJsonData = JSON.parse(event.target.result);
+
+                // Check if source is loaded first
+                if (!sourceJsonData) {
+                    ui.targetBadge.innerHTML = '<span class="status-badge status-warning">Upload source first</span>';
+                    return;
+                }
+
+                // Try to detect language and compare structure
+                const comparisonResult = compareAndExtractTranslations();
+
+                if (comparisonResult.success) {
+                    ui.targetDropZone.classList.add("has-file");
+                    ui.targetBadge.innerHTML = `<span class="status-badge status-success">${comparisonResult.langCode.toUpperCase()}: ${
+                        comparisonResult.extractedCount
+                    } texts</span>`;
+
+                    // Auto-select the detected language if not already selected
+                    const detectedLang = comparisonResult.langCode;
+                    const existingCodes = selectedLanguages.map((item) => getLangCode(item));
+
+                    if (!existingCodes.includes(detectedLang)) {
+                        languageSelectionOrder++;
+                        selectedLanguages.push({ code: detectedLang, order: languageSelectionOrder });
+                        ui.langCountBadge.textContent = selectedLanguages.length;
+                        updateLanguageSelectorButton();
+                        generateTranslationColumns();
+                    }
+
+                    // Auto-populate the detected language column
+                    populateTranslationsFromTarget(detectedLang, comparisonResult.translations);
+
+                    ui.buildStatus.textContent = `✅ Extracted ${
+                        comparisonResult.extractedCount
+                    } translations from target JSON (${detectedLang.toUpperCase()})`;
+                } else {
+                    ui.targetBadge.innerHTML =
+                        '<span class="status-badge" style="background:#f8d7da;color:#721c24">Structure mismatch</span>';
+                    ui.targetDropZone.classList.remove("has-file");
+                    alert(
+                        "⚠️ TARGET JSON STRUCTURE MISMATCH!\n\n" +
+                            "The target JSON structure doesn't match the source JSON.\n" +
+                            "Please ensure both files are the same type (e.g., both Actors.json)."
+                    );
+                }
+            } catch (e) {
+                ui.targetBadge.innerHTML =
+                    '<span class="status-badge" style="background:#f8d7da;color:#721c24">Parse Error</span>';
+                targetJsonData = null;
+                ui.targetDropZone.classList.remove("has-file");
+            }
+        };
+
+        reader.onerror = () => {
+            ui.targetBadge.innerHTML =
+                '<span class="status-badge" style="background:#f8d7da;color:#721c24">Read Error</span>';
+            targetJsonData = null;
+        };
+
+        reader.readAsText(file);
+    }
+
+    function compareAndExtractTranslations() {
+        if (!sourceJsonData || !targetJsonData || !textPaths || textPaths.length === 0) {
+            return { success: false };
+        }
+
+        const translations = [];
+        let successCount = 0;
+
+        // Try to extract translations from target JSON using the same paths
+        textPaths.forEach((pathObj) => {
+            const targetValue = getValueByPath(targetJsonData, pathObj.path);
+
+            if (targetValue !== undefined && targetValue !== null && targetValue !== pathObj.text) {
+                // Found a translation (different from source)
+                translations.push(targetValue);
+                successCount++;
+            } else {
+                // No translation found, use source text as fallback
+                translations.push(pathObj.text);
+            }
+        });
+
+        // Detect language based on filename or content
+        const detectedLang = detectLanguageFromFilename(targetFilename) || "en";
+
+        return {
+            success: successCount > 0,
+            langCode: detectedLang,
+            extractedCount: successCount,
+            translations: translations,
+        };
+    }
+
+    function detectLanguageFromFilename(filename) {
+        // Try to detect language code from filename patterns
+        const patterns = [
+            { regex: /[_\-\.]en[_\-\.]|english/i, code: "en" },
+            { regex: /[_\-\.]jp[_\-\.]|[_\-\.]ja[_\-\.]|japanese/i, code: "jp" },
+            { regex: /[_\-\.]id[_\-\.]|indonesian/i, code: "id" },
+            { regex: /[_\-\.]ar[_\-\.]|arabic/i, code: "ar" },
+            { regex: /[_\-\.]zh[_\-\.]|[_\-\.]cn[_\-\.]|chinese/i, code: "zh" },
+            { regex: /[_\-\.]de[_\-\.]|german/i, code: "de" },
+            { regex: /[_\-\.]es[_\-\.]|spanish/i, code: "es" },
+            { regex: /[_\-\.]fr[_\-\.]|french/i, code: "fr" },
+            { regex: /[_\-\.]ko[_\-\.]|[_\-\.]kr[_\-\.]|korean/i, code: "ko" },
+            { regex: /[_\-\.]pt[_\-\.]|portuguese/i, code: "pt" },
+            { regex: /[_\-\.]ru[_\-\.]|russian/i, code: "ru" },
+        ];
+
+        for (const pattern of patterns) {
+            if (pattern.regex.test(filename)) {
+                return pattern.code;
+            }
+        }
+
+        // If no pattern matches, prompt user
+        const langCode = prompt(
+            "🌐 LANGUAGE DETECTION\n\n" +
+                "Cannot auto-detect language from filename.\n" +
+                "Please enter the language code for this file:\n\n" +
+                "• en = English\n" +
+                "• jp = Japanese\n" +
+                "• id = Indonesian\n" +
+                "• ar = Arabic\n" +
+                "• zh = Chinese\n" +
+                "• de = German\n" +
+                "• es = Spanish\n" +
+                "• fr = French\n" +
+                "• ko = Korean\n" +
+                "• pt = Portuguese\n" +
+                "• ru = Russian",
+            "en"
+        );
+
+        return langCode && langCode.trim() ? langCode.trim().toLowerCase() : "en";
+    }
+
+    function getValueByPath(jsonData, pathArr) {
+        let current = jsonData;
+        for (let i = 0; i < pathArr.length; i++) {
+            if (current == null) return undefined;
+            current = current[pathArr[i]];
+        }
+        return current;
+    }
+
+    function populateTranslationsFromTarget(langCode, translations) {
+        const textarea = document.getElementById(`text-${langCode}`);
+        if (!textarea) {
+            console.warn(`Textarea for ${langCode} not found yet`);
+            return;
+        }
+
+        // Populate with translations from target JSON
+        textarea.value = translations.join("\n");
+
+        // Update UI
+        updateTranslationStatus(langCode);
+        updateTextareaUI();
+        updateBuildButtonState();
     }
 
     // ============================================
@@ -1284,7 +1502,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (textarea) {
                         textarea.value = response.target.text;
                         updateTranslationStatus(targetLang);
-                        updateTextareaUI(); // Update zebra lines immediately after translation completes
                     }
                     console.log(`Translation to ${targetLang} completed.`);
                 } catch (error) {
@@ -1299,6 +1516,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
 
+            updateTextareaUI();
             updateBuildButtonState();
         } catch (error) {
             console.error("Translate all error:", error);
@@ -1720,6 +1938,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         updateTextareaUI();
     }
 
+    function resetTargetState() {
+        targetJsonData = null;
+        targetFilename = "";
+        targetLanguageCode = null;
+        ui.targetDropZone.classList.remove("has-file");
+        ui.targetBadge.innerHTML = "";
+    }
+
     function resetI18nState() {
         existingI18nData = null;
         ui.i18nDropZone.classList.remove("has-file");
@@ -1742,6 +1968,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             `⚠️ CLEAR ALL DATA?\n\n` +
                 `This will reset everything:\n` +
                 `• Source file data\n` +
+                `• Target file data\n` +
                 `• i18n file data\n` +
                 `• All translations\n` +
                 `• Language selections\n\n` +
@@ -1752,6 +1979,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Reset all state
         resetSourceState();
+        resetTargetState();
         resetI18nState();
 
         // Reset language selections
@@ -1768,27 +1996,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         sourceFilename = "";
 
         ui.buildStatus.textContent = "All data cleared. Ready to start fresh!";
-    }
-
-    function clearAllDataWithoutConfirm() {
-        // Reset all state
-        resetSourceState();
-        resetI18nState();
-
-        // Reset language selections
-        selectedLanguages = [{ code: "en", order: 1 }];
-        ui.langCountBadge.textContent = selectedLanguages.length;
-
-        // Update the language selector button
-        updateLanguageSelectorButton();
-
-        // Regenerate translation columns
-        generateTranslationColumns();
-
-        // Reset filename
-        sourceFilename = "";
-
-        ui.buildStatus.textContent = "All data cleared due to file change. Ready to start fresh!";
     }
 
     // ============================================

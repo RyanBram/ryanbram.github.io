@@ -732,19 +732,30 @@
             <div class="content-grid">
                 <!-- Top Left: File Uploads -->
                 <div class="top-left-panel">
-                    <div id="source-drop-zone" class="file-upload-area">
+                    <!-- Source JSON (full width) -->
+                    <div id="source-drop-zone" class="file-upload-area" style="flex: 2">
                         <p><strong>📂 Source JSON</strong></p>
                         <p class="hint">Drop or click to select</p>
                         <span id="source-badge"></span>
                     </div>
                     <input type="file" id="source-file-input" class="file-input" accept=".json" />
 
-                    <div id="i18n-drop-zone" class="file-upload-area">
-                        <p><strong>🔄 Existing i18n (optional)</strong></p>
-                        <p class="hint">Drop to merge translations</p>
-                        <span id="i18n-badge"></span>
+                    <!-- Optional uploads side by side -->
+                    <div style="display: flex; gap: 10px; flex: 1">
+                        <div id="target-drop-zone" class="file-upload-area" style="flex: 1">
+                            <p><strong>🌐 Target JSON (optional)</strong></p>
+                            <p class="hint">Compare & extract</p>
+                            <span id="target-badge"></span>
+                        </div>
+                        <input type="file" id="target-file-input" class="file-input" accept=".json" />
+
+                        <div id="i18n-drop-zone" class="file-upload-area" style="flex: 1">
+                            <p><strong>🔄 Existing i18n (optional)</strong></p>
+                            <p class="hint">Merge translations</p>
+                            <span id="i18n-badge"></span>
+                        </div>
+                        <input type="file" id="i18n-file-input" class="file-input" accept=".json" />
                     </div>
-                    <input type="file" id="i18n-file-input" class="file-input" accept=".json" />
                 </div>
 
                 <!-- Top Right: Build Panel -->
@@ -1072,14 +1083,22 @@
                                 <strong>Select Target Languages:</strong> Click "Select Languages..." and choose target
                                 languages
                             </li>
-                            <li><strong>Copy Extracted Text:</strong> Click "Copy" to get the original text</li>
                             <li>
-                                <strong>Translate:</strong> Use "Translate All" for automatic translation, or paste to
-                                your translation tool (Google Translate, DeepL, ChatGPT, etc.)
+                                <strong>Option A - Upload Target JSON (NEW!):</strong> Upload a complete translated JSON
+                                file (e.g., Actors_en.json) to automatically extract and compare translations
                             </li>
                             <li>
-                                <strong>Paste Back:</strong> Paste translated text into the corresponding language
-                                column
+                                <strong>Option B - Manual Translation:</strong> Click "Copy" to get the original text,
+                                use "Translate All" for automatic translation, or paste to your translation tool (Google
+                                Translate, DeepL, ChatGPT, etc.)
+                            </li>
+                            <li>
+                                <strong>Option C - Existing i18n:</strong> Upload existing *_i18n.json to merge/update
+                                translations
+                            </li>
+                            <li>
+                                <strong>Paste Back (if manual):</strong> Paste translated text into the corresponding
+                                language column
                             </li>
                             <li><strong>Build i18n:</strong> Click "Build i18n" to generate the mapping file</li>
                             <li>
@@ -1116,10 +1135,14 @@
 
                     <h3>💡 Tips</h3>
                     <ul>
+                        <li>
+                            <strong>NEW:</strong> Upload a complete target language JSON to auto-extract translations!
+                        </li>
                         <li>Upload existing i18n file to preserve previous translations</li>
                         <li>Set the correct source language before translating</li>
                         <li>Use "Translate All" for quick automatic translation with Bergamot</li>
                         <li>Use AI translation tools for faster batch translation</li>
+                        <li>Target JSON comparison works best with same file structure (e.g., both Actors.json)</li>
                         <li>Each line in source = one line in translation (strict matching)</li>
                         <li>You can translate multiple languages at once to save time</li>
                     </ul>

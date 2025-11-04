@@ -1284,7 +1284,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (textarea) {
                         textarea.value = response.target.text;
                         updateTranslationStatus(targetLang);
-                        updateTextareaUI(); // Update zebra lines immediately after translation completes
                     }
                     console.log(`Translation to ${targetLang} completed.`);
                 } catch (error) {
@@ -1299,6 +1298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
 
+            updateTextareaUI();
             updateBuildButtonState();
         } catch (error) {
             console.error("Translate all error:", error);

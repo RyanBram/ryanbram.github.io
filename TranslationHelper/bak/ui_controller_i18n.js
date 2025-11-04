@@ -705,19 +705,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const newFilename = file.name;
         const isFileTypeChange = sourceFilename && sourceFilename !== newFilename;
 
-        if (isFileTypeChange) {
+        if (isFileTypeChange && existingI18nData) {
             const proceed = confirm(
                 `⚠️ FILE TYPE CHANGE DETECTED!\n\n` +
                     `You are switching from: ${sourceFilename}\n` +
                     `To: ${newFilename}\n\n` +
-                    `This will CLEAR ALL existing data to prevent conflicts.\n\n` +
+                    `This will CLEAR existing i18n data to prevent conflicts.\n\n` +
                     `Continue? (Recommended: Start fresh for new file types)`
             );
 
             if (!proceed) return;
 
-            // Clear all existing data to prevent conflicts
-            clearAllDataWithoutConfirm();
+            // Clear existing i18n data to prevent conflicts
+            resetI18nState();
         }
 
         sourceFilename = newFilename;
@@ -1284,7 +1284,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (textarea) {
                         textarea.value = response.target.text;
                         updateTranslationStatus(targetLang);
-                        updateTextareaUI(); // Update zebra lines immediately after translation completes
                     }
                     console.log(`Translation to ${targetLang} completed.`);
                 } catch (error) {
@@ -1299,6 +1298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
 
+            updateTextareaUI();
             updateBuildButtonState();
         } catch (error) {
             console.error("Translate all error:", error);
@@ -1768,27 +1768,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         sourceFilename = "";
 
         ui.buildStatus.textContent = "All data cleared. Ready to start fresh!";
-    }
-
-    function clearAllDataWithoutConfirm() {
-        // Reset all state
-        resetSourceState();
-        resetI18nState();
-
-        // Reset language selections
-        selectedLanguages = [{ code: "en", order: 1 }];
-        ui.langCountBadge.textContent = selectedLanguages.length;
-
-        // Update the language selector button
-        updateLanguageSelectorButton();
-
-        // Regenerate translation columns
-        generateTranslationColumns();
-
-        // Reset filename
-        sourceFilename = "";
-
-        ui.buildStatus.textContent = "All data cleared due to file change. Ready to start fresh!";
     }
 
     // ============================================

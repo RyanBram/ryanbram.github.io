@@ -1,49 +1,49 @@
 //=============================================================================
-// LanguageSwitcher.js
-// VERSI 1.2.0 (Perbaikan Show Choices & Troops)
+// rpg_locale.js
+// VERSI 1.5.0
 //=============================================================================
 
 /*:
- * @plugindesc v1.2.0 Multi-language support using i18n mapping files.
+ * @plugindesc v1.5.0 Multi-language support using i18n mapping files.
  * @author TranslatorHelper (with modifications)
  *
- * @param availableLanguages
- * @text Available Languages
+ * @param Available Languages
  * @desc Comma-separated language codes (e.g., ja,en,id)
  * @default ja,en,id
  *
- * @param languageNames
- * @text Language Display Names
+ * @param Language Names
  * @desc Comma-separated display names (e.g., 日本語,English,Indonesian)
  * @default 日本語,English,Indonesian
  *
- * @param defaultLanguage
- * @text Default Language
+ * @param Default Language
  * @desc Default language code (matches original data files)
  * @default ja
  *
- * @param localeFolderPath
- * @text Locale Folder Path
+ * @param Locale Folder Path
  * @desc Path to i18n files relative to data folder
- * @default locale
+ * @default locales
  *
- * @param optionName
- * @text Option Menu Text
+ * @param Option Name
  * @desc Text displayed in Options menu for language selection
  * @default Language
  *
+ * @param Enable Word Wrap
+ * @type boolean
+ * @desc Enable word wrap for long descriptions and text
+ * @default true
+ *
+ * @param Preserve Manual Line Breaks
+ * @type boolean
+ * @desc In Show Text, preserve manual line breaks (true) or reflow all text (false)
+ * @default true
+ *
  * @help
  * ============================================================================
- * Language Switcher Plugin - i18n Mode (v1.2.0)
+ * Language Switcher Plugin - i18n Mode (v1.5.0)
  * ============================================================================
  *
  * This plugin enables multi-language support by loading translation files
- * from ./data/locale/ folder.
- *
- * === Changelog v1.2.0 ===
- * - Added Show Choices (command 102) translation support
- * - Added Troops battle events translation support
- * - Fixed path consistency with translation_builder_i18n.js
+ * from ./data/locales/ folder.
  *
  * === File Structure ===
  *
@@ -68,7 +68,7 @@
  *
  * === Usage ===
  *
- * 1. Generate i18n files using TranslatorHelper_i18n.html
+ * 1. Generate i18n files using TranslatorHelper index.html
  * 2. Save to ./data/locale/ folder
  * 3. Install this plugin in RPG Maker
  * 4. Configure parameters (languages, names)
@@ -95,12 +95,14 @@
     // Parameters
     // ============================================
 
-    const parameters = PluginManager.parameters("LanguageSwitcher");
-    const availableLanguages = parameters["availableLanguages"].split(",").map((s) => s.trim());
-    const languageNames = parameters["languageNames"].split(",").map((s) => s.trim());
-    const defaultLanguage = parameters["defaultLanguage"] || "ja";
-    const localeFolderPath = parameters["localeFolderPath"] || "locale";
-    const optionName = parameters["optionName"] || "Language";
+    const parameters = PluginManager.parameters("rpg_locale");
+    var paramAvailableLanguages = parameters["Available Languages"].split(",").map((s) => s.trim());
+    var paramLanguageNames = parameters["Language Names"].split(",").map((s) => s.trim());
+    var paramDefaultLanguage = parameters["Default Language"] || "ja";
+    var paramLocaleFolderPath = parameters["Locale Folder Path"] || "locales";
+    var paramOptionName = parameters["Option Name"] || "Language";
+    var paramEnableWordWrap = parameters["Enable Word Wrap"] === "true";
+    var paramPreserveManualLineBreaks = parameters["Preserve Manual Line Breaks"] === "true";
 
     // ============================================
     // Global Namespace
@@ -108,16 +110,16 @@
 
     window.LanguageSwitcher = {
         i18nData: {},
-        currentLanguage: defaultLanguage,
+        currentLanguage: paramDefaultLanguage,
         pendingLanguage: null,
         originalDataSystem: null,
 
         getAvailableLanguages: function () {
-            return availableLanguages;
+            return paramAvailableLanguages;
         },
 
         getLanguageNames: function () {
-            return languageNames;
+            return paramLanguageNames;
         },
 
         getCurrentLanguage: function () {
@@ -125,14 +127,14 @@
         },
 
         /**
-         * Fungsi helper generik untuk mengambil terjemahan
-         * @param {string} dataType - Nama file (cth: "Actors", "System", "Map001", "Troops")
-         * @param {string[]} path - Array path (cth: ["1", "name"] or ["terms", "basic", 0])
-         * @param {*} fallback - Nilai default jika tidak ditemukan
+         * Generic helper function to retrieve translations
+         * @param {string} dataType - File name (e.g., "Actors", "System", "Map001", "Troops")
+         * @param {string[]} path - Array path (e.g., ["1", "name"] or ["terms", "basic", 0])
+         * @param {*} fallback - Default value if not found
          */
         getTranslation: function (dataType, path, fallback) {
             const lang = this.currentLanguage;
-            if (lang === defaultLanguage) {
+            if (lang === paramDefaultLanguage) {
                 return fallback;
             }
 
@@ -154,11 +156,167 @@
                 return fallback;
             }
 
+            // Return {{NEWLINE}} as \n before return
+            if (typeof value === "string") {
+                value = value.replace(/\{\{NEWLINE\}\}/g, "\n");
+            }
+
             return value !== undefined && value !== null ? value : fallback;
         },
 
         /**
-         * Mem-patch $dataSystem dengan nilai-nilai yang diterjemahkan
+         * Word wrap text to fit within specified width
+         * @param {string} text - Text to wrap
+         * @param {number} maxWidth - Maximum width in pixels
+         * @param {Window_Base} window - Window object for text measurement
+         * @returns {string} - Text with \n inserted for line breaks
+         */
+        wordWrap: function (text, maxWidth, window) {
+            if (!paramEnableWordWrap || !text) return text;
+
+            // Convert escape characters first
+            const processedText = window.convertEscapeCharacters(text);
+            const words = processedText.split(" ");
+            const lines = [];
+            let currentLine = "";
+
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                const testLine = currentLine ? currentLine + " " + word : word;
+                const testWidth = window.textWidth(testLine);
+
+                if (testWidth > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            return lines.join("\n");
+        },
+
+        /**
+         * Advanced word wrap for message box
+         * Handles both character-based (CJK) and word-based (Latin) wrapping
+         * @param {string} text - Text to wrap
+         * @param {boolean} hasFace - Whether message has a face image
+         * @returns {string} - Text with \n inserted for line breaks
+         */
+        messageWordWrap: function (text, hasFace) {
+            if (!paramEnableWordWrap || !text) return text;
+
+            // Create a temporary window for text measurement
+            const tempWindow = SceneManager._scene._messageWindow;
+            if (!tempWindow) return text;
+
+            // Calculate max width (window width - padding - face width if applicable)
+            const faceWidth = hasFace ? 168 : 0;
+            const padding = tempWindow.standardPadding() * 2;
+            const maxWidth = tempWindow.width - padding - faceWidth - 12; // 12 for extra margin
+
+            // If preserving manual line breaks, process each line separately
+            if (paramPreserveManualLineBreaks) {
+                const inputLines = text.split("\n");
+                const wrappedLines = [];
+
+                inputLines.forEach((line) => {
+                    if (!line) {
+                        wrappedLines.push("");
+                        return;
+                    }
+
+                    // Wrap this line
+                    const result = this._wrapSingleLine(line, maxWidth, tempWindow);
+                    wrappedLines.push(result);
+                });
+
+                return wrappedLines.join("\n");
+            } else {
+                // Reflow all text: remove existing line breaks and treat as one continuous text
+                const continuousText = text.replace(/\n/g, " ");
+                return this._wrapSingleLine(continuousText, maxWidth, tempWindow);
+            }
+        },
+
+        /**
+         * Wrap a single line of text
+         * @param {string} text - Text to wrap (single line)
+         * @param {number} maxWidth - Maximum width in pixels
+         * @param {Window_Base} window - Window for text measurement
+         * @returns {string} - Wrapped text
+         */
+        _wrapSingleLine: function (text, maxWidth, window) {
+            const lines = [];
+            let currentLine = "";
+            let i = 0;
+
+            while (i < text.length) {
+                const char = text[i];
+
+                // Check if next character would exceed width
+                const testLine = currentLine + char;
+                const testWidth = window.textWidth(testLine);
+
+                if (testWidth > maxWidth && currentLine.length > 0) {
+                    // Line would be too long, need to break
+
+                    // Check if current character is CJK (Chinese/Japanese/Korean)
+                    if (this.isCJKChar(char)) {
+                        // CJK: Character-based breaking (break immediately)
+                        lines.push(currentLine);
+                        currentLine = char;
+                    } else {
+                        // Latin/Indonesian/English: Word-based breaking
+                        // Try to find last space in current line for word-based breaking
+                        const lastSpaceIndex = currentLine.lastIndexOf(" ");
+                        if (lastSpaceIndex > 0 && lastSpaceIndex > currentLine.length * 0.5) {
+                            // Break at last space
+                            lines.push(currentLine.substring(0, lastSpaceIndex));
+                            currentLine = currentLine.substring(lastSpaceIndex + 1) + char;
+                        } else {
+                            // No good break point, just break here
+                            lines.push(currentLine);
+                            currentLine = char === " " ? "" : char;
+                        }
+                    }
+                } else {
+                    currentLine += char;
+                }
+
+                i++;
+            }
+
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+
+            return lines.join("\n");
+        },
+
+        /**
+         * Check if character is CJK (Chinese, Japanese, Korean)
+         * @param {string} char - Character to check
+         * @returns {boolean}
+         */
+        isCJKChar: function (char) {
+            const code = char.charCodeAt(0);
+            return (
+                (code >= 0x3040 && code <= 0x309f) || // Hiragana
+                (code >= 0x30a0 && code <= 0x30ff) || // Katakana
+                (code >= 0x4e00 && code <= 0x9fff) || // CJK Unified Ideographs
+                (code >= 0x3400 && code <= 0x4dbf) || // CJK Extension A
+                (code >= 0xac00 && code <= 0xd7af) || // Hangul Syllables
+                (code >= 0xff00 && code <= 0xffef) // Fullwidth Forms
+            );
+        },
+
+        /**
+         * Patch $dataSystem with translated values
          */
         patchDataSystem: function () {
             if (!this.originalDataSystem) {
@@ -183,7 +341,7 @@
                 "weaponTypes",
             ];
 
-            // Reset ke data asli
+            // Reset to original data
             for (const field of fieldsToPatch) {
                 if (this.originalDataSystem[field] !== undefined) {
                     $dataSystem[field] = this.originalDataSystem[field];
@@ -191,8 +349,8 @@
             }
             $dataSystem.terms = this.originalDataSystem.terms;
 
-            // Terapkan terjemahan jika bukan bahasa default
-            if (lang !== defaultLanguage) {
+            // Apply translation if not default language
+            if (lang !== paramDefaultLanguage) {
                 const i18nSys = this.i18nData.System;
                 if (i18nSys && i18nSys[lang]) {
                     const translatedSys = i18nSys[lang];
@@ -242,7 +400,7 @@
 
     DataManager.loadI18nFile = function (filename) {
         const xhr = new XMLHttpRequest();
-        const url = "data/" + localeFolderPath + "/" + filename + "_i18n.json";
+        const url = "data/" + paramLocaleFolderPath + "/" + filename + "_i18n.json";
 
         xhr.open("GET", url);
         xhr.overrideMimeType("application/json");
@@ -257,7 +415,7 @@
             }
         };
         xhr.onerror = function () {
-            // Silent fail untuk file yang tidak ada
+            // Silent fail for files that do not exist
         };
         xhr.send();
     };
@@ -267,7 +425,7 @@
         const filename = "Map%1".format(mapId.padZero(3));
         if (!LanguageSwitcher.i18nData[filename]) {
             const xhr = new XMLHttpRequest();
-            const url = "data/" + localeFolderPath + "/" + filename + "_i18n.json";
+            const url = "data/" + paramLocaleFolderPath + "/" + filename + "_i18n.json";
 
             xhr.open("GET", url);
             xhr.overrideMimeType("application/json");
@@ -296,25 +454,25 @@
     Game_System.prototype.initialize = function () {
         _Game_System_initialize.call(this);
 
-        // PERBAIKAN: Baca dari ConfigManager, BUKAN dari pendingLanguage yang usang
-        const savedLanguage = ConfigManager.language || defaultLanguage;
+        // FIX: Read from ConfigManager, NOT from obsolete pendingLanguage
+        const savedLanguage = ConfigManager.language || paramDefaultLanguage;
 
         this._language = savedLanguage;
         LanguageSwitcher.currentLanguage = savedLanguage;
-        LanguageSwitcher.pendingLanguage = null; // Hapus pending
+        LanguageSwitcher.pendingLanguage = null; // Remove pending
 
         LanguageSwitcher.patchDataSystem();
     };
 
     Game_System.prototype.getLanguage = function () {
         if (!this._language) {
-            this._language = defaultLanguage;
+            this._language = paramDefaultLanguage;
         }
         return this._language;
     };
 
     Game_System.prototype.setLanguage = function (languageCode) {
-        if (availableLanguages.includes(languageCode)) {
+        if (paramAvailableLanguages.includes(languageCode)) {
             this._language = languageCode;
             LanguageSwitcher.currentLanguage = languageCode;
 
@@ -343,7 +501,7 @@
     };
 
     // ============================================
-    // TextManager: Terjemahan dari System.json
+    // TextManager: Traslation from System.json
     // ============================================
 
     const _TextManager_basic = TextManager.basic;
@@ -402,11 +560,11 @@
     // Override: Data Objects (Items, Skills, etc.)
     // ============================================
 
-    // (TERMASUK DATABASE)
+    // (Including Database)
     const _Window_Base_drawItemName = Window_Base.prototype.drawItemName;
     Window_Base.prototype.drawItemName = function (item, x, y, width) {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage || !item) {
+        if (lang === paramDefaultLanguage || !item) {
             _Window_Base_drawItemName.call(this, item, x, y, width);
             return;
         }
@@ -419,15 +577,13 @@
             else if (DataManager.isArmor(item)) dataType = "Armors";
             else if (DataManager.isSkill(item)) dataType = "Skills";
             // ==========================================================
-            // PERBAIKAN BUG: isState, isClass, dan isEnemy tidak ada
+            // Bug fix: isState, isClass, and isEnemy do not exist
             // ==========================================================
-            else if (item.restriction !== undefined)
-                dataType = "States"; // Menggunakan properti 'restriction' untuk cek State
-            else if (item.expParams !== undefined)
-                dataType = "Classes"; // Menggunakan properti 'expParams' untuk cek Class
-            else if (item.exp !== undefined) dataType = "Enemies"; // Menggunakan properti 'exp' untuk cek Enemy
+            else if (item.restriction !== undefined) dataType = "States"; // Using 'restriction' property to check State
+            else if (item.expParams !== undefined) dataType = "Classes"; // Using 'expParams' property to check Class
+            else if (item.exp !== undefined) dataType = "Enemies"; // Using 'exp' property to check Enemy
             // ==========================================================
-            // AKHIR PERBAIKAN
+            // End of bug fix
             // ==========================================================
 
             let translatedName = item.name;
@@ -449,31 +605,105 @@
     const _Window_Status_drawActorClass = Window_Status.prototype.drawActorClass;
     Window_Status.prototype.drawActorClass = function (x, y) {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage) {
-            _Window_Status_drawActorClass.call(this, x, y); // Panggil asli
+        if (lang === paramDefaultLanguage) {
+            _Window_Status_drawActorClass.call(this, x, y); // Call original
             return;
         }
 
         const actorClass = this._actor.currentClass();
         if (!actorClass) {
-            _Window_Status_drawActorClass.call(this, x, y); // Panggil asli jika tidak ada class
+            _Window_Status_drawActorClass.call(this, x, y); // Call original if no class
             return;
         }
 
-        // 1. Ambil "Class" label (ini sudah diterjemahkan oleh TextManager)
+        // 1. Get "Class" label (this is already translated by TextManager)
         const vocab = TextManager.basic(5);
 
-        // 2. Dapatkan nama Class yang diterjemahkan secara manual
+        // 2. Get manually translated Class name
         const className = LanguageSwitcher.getTranslation(
             "Classes",
             [actorClass.id.toString(), "name"],
             actorClass.name
         );
 
-        // 3. Gambar teks yang sudah diterjemahkan
+        // 3. Draw the translated text
         this.resetTextColor();
         this.drawText(vocab, x, y, 160);
         this.drawText(className, x + 160, y, 160);
+    };
+
+    // ============================================
+    // Window_Status: Translate Actor Profile with Word Wrap
+    // ============================================
+
+    const _Window_Status_drawProfile = Window_Status.prototype.drawProfile;
+    Window_Status.prototype.drawProfile = function (x, y) {
+        const lang = LanguageSwitcher.currentLanguage;
+        if (lang === paramDefaultLanguage) {
+            _Window_Status_drawProfile.call(this, x, y);
+            return;
+        }
+
+        const actorId = this._actor.actorId();
+        const originalProfile = this._actor.profile();
+        const translatedProfile = LanguageSwitcher.getTranslation(
+            "Actors",
+            [actorId.toString(), "profile"],
+            originalProfile
+        );
+
+        // Apply word wrap if enabled
+        const maxWidth = this.contentsWidth() - x;
+        const wrappedProfile = LanguageSwitcher.wordWrap(translatedProfile, maxWidth, this);
+
+        this.drawTextEx(wrappedProfile, x, y);
+    };
+
+    // ============================================
+    // Window_Help: Word Wrap for Item/Skill/Weapon/Armor Descriptions
+    // ============================================
+
+    const _Window_Help_setItem = Window_Help.prototype.setItem;
+    Window_Help.prototype.setItem = function (item) {
+        if (!item || !paramEnableWordWrap) {
+            _Window_Help_setItem.call(this, item);
+            return;
+        }
+
+        // Get original description
+        const originalDesc = item.description || "";
+        let translatedDesc = originalDesc;
+
+        // Translate if not default language
+        const lang = LanguageSwitcher.currentLanguage;
+        if (lang !== paramDefaultLanguage && item.id) {
+            let dataType = "";
+
+            // Determine data type based on item meta or structure
+            if (DataManager.isItem(item)) {
+                dataType = "Items";
+            } else if (DataManager.isWeapon(item)) {
+                dataType = "Weapons";
+            } else if (DataManager.isArmor(item)) {
+                dataType = "Armors";
+            } else if (DataManager.isSkill(item)) {
+                dataType = "Skills";
+            }
+
+            if (dataType) {
+                translatedDesc = LanguageSwitcher.getTranslation(
+                    dataType,
+                    [item.id.toString(), "description"],
+                    originalDesc
+                );
+            }
+        }
+
+        // Apply word wrap
+        const maxWidth = this.contentsWidth() - this.textPadding() * 2;
+        const wrappedDesc = LanguageSwitcher.wordWrap(translatedDesc, maxWidth, this);
+
+        this.setText(wrappedDesc);
     };
 
     // ============================================
@@ -493,7 +723,7 @@
 
     DataManager.translateMapInfos = function () {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage) {
+        if (lang === paramDefaultLanguage) {
             if (this._i18nOriginalMapInfos) {
                 $dataMapInfos = JSON.parse(JSON.stringify(this._i18nOriginalMapInfos));
             }
@@ -558,12 +788,14 @@
     // ============================================
 
     /**
-     * Helper function untuk mendapatkan path yang sesuai dengan translation_builder_i18n.js
+     * Helper function for getting correct path as translation_builder_i18n.js
+     * @param {Game_Interpreter} interpreter - Interpreter instance
+     * @param {number} commandIndex - Current Index command (SHOULD definde explicitly)
+     * @param {number} paramIndex - Index parameter which is want to be accessed
      */
-    function getEventCommandPath(interpreter, paramIndex) {
+    function getEventCommandPath(interpreter, commandIndex, paramIndex) {
         const mapId = interpreter._mapId;
         const eventId = interpreter._eventId;
-        const commandIndex = interpreter._index;
 
         let dataType;
         let basePath;
@@ -577,7 +809,7 @@
             dataType = "Map%1".format(mapId.padZero(3));
             basePath = [eventId.toString()];
 
-            // PERBAIKAN: Dapatkan event dari $gameMap, BUKAN interpreter.character(0)
+            // FIX: Get event from $gameMap, NOT interpreter.character(0)
             const mapEvent = $gameMap.event(eventId);
             if (mapEvent && mapEvent._pageIndex !== undefined) {
                 pageIndex = mapEvent._pageIndex;
@@ -622,7 +854,7 @@
                 dataType = "CommonEvents";
                 basePath = [eventId.toString()];
 
-                // Common Event TIDAK memiliki "pages"
+                // Common Event doesn't have "pages"
                 path = [...basePath, "list", commandIndex.toString(), "parameters", paramIndex.toString()];
             }
         }
@@ -630,66 +862,82 @@
         return { dataType, path };
     }
 
-    // Override command 401 (Show Text)
-    const _Game_Interpreter_command401 = Game_Interpreter.prototype.command401;
-    Game_Interpreter.prototype.command401 = function () {
+    // ============================================
+    // Override command 101 (Show Text)
+    // ============================================
+    const _Game_Interpreter_command101 = Game_Interpreter.prototype.command101;
+    Game_Interpreter.prototype.command101 = function () {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage) {
-            return _Game_Interpreter_command401.call(this); // Panggil asli
+
+        if (lang === paramDefaultLanguage) {
+            return _Game_Interpreter_command101.call(this); // Panggil asli
         }
 
         if (!$gameMessage.isBusy()) {
-            // ==========================================================
-            // PERBAIKAN TOTAL: Replikasi logika asli dari rpg_objects.js
-            // ==========================================================
+            // Setup message properties (same as original command101)
+            $gameMessage.setFaceImage(this._params[0], this._params[1]);
+            $gameMessage.setBackground(this._params[2]);
+            $gameMessage.setPositionType(this._params[3]);
 
-            // Setup dari original command401
-            $gameMessage.setFaceImage(this._params[1], this._params[2]);
-            $gameMessage.setBackground(this._params[3]);
-            $gameMessage.setPositionType(this._params[4]);
+            // Check if message has face for word wrap calculation
+            const hasFace = this._params[0] !== "";
 
-            // 1. Terjemahkan baris teks PERTAMA
-            let { dataType, path } = getEventCommandPath(this, 0); // paramIndex = 0
-            let originalText = this._params[0];
-            let translatedText = LanguageSwitcher.getTranslation(dataType, path, originalText);
-            $gameMessage.add(translatedText);
+            // Collect all text lines first
+            const allLines = [];
 
-            // 2. Replikasi loop asli untuk baris-baris berikutnya
+            // Loop through all text lines (command 401)
             while (this.nextEventCode() === 401) {
-                this._index++; // Maju ke command 401 berikutnya
+                this._index++; // Move to next command (401)
 
-                const nextCommand = this.commandAt(this._index);
-                const nextParams = nextCommand.parameters;
+                const currentCommand = this.currentCommand();
+                const originalText = currentCommand.parameters[0];
 
-                // Dapatkan path untuk command BARU (this._index sudah benar)
-                ({ dataType, path } = getEventCommandPath(this, 0));
-                originalText = nextParams[0];
-                translatedText = LanguageSwitcher.getTranslation(dataType, path, originalText);
-                $gameMessage.add(translatedText);
+                // Get translation for this specific 401 command
+                const { dataType, path } = getEventCommandPath(this, this._index, 0);
+                const translatedText = LanguageSwitcher.getTranslation(dataType, path, originalText);
+
+                allLines.push(translatedText);
             }
 
-            // 3. Replikasi switch block krusial dari rpg_objects.js
+            // Join all lines and apply word wrap
+            const fullText = allLines.join("\n");
+            const wrappedText = LanguageSwitcher.messageWordWrap(fullText, hasFace);
+
+            // Split wrapped text back into lines and add to message
+            const wrappedLines = wrappedText.split("\n");
+            wrappedLines.forEach((line) => {
+                $gameMessage.add(line);
+            });
+
+            // Handle subsequent commands (choices, input, etc.)
             switch (this.nextEventCode()) {
                 case 102: // Show Choices
-                    this._index++; // Maju ke command 102
+                    this._index++; // Advance to command 102
 
-                    // Salin logika terjemahan dari command102 KEMARI
+                    // Save command 102 index before translate
+                    const choiceCommandIndex = this._index;
+
+                    // Copy translation logic from command102 HERE
                     const choiceParams = this.currentCommand().parameters;
                     const originalChoices = choiceParams[0];
                     const translatedChoices = [];
 
-                    // Dapatkan path dasar untuk array pilihan
-                    // 'getEventCommandPath(this, 0)' akan menunjuk ke "parameters"[0]
-                    const { dataType: choiceDataType, path: choiceBasePath } = getEventCommandPath(this, 0);
+                    // Get base path for choices array
+                    // getEventCommandPath will generate path like: [..., "parameters", "0"]
+                    const { dataType: choiceDataType, path: choiceBasePath } = getEventCommandPath(
+                        this,
+                        choiceCommandIndex,
+                        0
+                    );
 
                     originalChoices.forEach((choice, choiceIndex) => {
-                        // Buat path untuk setiap pilihan: ...parameters[0][choiceIndex]
+                        // Create path for each choice: ...parameters[0][choiceIndex]
                         const choicePath = [...choiceBasePath, choiceIndex.toString()];
                         const translatedChoice = LanguageSwitcher.getTranslation(choiceDataType, choicePath, choice);
                         translatedChoices.push(translatedChoice);
                     });
 
-                    // Buat parameter baru dengan pilihan yang sudah diterjemahkan
+                    // Create new parameters with translated choices
                     const translatedChoiceParams = [...choiceParams];
                     translatedChoiceParams[0] = translatedChoices;
 
@@ -709,8 +957,43 @@
             this._index++;
             this.setWaitMode("message");
             // ==========================================================
-            // AKHIR PERBAIKAN
+            // END OF FIX
             // ==========================================================
+        }
+        return false;
+    };
+
+    // ============================================
+    // Override command 105 (Show Scrolling Text)
+    // ============================================
+    const _Game_Interpreter_command105 = Game_Interpreter.prototype.command105;
+    Game_Interpreter.prototype.command105 = function () {
+        const lang = LanguageSwitcher.currentLanguage;
+
+        if (lang === paramDefaultLanguage) {
+            return _Game_Interpreter_command105.call(this); // Panggil asli
+        }
+
+        if (!$gameMessage.isBusy()) {
+            // Setup from original command105
+            $gameMessage.setScroll(this._params[0], this._params[1]);
+
+            // Translate text lines (command 405)
+            while (this.nextEventCode() === 405) {
+                this._index++; // Advance to next command 405
+
+                const nextCommand = this.currentCommand();
+                const nextParams = nextCommand.parameters;
+
+                // Get path for command 405 (this._index is already correct)
+                const { dataType, path } = getEventCommandPath(this, this._index, 0);
+                const originalText = nextParams[0];
+                const translatedText = LanguageSwitcher.getTranslation(dataType, path, originalText);
+                $gameMessage.add(translatedText);
+            }
+
+            this._index++;
+            this.setWaitMode("message");
         }
         return false;
     };
@@ -719,60 +1002,46 @@
     const _Game_Interpreter_command402 = Game_Interpreter.prototype.command402;
     Game_Interpreter.prototype.command402 = function () {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage) {
+
+        if (lang === paramDefaultLanguage) {
             return _Game_Interpreter_command402.call(this);
         }
 
-        if (this._params[0] < $gameMessage.choices().length) {
-            const originalText = this._params[1];
-            const { dataType, path } = getEventCommandPath(this, 1);
-            const translatedText = LanguageSwitcher.getTranslation(dataType, path, originalText);
-
-            const originalParams = this._params;
-            this._params = [...this._params];
-            this._params[1] = translatedText;
-
-            const result = _Game_Interpreter_command402.call(this);
-
-            this._params = originalParams;
-            return result;
-        }
-        return true;
-    };
-
-    // BARU: Override command 102 (Show Choices)
+        // Command 402 checks if the selected choice matches this._params[0] (choice index)
+        // Translation is already handled in command102, so just call original
+        return _Game_Interpreter_command402.call(this);
+    }; // NEW: Override command 102 (Show Choices)
     const _Game_Interpreter_command102 = Game_Interpreter.prototype.command102;
     Game_Interpreter.prototype.command102 = function () {
         const lang = LanguageSwitcher.currentLanguage;
-        if (lang === defaultLanguage) {
+        if (lang === paramDefaultLanguage) {
             return _Game_Interpreter_command102.call(this);
         }
 
-        // Fungsi ini sekarang HANYA berjalan jika 102 dipanggil TANPA 401
+        // This function now ONLY runs if 102 is called WITHOUT 401
         if (!$gameMessage.isBusy()) {
             const originalChoices = this._params[0];
             const translatedChoices = [];
 
-            // Dapatkan path dasar untuk array pilihan
-            // 'getEventCommandPath(this, 0)' akan menunjuk ke "parameters"[0]
-            const { dataType, path: basePath } = getEventCommandPath(this, 0);
+            // Get base path for choices array
+            // getEventCommandPath will generate path like: [..., "parameters", "0"]
+            const { dataType, path: basePath } = getEventCommandPath(this, this._index, 0);
 
             originalChoices.forEach((choice, choiceIndex) => {
-                // Buat path untuk setiap pilihan: ...parameters[0][choiceIndex]
+                // Create path for each choice: ...parameters[0][choiceIndex]
                 const choicePath = [...basePath, choiceIndex.toString()];
                 const translatedChoice = LanguageSwitcher.getTranslation(dataType, choicePath, choice);
                 translatedChoices.push(translatedChoice);
             });
 
-            // Modifikasi parameter sementara
-            const originalParams = this._params;
-            this._params = [...this._params];
-            this._params[0] = translatedChoices;
+            // Create new parameters with translated choices
+            const translatedParams = [...this._params];
+            translatedParams[0] = translatedChoices;
 
-            const result = _Game_Interpreter_command102.call(this);
-
-            this._params = originalParams;
-            return result;
+            // Call setupChoices directly with translated parameters
+            this.setupChoices(translatedParams);
+            this._index++;
+            this.setWaitMode("message");
         }
         return false;
     };
@@ -784,7 +1053,7 @@
     const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
     Window_Options.prototype.addGeneralOptions = function () {
         _Window_Options_addGeneralOptions.call(this);
-        this.addCommand(optionName, "language");
+        this.addCommand(paramOptionName, "language");
     };
 
     const _Window_Options_statusText = Window_Options.prototype.statusText;
@@ -792,8 +1061,8 @@
         const symbol = this.commandSymbol(index);
         if (symbol === "language") {
             const currentLang = $gameSystem.getLanguage();
-            const langIndex = availableLanguages.indexOf(currentLang);
-            return languageNames[langIndex] || currentLang;
+            const langIndex = paramAvailableLanguages.indexOf(currentLang);
+            return paramLanguageNames[langIndex] || currentLang;
         }
         return _Window_Options_statusText.call(this, index);
     };
@@ -836,9 +1105,9 @@
 
     Window_Options.prototype.changeLanguage = function (direction) {
         const currentLang = $gameSystem.getLanguage();
-        const currentIndex = availableLanguages.indexOf(currentLang);
-        const newIndex = (currentIndex + direction + availableLanguages.length) % availableLanguages.length;
-        const newLang = availableLanguages[newIndex];
+        const currentIndex = paramAvailableLanguages.indexOf(currentLang);
+        const newIndex = (currentIndex + direction + paramAvailableLanguages.length) % paramAvailableLanguages.length;
+        const newLang = paramAvailableLanguages[newIndex];
 
         $gameSystem.setLanguage(newLang);
 
@@ -855,7 +1124,7 @@
                         try {
                             window.refresh();
                         } catch (e) {
-                            // Silent fail untuk window yang tidak bisa di-refresh
+                            // Silent fail for windows that cannot be refreshed
                         }
                     }
                 });
@@ -875,7 +1144,7 @@
     const _ConfigManager_makeData = ConfigManager.makeData;
     ConfigManager.makeData = function () {
         const config = _ConfigManager_makeData.call(this);
-        // Pastikan kita save $gameSystem JIKA ada, jika tidak, save setting terakhir
+        // Make sure we save $gameSystem IF exists, otherwise save last setting
         config.language = $gameSystem ? $gameSystem.getLanguage() : ConfigManager.language;
         return config;
     };
@@ -884,10 +1153,10 @@
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData.call(this, config);
 
-        // Simpan di ConfigManager itu sendiri, BUKAN di global LanguageSwitcher
-        ConfigManager.language = config.language || defaultLanguage;
+        // Save in ConfigManager itself, NOT in global LanguageSwitcher
+        ConfigManager.language = config.language || paramDefaultLanguage;
 
-        // Set global pending/current untuk Sesi INI
+        // Set global pending/current for THIS Session
         LanguageSwitcher.pendingLanguage = ConfigManager.language;
         LanguageSwitcher.currentLanguage = ConfigManager.language;
     };
