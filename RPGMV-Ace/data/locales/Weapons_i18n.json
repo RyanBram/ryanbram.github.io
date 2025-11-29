@@ -1,0 +1,728 @@
+{
+  "ar": {
+    "1": {
+      "name": "محور اليد",
+      "description": "مفأس صغير يستخدم لحصاد الخشب."
+    },
+    "2": {
+      "name": "معركة Axe",
+      "description": "محور على الوجهين مصنوع للقتال."
+    },
+    "3": {
+      "name": "بارديتش",
+      "description": "ثلاثة شفرات هلال على هذا المحور"
+    },
+    "4": {
+      "name": "ميثريل أكس",
+      "description": "ميثريل ماكس مصنوع من المعدن السحري"
+    },
+    "5": {
+      "name": "كريسون أكس",
+      "description": "قريمسون غارق في مخاض المعركة."
+    },
+    "6": {
+      "name": "جيجانتس أكس",
+      "description": "الأفأس الثقيلة المستخدمة من قبل العمالقة."
+    },
+    "7": {
+      "name": "سيستوس",
+      "description": "المسامير تظهر على رأس هذا القفاز."
+    },
+    "8": {
+      "name": "باجينا",
+      "description": "سلاح القتال مع أربعة مسامير قصيرة."
+    },
+    "9": {
+      "name": "مخلب الحديد",
+      "description": "مخالبها مصنوعة من الفولاذ."
+    },
+    "10": {
+      "name": "ميثريل كلو",
+      "description": "مخلب ميثريل مصنوع من المعدن السحري"
+    },
+    "11": {
+      "name": "التنين فانغ",
+      "description": "رأس المخلب مصنوع من أنياب التنين."
+    },
+    "12": {
+      "name": "زفيروس مخلب",
+      "description": "أربع رياح تمكن هذا المخلب"
+    },
+    "13": {
+      "name": "رمسبير",
+      "description": "رمية قصيرة."
+    },
+    "14": {
+      "name": "الحزبية",
+      "description": "رمية طويلة مع شفرة طويلة."
+    },
+    "15": {
+      "name": "هالبرد",
+      "description": "يتم تركيب مواساة على هذا الرمح."
+    },
+    "16": {
+      "name": "ميثريل سبير",
+      "description": "ميثريل سبير مصنوع من المعدن السحري"
+    },
+    "17": {
+      "name": "لانس المقدس",
+      "description": "روح بيضاء باركت هذا الرمح المقدس."
+    },
+    "18": {
+      "name": "غيبولغ سبير",
+      "description": "يحتوي على سحر الظل المحفورة بعمق."
+    },
+    "19": {
+      "name": "السيف القصير",
+      "description": "السيف القصير الخفيف وسهل الاستخدام."
+    },
+    "20": {
+      "name": "السيف الطويل",
+      "description": "قوة أطول سيف قتالي"
+    },
+    "21": {
+      "name": "فالسيون",
+      "description": "سيف عريض مع شفرة هلال"
+    },
+    "22": {
+      "name": "ميثريل السيف",
+      "description": "سيف ميثريل مصنوع من المعدن السحري"
+    },
+    "23": {
+      "name": "رون بليد",
+      "description": "محفورة مع الرونية السحرية."
+    },
+    "24": {
+      "name": "سيف الطين",
+      "description": "السيف السحري الذي يجلب الانتصار على الشر"
+    },
+    "25": {
+      "name": "كاتانا",
+      "description": "لديه نقش سيف نحيل."
+    },
+    "26": {
+      "name": "زنباتو",
+      "description": "سيف ممتاز مع قوة تدميرية."
+    },
+    "27": {
+      "name": "توراتورو",
+      "description": "سيف قصير يخفف من الصقيع"
+    },
+    "28": {
+      "name": "ريجين لا تاشي",
+      "description": "الكاتانا السحرية مصنوعة من المعدن السحري"
+    },
+    "29": {
+      "name": "شيشيشتو",
+      "description": "سيف قديم ذو قوة خفية"
+    },
+    "30": {
+      "name": "موراماسا كاتانا",
+      "description": "سيف شيطاني يمتص حياة العازل"
+    },
+    "31": {
+      "name": "قوس قصير",
+      "description": "قوس قصير مصنوع للصيد"
+    },
+    "32": {
+      "name": "لونغبو",
+      "description": "الشكل الدائري يمنحها القوة."
+    },
+    "33": {
+      "name": "القوس والنشاب",
+      "description": "يطلق النار على مسمار القوس بين قوزام من سلسلة قوية."
+    },
+    "34": {
+      "name": "ميثريل بو",
+      "description": "قوس ميثريل مصنوع من المعدن السحري."
+    },
+    "35": {
+      "name": "إيبون القوس",
+      "description": "قوس مصنوع من أرواح الأرض."
+    },
+    "36": {
+      "name": "أرتميس القوس",
+      "description": "قوس قصير مصنوع للصيد.قوس يحمل اسم إلهة القمر."
+    },
+    "37": {
+      "name": "سكين",
+      "description": "سكينك المطحنة"
+    },
+    "38": {
+      "name": "الخنجر",
+      "description": "خنجر مع شفرة كبيرة مصنوعة للقتال."
+    },
+    "39": {
+      "name": "غوش الرئيسي",
+      "description": "سكين يستخدم لتزوير الهجمات."
+    },
+    "40": {
+      "name": "ميثريل سكين",
+      "description": "سكين ميثريل مصنوع من المعدن السحري"
+    },
+    "41": {
+      "name": "الخنجر القاتل",
+      "description": "تستخدم في الاغتيالات."
+    },
+    "42": {
+      "name": "شفرة فورتكس",
+      "description": "يحمل اسم maelstrom مكثفة."
+    },
+    "43": {
+      "name": "ميس",
+      "description": "نادي دائري مع طفرات معدنية."
+    },
+    "44": {
+      "name": "الفلل",
+      "description": "كرة حديدية تتجبث من سلسلة\t"
+    },
+    "45": {
+      "name": "مطرقة الحرب",
+      "description": "مطرقة فولاذية مصنوعة للمعركة"
+    },
+    "46": {
+      "name": "ميثريل ميس",
+      "description": "ميثريل مايس مصنوع من المعدن السحري"
+    },
+    "47": {
+      "name": "قواطع الأرض",
+      "description": "يمكن للأرض أن تكسر من هذه المطرقة السحرية."
+    },
+    "48": {
+      "name": "مشنقة المطرقة",
+      "description": "\"الكسارة\" هي ما أطلق عليه إله الحرب هذا."
+    },
+    "49": {
+      "name": "وود الموظفين",
+      "description": "طاقم عمل قوي مصنوع من البلوط."
+    },
+    "50": {
+      "name": "ماجيك الموظفين",
+      "description": "يساعد الجرم المرتبط بهذا الطاقم في صب السحر."
+    },
+    "51": {
+      "name": "عصا القوة",
+      "description": "الفضة تضخيم المصبوب السحري من هذه الوطوط"
+    },
+    "52": {
+      "name": "ميثريل رود",
+      "description": "قضيب ميثريل مصنوع من المعدن السحري"
+    },
+    "53": {
+      "name": "فريق عمل الروح",
+      "description": "عباءة مصنوعة من شجرة قديمة من الضلباب"
+    },
+    "54": {
+      "name": "عصا سحرية أزرت",
+      "description": "عصا سحرية مدمجة مع حجر الفيلسوف"
+    },
+    "55": {
+      "name": "فلينت لوك",
+      "description": "مسدس تحف مع دعامة غير تقليدي."
+    },
+    "56": {
+      "name": "المسكت",
+      "description": "مسدس يستخدمه الفرسان"
+    },
+    "57": {
+      "name": "دراغون",
+      "description": "تستخدم من قبل الفرسان."
+    },
+    "58": {
+      "name": "ميثريل بندقية",
+      "description": "بندقية ميثريل مصنوعة من المعدن السحري."
+    },
+    "59": {
+      "name": "صانعة السلام",
+      "description": "مسدس دوار يستخدم مسحوق أسود."
+    },
+    "60": {
+      "name": "مدفع إيثربلاست",
+      "description": "مسدس سحري يطلق الرصاص من لا شيء"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Tangan Axe",
+      "description": "Axe kecil yang digunakan untuk memanen kayu."
+    },
+    "2": {
+      "name": "Pertempuran Axe",
+      "description": "Double-sided kapak dibuat untuk pertempuran."
+    },
+    "3": {
+      "name": "Bardiche",
+      "description": "Tiga pisau crescent pada kapak ini."
+    },
+    "4": {
+      "name": "Mithril Axe",
+      "description": "Axe Mithril terbuat dari mineral ajaib."
+    },
+    "5": {
+      "name": "Crimson Axe",
+      "description": "Crimson basah axe pertempuran."
+    },
+    "6": {
+      "name": "Gigant Axe",
+      "description": "Keleluke berat yang digunakan oleh raksasa."
+    },
+    "7": {
+      "name": "Cestus",
+      "description": "Paku muncul di kepala sarung tangan ini."
+    },
+    "8": {
+      "name": "Bagna",
+      "description": "Memerangi senjata dengan empat paku pendek."
+    },
+    "9": {
+      "name": "Cakar Besi",
+      "description": "cakarnya terbuat dari baja."
+    },
+    "10": {
+      "name": "Mithril Cakar",
+      "description": "Mithril cakar yang terbuat dari mineral ajaib."
+    },
+    "11": {
+      "name": "Naga Fang",
+      "description": "Kepala cakar terbuat dari taring naga."
+    },
+    "12": {
+      "name": "Zephyrus Cakar",
+      "description": "Empat angin memberdayakan cakar ini."
+    },
+    "13": {
+      "name": "Tombak",
+      "description": "Tombak pendek."
+    },
+    "14": {
+      "name": "Partisan",
+      "description": "Tombak panjang dengan pisau panjang."
+    },
+    "15": {
+      "name": "Halberd",
+      "description": "Sebuah kapak dipasang pada tombak ini."
+    },
+    "16": {
+      "name": "Mithril Tombak",
+      "description": "Tombak Mithril terbuat dari mineral ajaib."
+    },
+    "17": {
+      "name": "Lance Suci",
+      "description": "Roh putih memberkati tombak suci ini."
+    },
+    "18": {
+      "name": "Gaebulg Tombak",
+      "description": "Berisi sihir bayangan yang sangat terukir."
+    },
+    "19": {
+      "name": "Pedang Pendek",
+      "description": "Pedang pendek yang ringan dan mudah digunakan."
+    },
+    "20": {
+      "name": "Pedang Panjang",
+      "description": "Kekuatan pedang tempur terpanjang."
+    },
+    "21": {
+      "name": "Falcion",
+      "description": "Pedang yang lebar dengan pisau sabit."
+    },
+    "22": {
+      "name": "Pedang Mithril",
+      "description": "Pedang Mitril terbuat dari mineral ajaib."
+    },
+    "23": {
+      "name": "Pisau Rune",
+      "description": "Ukiran dengan rune ajaib."
+    },
+    "24": {
+      "name": "Pedang Tyrfing",
+      "description": "Pedang sihir yang membawa kemenangan atas kejahatan."
+    },
+    "25": {
+      "name": "Katana",
+      "description": "Memiliki prasasti pedang ramping."
+    },
+    "26": {
+      "name": "Zanbatou",
+      "description": "Pedang yang sangat baik dengan kekuatan destruktif."
+    },
+    "27": {
+      "name": "Toratouru",
+      "description": "Sebuah pedang pendek ditempa dengan embun beku."
+    },
+    "28": {
+      "name": "Reigin tidak Tachi",
+      "description": "Magic katana terbuat dari mineral ajaib."
+    },
+    "29": {
+      "name": "Shichishitou",
+      "description": "Pedang kuno dengan kekuatan tersembunyi."
+    },
+    "30": {
+      "name": "Muramasa Katana",
+      "description": "Pedang iblis yang menghisap kehidupan pengguna."
+    },
+    "31": {
+      "name": "Shortbow",
+      "description": "Sebuah shortbow dibuat untuk berburu."
+    },
+    "32": {
+      "name": "busur panjang",
+      "description": "Bentuk melingkar memberikan kekuatannya."
+    },
+    "33": {
+      "name": "busur silang",
+      "description": "Menembak baut panah dari tali yang kuat."
+    },
+    "34": {
+      "name": "Mithril Busur",
+      "description": "Mithril busur terbuat dari mineral ajaib."
+    },
+    "35": {
+      "name": "Ebon Bow",
+      "description": "Sebuah busur yang terbuat dari roh-roh bumi."
+    },
+    "36": {
+      "name": "Artemis Bow",
+      "description": "Sebuah busur dibuat untuk berburu.Sebuah busur yang menyandang nama Dewi Bulan."
+    },
+    "37": {
+      "name": "Pina",
+      "description": "Pisau run-of-the-mill Anda."
+    },
+    "38": {
+      "name": "Belati",
+      "description": "Belati dengan pisau besar yang dibuat untuk pertempuran."
+    },
+    "39": {
+      "name": "Gauche Utama",
+      "description": "Pisau digunakan untuk menangkis serangan."
+    },
+    "40": {
+      "name": "Mithril Pisau",
+      "description": "Pisau Mithril terbuat dari mineral ajaib."
+    },
+    "41": {
+      "name": "Pembunuh Belati",
+      "description": "Digunakan untuk pembunuhan."
+    },
+    "42": {
+      "name": "Pisau Vortex",
+      "description": "menyandang nama pusaran yang intens."
+    },
+    "43": {
+      "name": "Mace",
+      "description": "Sebuah klub melingkar dengan paku logam."
+    },
+    "44": {
+      "name": "Flail",
+      "description": "Sebuah bola besi menggantung dari rantai.\t"
+    },
+    "45": {
+      "name": "Perang Palu",
+      "description": "Sebuah palu baja dibuat untuk pertempuran."
+    },
+    "46": {
+      "name": "Mithril Mace",
+      "description": "Mithril mace terbuat dari mineral ajaib."
+    },
+    "47": {
+      "name": "Pemutusan Tanah",
+      "description": "Bumi bisa retak dari palu ajaib ini."
+    },
+    "48": {
+      "name": "Mourner Hammer",
+      "description": "The \"Crusher\" adalah apa yang Tuhan Perang dijuluki ini."
+    },
+    "49": {
+      "name": "Staf Kayu",
+      "description": "Staf yang kokoh terbuat dari pohon ek."
+    },
+    "50": {
+      "name": "Staf Sihir",
+      "description": "Sebuah bola yang melekat pada staf ini membantu dengan casting magic."
+    },
+    "51": {
+      "name": "Tongkat Kekuatan",
+      "description": "Perak memperkuat magic cast dari tongkat ini."
+    },
+    "52": {
+      "name": "Mitril Rod",
+      "description": "Tongkat Mithril terbuat dari mineral ajaib."
+    },
+    "53": {
+      "name": "Staf Roh",
+      "description": "Sebuah tongkat yang terbuat dari pohon tua mistletoe."
+    },
+    "54": {
+      "name": "Ajaib Wand Azert",
+      "description": "Tongkat ajaib tertanam dengan Batu Filsuf."
+    },
+    "55": {
+      "name": "Kunci Flint",
+      "description": "Pistol antik dengan brace funky."
+    },
+    "56": {
+      "name": "Musket",
+      "description": "Sebuah pistol yang digunakan oleh musketeers."
+    },
+    "57": {
+      "name": "Dragoon",
+      "description": "Digunakan oleh kavaleri."
+    },
+    "58": {
+      "name": "Mithril Senjata",
+      "description": "Pistol Mithril terbuat dari mineral ajaib."
+    },
+    "59": {
+      "name": "Pembuat Perdamaian",
+      "description": "pistol yang berputar yang menggunakan bubuk hitam."
+    },
+    "60": {
+      "name": "Eterblast Senjata",
+      "description": "Sebuah pistol ajaib yang menembakkan peluru dari ketiadaan."
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "ハンドアックス",
+      "description": "木材の収穫に使用される小さな斧。"
+    },
+    "2": {
+      "name": "バトルアックス",
+      "description": "戦闘用に作られた両面斧。"
+    },
+    "3": {
+      "name": "バルディーチェ",
+      "description": "この斧に3つの三日月の刃。"
+    },
+    "4": {
+      "name": "ミトリル・アックス",
+      "description": "魔法のミネラルで作られたミトリル斧。"
+    },
+    "5": {
+      "name": "クリムゾンアキセ",
+      "description": "クリムゾンド・バトル・アックス"
+    },
+    "6": {
+      "name": "ギガンテス斧",
+      "description": "巨人が使う重い斧。"
+    },
+    "7": {
+      "name": "セストゥス",
+      "description": "この手袋の頭にスパイクが現れます。"
+    },
+    "8": {
+      "name": "バグナ",
+      "description": "短い釘を4本で戦う武器。"
+    },
+    "9": {
+      "name": "鉄の爪",
+      "description": "爪は鋼で作られています。"
+    },
+    "10": {
+      "name": "ミトリル・クロー",
+      "description": "魔法のミネラルで作られたミトリルの爪。"
+    },
+    "11": {
+      "name": "ドラゴンファング",
+      "description": "爪頭はドラゴンの牙で作られています。"
+    },
+    "12": {
+      "name": "ゼフィラス法",
+      "description": "4つの風がこの爪に力を与える。"
+    },
+    "13": {
+      "name": "槍",
+      "description": "短い槍"
+    },
+    "14": {
+      "name": "パルティス",
+      "description": "長い刃を持つ長い槍。"
+    },
+    "15": {
+      "name": "ハルバード",
+      "description": "この槍に斧が取り付けられています。"
+    },
+    "16": {
+      "name": "ミトリル・スピアー",
+      "description": "魔法の鉱物で作られたミトリル槍。"
+    },
+    "17": {
+      "name": "聖なるランス",
+      "description": "白い霊がこの聖なる槍を祝福した。"
+    },
+    "18": {
+      "name": "ゲバルグ・スピアー",
+      "description": "深く刻まれた影の魔法が含まれています。"
+    },
+    "19": {
+      "name": "ショートソード",
+      "description": "軽くて使いやすい短刀。"
+    },
+    "20": {
+      "name": "ロングソード",
+      "description": "最長の戦闘剣の強さ。"
+    },
+    "21": {
+      "name": "ファルシオン",
+      "description": "三日月刃の広い剣。"
+    },
+    "22": {
+      "name": "ミトリル剣",
+      "description": "魔法の鉱物で作られたミトリルの剣。"
+    },
+    "23": {
+      "name": "ルーンブレード",
+      "description": "魔法のランで刻まれた"
+    },
+    "24": {
+      "name": "ティルフィン・ソード",
+      "description": "悪に勝利をもたらす魔法の剣。"
+    },
+    "25": {
+      "name": "カタナ",
+      "description": "細身の剣の碑文を持っています。"
+    },
+    "26": {
+      "name": "ザンバトウ",
+      "description": "破壊力を持った優れた剣"
+    },
+    "27": {
+      "name": "虎鶴",
+      "description": "霜で和らげられた短剣"
+    },
+    "28": {
+      "name": "礼吟の達",
+      "description": "魔法の鉱物で作られた魔法のカタナ。"
+    },
+    "29": {
+      "name": "七人派",
+      "description": "隠された力を持つ古代の剣。"
+    },
+    "30": {
+      "name": "村政カタナ",
+      "description": "操る者の命を吸う悪魔の剣。"
+    },
+    "31": {
+      "name": "ショートボウ",
+      "description": "狩猟用に作られたショートボウ。"
+    },
+    "32": {
+      "name": "ロングボウ",
+      "description": "円形は強さを与えます。"
+    },
+    "33": {
+      "name": "クロスボウ",
+      "description": "強い文字列からクロスボウボルトを撃ちます。"
+    },
+    "34": {
+      "name": "ミトリル・ボウ",
+      "description": "魔法のミネラルで作られたミトリルの弓。"
+    },
+    "35": {
+      "name": "エボン・ボウ",
+      "description": "大地の精霊から作られた弓。"
+    },
+    "36": {
+      "name": "アルテミス・ボウ",
+      "description": "狩猟用に作られたショートボウ。月の女神の名前を冠した弓。"
+    },
+    "37": {
+      "name": "ナイフ",
+      "description": "君のラン・オブ・ザ・ミル・ナイフ"
+    },
+    "38": {
+      "name": "ダガー",
+      "description": "戦闘用に作られた大きな刃を持つ短剣。"
+    },
+    "39": {
+      "name": "メインゴーシュ",
+      "description": "攻撃をかわすために使用されるナイフ。"
+    },
+    "40": {
+      "name": "ミトリルナイフ",
+      "description": "魔法のミネラルで作られたミトリルナイフ。"
+    },
+    "41": {
+      "name": "アサシン・ダガー",
+      "description": "暗殺に使われた"
+    },
+    "42": {
+      "name": "ボルテックスブレード",
+      "description": "激しい大混乱の名前をはがします。"
+    },
+    "43": {
+      "name": "メイケ",
+      "description": "金属スパイクを持つ円形のクラブ。"
+    },
+    "44": {
+      "name": "フレイル",
+      "description": "鎖からぶら下がった鉄球。\t"
+    },
+    "45": {
+      "name": "ウォーハンマー",
+      "description": "戦闘用に作られたスチールハンマー。"
+    },
+    "46": {
+      "name": "ミトリル・メイス",
+      "description": "魔法のミネラルで作られたミトリル・メイス。"
+    },
+    "47": {
+      "name": "グラウンドブレーカー",
+      "description": "地球はこの魔法のハンマーから割れる。"
+    },
+    "48": {
+      "name": "ミュナーハンマー",
+      "description": "「クラッシャー」は、ゴッド・オブ・ウォーがこれをあだ名したものです。"
+    },
+    "49": {
+      "name": "ウッドスタッフ",
+      "description": "オーク製の丈夫なスタッフ。"
+    },
+    "50": {
+      "name": "マジックスタッフ",
+      "description": "このスタッフに取り付けられた orbは、キャスティングマジックに役立ちます。"
+    },
+    "51": {
+      "name": "フォースワンド",
+      "description": "銀はこの杖から魔法のキャストを増幅します。"
+    },
+    "52": {
+      "name": "ミトリル・ロッド",
+      "description": "魔法のミネラルで作られたミトリルロッド。"
+    },
+    "53": {
+      "name": "スピリットスタッフ",
+      "description": "ヤドリギの古い木から作られたケイン。"
+    },
+    "54": {
+      "name": "マジックワンド・アザート",
+      "description": "賢者の石が埋め込まれた魔法の杖。"
+    },
+    "55": {
+      "name": "フリント・ロック",
+      "description": "ファンキーブレース付きアンティークピストル。"
+    },
+    "56": {
+      "name": "マスケット",
+      "description": "銃器が使う銃"
+    },
+    "57": {
+      "name": "ドラゴン",
+      "description": "騎兵隊が使う"
+    },
+    "58": {
+      "name": "ミトリル・ガン",
+      "description": "魔法の鉱物で作られたミトリル銃。"
+    },
+    "59": {
+      "name": "ピースメーカー",
+      "description": "ブラックパウダーを使用した回転ピストル。"
+    },
+    "60": {
+      "name": "イーサブラストガン",
+      "description": "何もないから弾丸を撃つ魔法の銃。"
+    }
+  }
+}

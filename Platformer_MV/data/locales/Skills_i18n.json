@@ -1,0 +1,57 @@
+{
+  "en": {
+    "1": {
+      "name": "Attack",
+      "message1": "The attack!",
+      "note": "Skill number one is used when the \n is selected for the [Attack] command."
+    },
+    "2": {
+      "name": "Defensive",
+      "message1": "They are protecting themselves.",
+      "note": "Skill number two is used when the \n is selected for the Defend command."
+    },
+    "3": {
+      "name": "Consecutive Attacks",
+      "message1": "The attack!"
+    },
+    "4": {
+      "name": "Two attacks.",
+      "message1": "The attack!"
+    },
+    "5": {
+      "name": "Three attacks.",
+      "message1": "The attack!"
+    },
+    "6": {
+      "name": "Run away.",
+      "message1": "I ran away."
+    },
+    "7": {
+      "name": "See how it goes",
+      "message1": "I'm watching."
+    },
+    "8": {
+      "name": "Heels",
+      "message1": "I said a %1!"
+    },
+    "9": {
+      "name": "Fire",
+      "message1": "I said a %1!",
+      "note": "<bulletanime: 67>"
+    },
+    "10": {
+      "name": "Spark",
+      "message1": "I said a %1!"
+    },
+    "11": {
+      "name": "Wall Reflective Bullets",
+      "message1": "The attack!",
+      "note": "<map_reflect>\n<time_bomb:12 0 0.1 20 1 1 12>\n<gravity:0.004>"
+    },
+    "12": {
+      "name": "Penetrating bullets",
+      "message1": "The attack!",
+      "note": "<map_through>\n"
+    }
+  }
+}

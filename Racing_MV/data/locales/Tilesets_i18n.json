@@ -1,0 +1,22 @@
+{
+  "en": {
+    "1": {
+      "name": "Field"
+    },
+    "2": {
+      "name": "Appearance"
+    },
+    "3": {
+      "name": "Interior"
+    },
+    "4": {
+      "name": "Dungeon"
+    },
+    "5": {
+      "name": "Near-future appearance"
+    },
+    "6": {
+      "name": "Interior of the Near Future"
+    }
+  }
+}

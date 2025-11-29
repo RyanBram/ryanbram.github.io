@@ -1,0 +1,46 @@
+{
+  "en": {
+    "1": {
+      "name": "Attack",
+      "message1": "The attack!",
+      "note": "Skill number one is used when the Attack command is selected."
+    },
+    "2": {
+      "name": "Defensive",
+      "message1": "They are protecting themselves.",
+      "note": "Skill number two is used when the {{NEWLINE}} command is selected."
+    },
+    "3": {
+      "name": "Consecutive Attacks",
+      "message1": "The attack!"
+    },
+    "4": {
+      "name": "Two attacks.",
+      "message1": "The attack!"
+    },
+    "5": {
+      "name": "Three attacks.",
+      "message1": "The attack!"
+    },
+    "6": {
+      "name": "Run away.",
+      "message1": "I ran away."
+    },
+    "7": {
+      "name": "See how it goes",
+      "message1": "I'm watching."
+    },
+    "8": {
+      "name": "Heels",
+      "message1": "I said one percent!"
+    },
+    "9": {
+      "name": "Fire",
+      "message1": "I said one percent!"
+    },
+    "10": {
+      "name": "Spark",
+      "message1": "I said one percent!"
+    }
+  }
+}

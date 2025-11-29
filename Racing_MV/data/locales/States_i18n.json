@@ -1,0 +1,60 @@
+{
+  "en": {
+    "1": {
+      "name": "Unable to fight.",
+      "message1": "It's fallen!",
+      "message2": "I defeated you!",
+      "message4": "Stand up!",
+      "note": "The first state is automatically added to the {{NEWLINE}} when the HP is zero."
+    },
+    "2": {
+      "name": "Defensive"
+    },
+    "3": {
+      "name": "Immortals"
+    },
+    "4": {
+      "name": "Poison",
+      "message1": "It was poisoned!",
+      "message2": "I poisoned him!",
+      "message4": "The poison is gone!"
+    },
+    "5": {
+      "name": "Dark",
+      "message1": "It was locked in the dark!",
+      "message2": "I closed it in the dark!",
+      "message4": "The darkness is gone!"
+    },
+    "6": {
+      "name": "Silence",
+      "message1": "It was silent!",
+      "message2": "I silenced him!",
+      "message4": "The silence has been cleared!"
+    },
+    "7": {
+      "name": "激昂",
+      "message1": "I was raging!",
+      "message2": "You made me smittrag!",
+      "message4": "It came back to me!"
+    },
+    "8": {
+      "name": "Confused",
+      "message1": "I was confused!",
+      "message2": "It confused me!",
+      "message4": "It came back to me!"
+    },
+    "9": {
+      "name": "Fascinating",
+      "message1": "I was fascinated!",
+      "message2": "It captivated me!",
+      "message4": "It came back to me!"
+    },
+    "10": {
+      "name": "Sleep",
+      "message1": "I'm asleep!",
+      "message2": "I put him to sleep!",
+      "message3": "is sleeping.",
+      "message4": "I'm awake!"
+    }
+  }
+}

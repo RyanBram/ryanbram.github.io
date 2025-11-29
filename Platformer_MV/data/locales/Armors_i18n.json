@@ -1,0 +1,24 @@
+{
+  "en": {
+    "1": {
+      "name": "Shield",
+      "note": "<guard_speed: 30>"
+    },
+    "2": {
+      "name": "Hats"
+    },
+    "3": {
+      "name": "Clothes"
+    },
+    "4": {
+      "name": "The two-step jump ring.",
+      "description": "A mysterious ring that can jump again in the air when worn.\n\\C[16] How to operate \\C[0] After jumping with X key, X key again in the air after jumping in the air",
+      "note": "<much_jump:1>"
+    },
+    "5": {
+      "name": "The wall-sto-wall ring.",
+      "description": "A mysterious ring that can kick and jump the wall when worn. \n\\C[16] How to operate \\C[0] After jumping with the X key, it is exposed to the wall while it is exposed to the wall.",
+      "note": "<wall_jump>"
+    }
+  }
+}

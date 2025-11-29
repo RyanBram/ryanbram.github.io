@@ -1,0 +1,689 @@
+{
+  "en": {
+    "1": {
+      "name": "Ald",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:0>\n<cardElement:0>\n<cardElement:0>\n<cardRare:3>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_1>"
+    },
+    "2": {
+      "name": "Nina",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:2>\n<cardElement:6\n<cardRation:3>\n<unitSkill:5>\n<partySkill>\n<card_2>\n<card_2>"
+    },
+    "3": {
+      "name": "Rob",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:1\n<cardElement:4>\n<cardRare:3>\n<unitSkill:7>\n<partySkill:8>\n<card_3>"
+    },
+    "4": {
+      "name": "Hayatemar",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:1\n<cardElement:5>\n<cardRare:3>\n<unitSkill:9>\n<partySkill>10\n<card_4>"
+    },
+    "5": {
+      "name": "Dilala",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:0>\n<cardElement:5\n<cardRare:3>\n<unitSkill:11>\n<partySkill>12>\n<card_5>"
+    },
+    "6": {
+      "name": "Gustav",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:0>\n<cardElement:4\n<cardRare:3>\n<unitSkill:13>\n<partySkill:14>\n<card_6>\n<card_6>"
+    },
+    "7": {
+      "name": "Isel",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:2>\n<cardElement:4\n<cardRare:3>\n<unitSkill:15>\n<partySkill: 16>\n<card_7>\n<card_7>"
+    },
+    "8": {
+      "name": "Night one.",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:1\n<cardElement:7>\n<cardRare:3>\n<unitSkill:17>\n<partySkill>18\n<card_8>"
+    },
+    "9": {
+      "name": "Sophie",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<card:3>\n<cardElement:3>\n<cardRare:3>\n<unitSkill:19>\n<partySkill>\n<partySkill>\n<card_9>"
+    },
+    "10": {
+      "name": "Frist",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:3>\n<unitSkill:21>\n<partySkill>:22\n<card_10>"
+    },
+    "11": {
+      "name": "Akja",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<card:3>\n<cardElement:7>\n<cardRare:3>\n<unitSkill:23>\n<partySkill:24\n<card_11>"
+    },
+    "12": {
+      "name": "Franz",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:1\n<cardElement:3>\n<cardRare:3>\n<unitSkill:25>\n<partySkill>\n<cardSkill>\n<card_12>"
+    },
+    "13": {
+      "name": "Marie",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<card:3>\n<cardElement:6>\n<cardRare:3>\n<unitSkill:27>\n<partySkill:28>\n<card_13>"
+    },
+    "14": {
+      "name": "Orhan",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:0>\n<cardElement:6\n<cardRare:3>\n<unitSkill:29>\n<partySkill>\n<card_1>\n<card_14>"
+    },
+    "15": {
+      "name": "チムグ",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:2>\n<cardElement:0>\n<cardRare:3>\n<unitSkill:31>\n<partySkill: 32\n<cardImage:card_15>"
+    },
+    "16": {
+      "name": "B2",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:0>\n<cardElement:3\n<cardRare:3>\n<unitSkill:33>\n<partySkill:34>\n<cardImage:card_16>"
+    },
+    "17": {
+      "name": "Angel",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:18>\n<cardAtk:2>\n<cardType:1>\n<cardElement:6\n<cardRare:1>\n<unitSkill:35>\n<unitSkill:36>\n<card_17>\n<card_17>"
+    },
+    "18": {
+      "name": "Assassin",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:14>\n<cardAtk:4>\n<cardType:0>\n<cardElement:7\n<cardRare:1>\n<unitSkill:37>\n<partySkill:38>\n<card_18>\n<card_18>"
+    },
+    "19": {
+      "name": "Komori",
+      "description": "Test",
+      "note": "<cardCost:2>\n<cardHp:13>\n<cardAtk:3>\n<cardType:1>\n<cardElement:7\n<cardRare:0>\n<unitSkill:39>\n<partySkill:40>\n<cardImage:card_19>"
+    },
+    "20": {
+      "name": "Behemoth",
+      "description": "Test",
+      "note": "<cardCost:4>\n<cardHp:19>\n<cardAtk:3>\n<cardType:2>\n<cardElement:4\n<cardRation:2>\n<unitSkill:41>\n<partySkill:42>\n<card_20>"
+    },
+    "21": {
+      "name": "Captain",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_21>"
+    },
+    "22": {
+      "name": "Cerberus",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_22>"
+    },
+    "23": {
+      "name": "Chimera",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_23>"
+    },
+    "24": {
+      "name": "Cokotris",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_24>"
+    },
+    "25": {
+      "name": "Dark Road",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_25>"
+    },
+    "26": {
+      "name": "The True Dark Road",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_26>"
+    },
+    "27": {
+      "name": "Death",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_27>"
+    },
+    "28": {
+      "name": "Demon",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_28>"
+    },
+    "29": {
+      "name": "Dragon",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_29>"
+    },
+    "30": {
+      "name": "Earth Spirit",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_30>"
+    },
+    "31": {
+      "name": "Ebil God",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_31>"
+    },
+    "32": {
+      "name": "Fairy",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_32>"
+    },
+    "33": {
+      "name": "Fanatic",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_33>"
+    },
+    "34": {
+      "name": "Fire Spirit",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_34>"
+    },
+    "35": {
+      "name": "Gargoyle",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_35>"
+    },
+    "36": {
+      "name": "Garuda",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_36>"
+    },
+    "37": {
+      "name": "Gyzer",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:37>\n<card_37>"
+    },
+    "38": {
+      "name": "General woman",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:77>\n<partySkill:78>\n<card_38>"
+    },
+    "39": {
+      "name": "General Man",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:79>\n<partySkill:80>\n<card_39>"
+    },
+    "40": {
+      "name": "Ghosts",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_40>"
+    },
+    "41": {
+      "name": "God",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_41>"
+    },
+    "42": {
+      "name": "Godes",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:"
+    },
+    "43": {
+      "name": "Hornet",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_43>"
+    },
+    "44": {
+      "name": "Imp",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_44>"
+    },
+    "45": {
+      "name": "Iron Giants",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_45>"
+    },
+    "46": {
+      "name": "Jellyfish",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardATK:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_46>"
+    },
+    "47": {
+      "name": "Ramia",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_47>"
+    },
+    "48": {
+      "name": "The Magician",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:48>"
+    },
+    "49": {
+      "name": "Mimic",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:49>\n<card_49>"
+    },
+    "50": {
+      "name": "Minotaur",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_50>"
+    },
+    "51": {
+      "name": "Aug",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_51>"
+    },
+    "52": {
+      "name": "Orcs",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_52>\n<card_52>"
+    },
+    "53": {
+      "name": "Plant",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_53>"
+    },
+    "54": {
+      "name": "Puppet",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_54>"
+    },
+    "55": {
+      "name": "Rat",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_55>"
+    },
+    "56": {
+      "name": "Rogue",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_56>"
+    },
+    "57": {
+      "name": "Sahagin",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_57>"
+    },
+    "58": {
+      "name": "Scorpioon",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:58>"
+    },
+    "59": {
+      "name": "Skull Dancer",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:59>"
+    },
+    "60": {
+      "name": "Slime",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_60>\n<card_60>"
+    },
+    "61": {
+      "name": "Snake",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_61>"
+    },
+    "62": {
+      "name": "Soldier",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_62>"
+    },
+    "63": {
+      "name": "Spider",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_63>"
+    },
+    "64": {
+      "name": "saccubus",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_64>"
+    },
+    "65": {
+      "name": "Swordman",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_65>"
+    },
+    "66": {
+      "name": "Vampires",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_66>"
+    },
+    "67": {
+      "name": "Water Spirit",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_67>"
+    },
+    "68": {
+      "name": "Warewolf",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_68>"
+    },
+    "69": {
+      "name": "Willowisp",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_69>"
+    },
+    "70": {
+      "name": "Wind Spirit",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_70>"
+    },
+    "71": {
+      "name": "Food ogre",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_71>"
+    },
+    "72": {
+      "name": "Abomination",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_72>"
+    },
+    "73": {
+      "name": "Archangel",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_73>"
+    },
+    "74": {
+      "name": "Army Soldier",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_74>"
+    },
+    "75": {
+      "name": "The bodyguard.",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_75>"
+    },
+    "76": {
+      "name": "Boss",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_76>"
+    },
+    "77": {
+      "name": "Butcher",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_77>"
+    },
+    "78": {
+      "name": "White Tiger",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_78>"
+    },
+    "79": {
+      "name": "The damned woman.",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_79>\n<card_79>"
+    },
+    "80": {
+      "name": "Demon Lord",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_80>"
+    },
+    "81": {
+      "name": "Dolls",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_81>"
+    },
+    "82": {
+      "name": "Doomscal",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_82>"
+    },
+    "83": {
+      "name": "Drone",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_83>"
+    },
+    "84": {
+      "name": "The Devil's Toys",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_84>"
+    },
+    "85": {
+      "name": "Fallen Angel",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_85>"
+    },
+    "86": {
+      "name": "Genbu",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_86>"
+    },
+    "87": {
+      "name": "Goth Lolli",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_87>"
+    },
+    "88": {
+      "name": "Inugami",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:1988>"
+    },
+    "89": {
+      "name": "The killer robot.",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_89>"
+    },
+    "90": {
+      "name": "Machine",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_90>"
+    },
+    "91": {
+      "name": "Mad Doctor",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_91>"
+    },
+    "92": {
+      "name": "Mecha Suit",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_92>"
+    },
+    "93": {
+      "name": "Nurse",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_93>"
+    },
+    "94": {
+      "name": "Parasite",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_94>"
+    },
+    "95": {
+      "name": "Demonic priest",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_95>"
+    },
+    "96": {
+      "name": "Qinglong",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_96>"
+    },
+    "97": {
+      "name": "Special Forces",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_97>\n<card_97>"
+    },
+    "98": {
+      "name": "The wandering soul.",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_98>"
+    },
+    "99": {
+      "name": "朱雀",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:99>\n<card_99>"
+    },
+    "100": {
+      "name": "Sweet Lolita",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardATK:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_100>\n<card_100>"
+    },
+    "101": {
+      "name": "Teddy Bear",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_101>"
+    },
+    "102": {
+      "name": "Tengu",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<card_102>"
+    },
+    "103": {
+      "name": "thugs",
+      "description": "Test",
+      "note": "<cardCest:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_103>"
+    },
+    "104": {
+      "name": "Fallen warriors",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4>\n<cardImage:card_104>"
+    },
+    "105": {
+      "name": "Yakuza",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRare:0>\n<unitSkill:3>\n<partySkill:4\n<cardImage:card_105>"
+    },
+    "106": {
+      "name": "Zombies.",
+      "description": "Test",
+      "note": "<cardCost:3>\n<cardHp:12>\n<cardAtk:3>\n<cardType:1>\n<cardElement:0>\n<cardRation:0>\n<unitSkill:213>\n<partySkill:214>\n<card_106>\n<card_10>"
+    },
+    "151": {
+      "name": "Mirror",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_1>\n<card_i1>"
+    },
+    "152": {
+      "name": "The clock.",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i2>"
+    },
+    "153": {
+      "name": "Throne",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i3>"
+    },
+    "154": {
+      "name": "World Map",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i4>"
+    },
+    "155": {
+      "name": "ツボ",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i5>"
+    },
+    "156": {
+      "name": "たる",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i6>"
+    },
+    "157": {
+      "name": "Water squee",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i7>"
+    },
+    "158": {
+      "name": "Crystal Ball",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i8>"
+    },
+    "159": {
+      "name": "Bed",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i9>"
+    },
+    "160": {
+      "name": "Make-up table",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i10>"
+    },
+    "161": {
+      "name": "Bookshelf",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<cardImage:card_i11>"
+    },
+    "162": {
+      "name": "Shield",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_1>\n<card_i12>"
+    },
+    "163": {
+      "name": "Carrots",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<cardSkill:304>\n<card_i13>"
+    },
+    "164": {
+      "name": "Paper",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_1>\n<cardSkill:304>\n<card_i14>"
+    },
+    "165": {
+      "name": "Grilled pork",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i15>"
+    },
+    "166": {
+      "name": "Fruit assorted",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i16>"
+    },
+    "167": {
+      "name": "Cookware",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i17>"
+    },
+    "168": {
+      "name": "酒",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<cardSkill:304>\n<card_i18>"
+    },
+    "169": {
+      "name": "Book of Adventure.",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i19>"
+    },
+    "170": {
+      "name": "Holy water.",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i20>"
+    },
+    "171": {
+      "name": "Gold bullion",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i21>"
+    },
+    "172": {
+      "name": "The bear doll.",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i22>"
+    },
+    "173": {
+      "name": "Girl's Doll",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<cardImage:card_i23>"
+    },
+    "174": {
+      "name": "Scoop",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i24>"
+    },
+    "175": {
+      "name": "つるはし",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i25>"
+    },
+    "176": {
+      "name": "Pendant",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i26>"
+    },
+    "177": {
+      "name": "Sarkrett",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i27>"
+    },
+    "178": {
+      "name": "Iron Helm",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i28>"
+    },
+    "179": {
+      "name": "Letter",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i29>"
+    },
+    "180": {
+      "name": "Lime",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:303>\n<partySkill:304>\n<card_i30>"
+    },
+    "181": {
+      "name": "Chimugu's bag",
+      "description": "Test",
+      "note": "<cardCost:1>\n<cardHp:3>\n<cardType:4>\n<cardRare:0>\n<unitSkill:363>\n<partySkill:364>\n<cardImage:card_i31>"
+    }
+  }
+}

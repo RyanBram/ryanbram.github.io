@@ -1,0 +1,138 @@
+{
+  "en": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002"
+    },
+    "3": {
+      "name": "EV003"
+    },
+    "4": {
+      "name": "EV004"
+    },
+    "5": {
+      "name": "EV005"
+    },
+    "6": {
+      "name": "EV006"
+    },
+    "7": {
+      "name": "EV007",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "You can set the width with the 'w' tag and the height with the 'h' tag for small-sized events."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "In this case, the memo field has been set to <w:0.25><h:0.5> for this event. The 'w' tag represents the width from the center to the left (or right), and the 'h' tag represents the height from the feet to the head."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "If the value is 1.0, it corresponds to one tile size (48 dots), and if it's 0.5, it represents the half size, which is 24 dots."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "8": {
+      "name": "EV008",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Lift Samples:"
+              ]
+            },
+            {
+              "parameters": [
+                "The memo field is set to <lift>gravity:0weight:99, and the autonomous movement type is \"Custom\" with a specified movement route."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "9": {
+      "name": "EV009"
+    },
+    "10": {
+      "name": "EV010"
+    },
+    "11": {
+      "name": "EV011",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "\\> \\C[16]← / →\\C[0] : Move \\C[16]↑ / ↓\\C[0] : Climb Ladder"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] : Jump \\C[16] C \\C[0] : Dash"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] Q / W \\C[0] : Change Character \\C[16] Z \\C[0] : Attack / Throw"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] ↓+ Z \\C[0] : Lift \\C[16] ↓(Long)\\C[0] : Defend"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "\\> \\C[16]Enter / Space\\C[0] : Confirm / Talk (Examine)"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] Esc / Num0 \\C[0] : Cancel / Open Menu"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] S \\C[0] : Use Item"
+              ]
+            },
+            {
+              "parameters": [
+                "\\> \\C[16] D \\C[0] : Check Log"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "12": {
+      "name": "EV012"
+    },
+    "13": {
+      "name": "EV013"
+    },
+    "14": {
+      "name": "EV014"
+    }
+  }
+}

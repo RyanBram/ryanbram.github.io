@@ -1,0 +1,364 @@
+{
+  "en": {
+    "1": {
+      "name": "Strike/Physical"
+    },
+    "2": {
+      "name": "Strikes/Effects"
+    },
+    "3": {
+      "name": "Blow/Fire"
+    },
+    "4": {
+      "name": "Blow/Ice"
+    },
+    "5": {
+      "name": "Stroke/Lightning"
+    },
+    "6": {
+      "name": "Slash/Physical"
+    },
+    "7": {
+      "name": "Slash/Effect"
+    },
+    "8": {
+      "name": "Slash/Fire"
+    },
+    "9": {
+      "name": "Slash/Ice"
+    },
+    "10": {
+      "name": "Slash/Thunder"
+    },
+    "11": {
+      "name": "Stabbing/Physical"
+    },
+    "12": {
+      "name": "Stabbing/Effects"
+    },
+    "13": {
+      "name": "Stabbing/flame"
+    },
+    "14": {
+      "name": "Stabbing/Ice"
+    },
+    "15": {
+      "name": "stinging/rain"
+    },
+    "16": {
+      "name": "Nails/Physical"
+    },
+    "17": {
+      "name": "Nails/Effects"
+    },
+    "18": {
+      "name": "Nails/Fire"
+    },
+    "19": {
+      "name": "Nails/Ice"
+    },
+    "20": {
+      "name": "Nails/Thunder"
+    },
+    "21": {
+      "name": "Strikes/Special Moves1"
+    },
+    "22": {
+      "name": "Strikes/Special Moves2"
+    },
+    "23": {
+      "name": "Slashing/Special Moves1"
+    },
+    "24": {
+      "name": "Slashing/Special Moves2"
+    },
+    "25": {
+      "name": "Slashing/Special Attacks3"
+    },
+    "26": {
+      "name": "stinging/Special Moves1"
+    },
+    "27": {
+      "name": "stinging/Special Moves2"
+    },
+    "28": {
+      "name": "Nails/Special Moves"
+    },
+    "29": {
+      "name": "Arrows/Special Moves"
+    },
+    "30": {
+      "name": "General Purpose / Special Moves 1"
+    },
+    "31": {
+      "name": "General Purpose / Special Moves2"
+    },
+    "32": {
+      "name": "Breathing"
+    },
+    "33": {
+      "name": "Pollen"
+    },
+    "34": {
+      "name": "Ultrasound"
+    },
+    "35": {
+      "name": "Fog"
+    },
+    "36": {
+      "name": "Song"
+    },
+    "37": {
+      "name": "咆哮"
+    },
+    "38": {
+      "name": "Foot payment"
+    },
+    "39": {
+      "name": "Body per body"
+    },
+    "40": {
+      "name": "閃光"
+    },
+    "41": {
+      "name": "Recovery/Non-consolidated1"
+    },
+    "42": {
+      "name": "Recovery/Non-consolidated2"
+    },
+    "43": {
+      "name": "Recovery/Overall1"
+    },
+    "44": {
+      "name": "Recovery/Overall2"
+    },
+    "45": {
+      "name": "Treatment/Non-consolidated1"
+    },
+    "46": {
+      "name": "Treatment/Non-consolidated2"
+    },
+    "47": {
+      "name": "Treatment/Overall1"
+    },
+    "48": {
+      "name": "Treatment/Overall2"
+    },
+    "49": {
+      "name": "Resuscitation1"
+    },
+    "50": {
+      "name": "Resuscitation 2"
+    },
+    "51": {
+      "name": "Reinforcement1"
+    },
+    "52": {
+      "name": "Reinforcements2"
+    },
+    "53": {
+      "name": "Reinforcements3"
+    },
+    "54": {
+      "name": "Weakness1"
+    },
+    "55": {
+      "name": "Weakness2"
+    },
+    "56": {
+      "name": "Weakness3"
+    },
+    "57": {
+      "name": "Cursed"
+    },
+    "58": {
+      "name": "Absorption"
+    },
+    "59": {
+      "name": "Poison"
+    },
+    "60": {
+      "name": "Dark"
+    },
+    "61": {
+      "name": "Silence"
+    },
+    "62": {
+      "name": "Sleep"
+    },
+    "63": {
+      "name": "Confused"
+    },
+    "64": {
+      "name": "Paralyzed"
+    },
+    "65": {
+      "name": "Immediate death"
+    },
+    "66": {
+      "name": "Flames/Non-consolidated1"
+    },
+    "67": {
+      "name": "Flames/Non-consolidated2"
+    },
+    "68": {
+      "name": "Flames/whole1"
+    },
+    "69": {
+      "name": "Fire and whole two."
+    },
+    "70": {
+      "name": "Fire and whole three."
+    },
+    "71": {
+      "name": "Ice/Non-consolidated1"
+    },
+    "72": {
+      "name": "Ice/Single2"
+    },
+    "73": {
+      "name": "Ice/Overall1"
+    },
+    "74": {
+      "name": "Ice/Overall2"
+    },
+    "75": {
+      "name": "Ice/Overall3"
+    },
+    "76": {
+      "name": "Thunder/Non-consolidated1"
+    },
+    "77": {
+      "name": "Thunder/Non-consolidated2"
+    },
+    "78": {
+      "name": "Thunder/Overall1"
+    },
+    "79": {
+      "name": "Lightning/Overall2"
+    },
+    "80": {
+      "name": "Thunder/Overall3"
+    },
+    "81": {
+      "name": "Water/unit1"
+    },
+    "82": {
+      "name": "Water/Non-consolidated2"
+    },
+    "83": {
+      "name": "Water/whole1"
+    },
+    "84": {
+      "name": "Water/Overall2"
+    },
+    "85": {
+      "name": "Water/Overall3"
+    },
+    "86": {
+      "name": "Sat/Non-consolidated1"
+    },
+    "87": {
+      "name": "Sat/Non-consolidated2"
+    },
+    "88": {
+      "name": "Sat/Overall1"
+    },
+    "89": {
+      "name": "Sat/Overall2"
+    },
+    "90": {
+      "name": "Sat/Overall3"
+    },
+    "91": {
+      "name": "Wind/Non-consolidated1"
+    },
+    "92": {
+      "name": "Wind/Single2"
+    },
+    "93": {
+      "name": "Wind/Overall1"
+    },
+    "94": {
+      "name": "Wind/Overall2"
+    },
+    "95": {
+      "name": "Wind/Overall3"
+    },
+    "96": {
+      "name": "Light/Non-consolidated1"
+    },
+    "97": {
+      "name": "Light/Non-consolidated2"
+    },
+    "98": {
+      "name": "Light/whole1"
+    },
+    "99": {
+      "name": "Light/Overall2"
+    },
+    "100": {
+      "name": "Light/whole3"
+    },
+    "101": {
+      "name": "Dark / Single1"
+    },
+    "102": {
+      "name": "Dark/Single2"
+    },
+    "103": {
+      "name": "Dark/whole1"
+    },
+    "104": {
+      "name": "Dark/whole two"
+    },
+    "105": {
+      "name": "Dark and whole three."
+    },
+    "106": {
+      "name": "Unattributed/Non-consolidated1"
+    },
+    "107": {
+      "name": "Unattributed/Non-consolidated2"
+    },
+    "108": {
+      "name": "Unattributed/Overall1"
+    },
+    "109": {
+      "name": "Unattributed/Overall2"
+    },
+    "110": {
+      "name": "Unattributed/Overall3"
+    },
+    "111": {
+      "name": "Shooting/one-off"
+    },
+    "112": {
+      "name": "Shooting/Shooting"
+    },
+    "113": {
+      "name": "Shooting/whole"
+    },
+    "114": {
+      "name": "Shooting/Special Moves"
+    },
+    "115": {
+      "name": "Laser/one-off"
+    },
+    "116": {
+      "name": "Laser/whole"
+    },
+    "117": {
+      "name": "Pillar of light1"
+    },
+    "118": {
+      "name": "Pillar of light2"
+    },
+    "119": {
+      "name": "Bullets of light."
+    },
+    "120": {
+      "name": "Radiation"
+    }
+  }
+}

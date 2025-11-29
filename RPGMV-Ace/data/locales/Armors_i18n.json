@@ -1,0 +1,728 @@
+{
+  "ar": {
+    "1": {
+      "name": "الملابس غير العارضة",
+      "description": "ملابس خفيفة الوزن جدا."
+    },
+    "2": {
+      "name": "أعلى جلدية",
+      "description": "مصنوعة من أفضل الجلود."
+    },
+    "3": {
+      "name": "غارب المغامر",
+      "description": "الملابس البالية التي يمكن أن تصمد أمام رحلة قاسية."
+    },
+    "4": {
+      "name": "جلد صلب",
+      "description": "سترة جلدية صلبة."
+    },
+    "5": {
+      "name": "بريغاندين",
+      "description": "ملابس مصنوعة من الفولاذ المقوى."
+    },
+    "6": {
+      "name": "باندانا",
+      "description": "قطعة قماش من شارة الرأس تحمي الرأس."
+    },
+    "7": {
+      "name": "جلد باندانا",
+      "description": "قبعة مصنوعة من الفراء."
+    },
+    "8": {
+      "name": "قبعة الفرو",
+      "description": "قبعة مصنوعة من الفراء."
+    },
+    "9": {
+      "name": "توربان",
+      "description": "قطعة قماش سميكة ملفوفة بشكل متكرر حول رأس المرء."
+    },
+    "10": {
+      "name": "غطاء ريشة",
+      "description": "قبعة أنيقة مع الريش من العديد من الطيور الجميلة."
+    },
+    "11": {
+      "name": "القطن روب",
+      "description": "رداء مصنوع من قضبان سميكة"
+    },
+    "12": {
+      "name": "عباءت الحرير",
+      "description": "عباءة مصنوعة من الحرير الناعم"
+    },
+    "13": {
+      "name": "رن روب",
+      "description": "رداء مبطنة محفورة بالهواة"
+    },
+    "14": {
+      "name": "هيرميت روب",
+      "description": "روب يرتديه رجل عجوز حكيم"
+    },
+    "15": {
+      "name": "عباءة عنصرية",
+      "description": "قوة الملك الروحية تسكن في هذا الرداء."
+    },
+    "16": {
+      "name": "النحاس بريس",
+      "description": "الحلي الشعر مصنوعة من النحاس."
+    },
+    "17": {
+      "name": "دائرة",
+      "description": "زخرفة على شكل حلقة مصنوعة من الحديد."
+    },
+    "18": {
+      "name": "دبوس الشعر الفضي",
+      "description": "ملحق الشعر الذي يعزز السحر."
+    },
+    "19": {
+      "name": "دائرة ميثريل",
+      "description": "دائرة ميثريل مصنوعة من المعدن السحري."
+    },
+    "20": {
+      "name": "تاج ماجي",
+      "description": "تمكينها من خلال قوة الحضارة السحرية القديمة."
+    },
+    "21": {
+      "name": "البريد الجلدي",
+      "description": "درع مصنوع من الجلد المتداخل."
+    },
+    "22": {
+      "name": "لوحة برونزية",
+      "description": "لوحة صدر مصنوعة من البرونز."
+    },
+    "23": {
+      "name": "لوحة الحديد",
+      "description": "لوحة صدر مصنوعة من الحديد."
+    },
+    "24": {
+      "name": "لوحة ميثريل",
+      "description": "لوحة الثدي ميثريل مصنوعة من المعدن السحري."
+    },
+    "25": {
+      "name": "لوحة التنين",
+      "description": "صفيحة صدر مصنوعة من مقاييس التنين."
+    },
+    "26": {
+      "name": "غطاء جلدي",
+      "description": "قبعة مصنوعة من الجلد."
+    },
+    "27": {
+      "name": "غطاء برونزي",
+      "description": "قبعة معززة مصنوعة من البرونز"
+    },
+    "28": {
+      "name": "ساريت",
+      "description": "قبعة مصنوعة من الفولاذ."
+    },
+    "29": {
+      "name": "ميثريل كاب",
+      "description": "قبعة ميثريل مصنوعة من المعدن السحري"
+    },
+    "30": {
+      "name": "كاب التنين",
+      "description": "قبعة مصنوعة من مقاييس التنين"
+    },
+    "31": {
+      "name": "سلسلة البريد",
+      "description": "درع مصنوع من سلاسل حديدية"
+    },
+    "32": {
+      "name": "الدروع الحديدية",
+      "description": "درع مصنوع من الفولاذ."
+    },
+    "33": {
+      "name": "لوحة البريد",
+      "description": "الفرسان يرتدون بريد لوحة."
+    },
+    "34": {
+      "name": "ميثريل أرمور",
+      "description": "درع ميثريل مصنوع من المعدن السحري"
+    },
+    "35": {
+      "name": "درع التنين",
+      "description": "درع مصنوع من مقاييس التنين"
+    },
+    "36": {
+      "name": "سلسلة هيلم",
+      "description": "خوذة مصنوعة من سلاسل حديدية."
+    },
+    "37": {
+      "name": "الدّهوم الحديدي",
+      "description": "خوذة مصنوعة من الفولاذ."
+    },
+    "38": {
+      "name": "نايت هيلم",
+      "description": "الفرسان يرتدون هذه القيادة"
+    },
+    "39": {
+      "name": "ميثريل هيلم",
+      "description": "(ميثريل هيرمي) مصنوع من المعدن السحري"
+    },
+    "40": {
+      "name": "دراغون هيلم",
+      "description": "خوذة مصنوعة من موازين التنين."
+    },
+    "41": {
+      "name": "باكر",
+      "description": "درع صغير يستخدم لدرء الهجمات."
+    },
+    "42": {
+      "name": "الدرع المستدير",
+      "description": "درع دائري بإطار فولاذي مقوى."
+    },
+    "43": {
+      "name": "سبايك شيلد",
+      "description": "درع مع المسامير على سطحه للمخالفة."
+    },
+    "44": {
+      "name": "ميثريل باكر",
+      "description": "ميثريل باكلر مصنوع من المعدن السحري"
+    },
+    "45": {
+      "name": "التنين باكر",
+      "description": "باكر مصنوع من مقاييس التنين."
+    },
+    "46": {
+      "name": "درع الخشب",
+      "description": "درع مصنوع من الخشب الصلب"
+    },
+    "47": {
+      "name": "الدرع الحديدي",
+      "description": "درع مصنوع من الفولاذ."
+    },
+    "48": {
+      "name": "نايت شيلد",
+      "description": "الفرسان يستخدمون هذا الدرع"
+    },
+    "49": {
+      "name": "ميثريل شيلد",
+      "description": "درع ميثريل مصنوع من المعدن السحري"
+    },
+    "50": {
+      "name": "دراجون شيلد",
+      "description": "درع مصنوع من مقاييس التنين"
+    },
+    "51": {
+      "name": "حرب حزام الله",
+      "description": "حزام معدني محفور مع اسم إله الحرب"
+    },
+    "52": {
+      "name": "قطعة دفاعية",
+      "description": "شنق في الغابة السحرية للدفاع."
+    },
+    "53": {
+      "name": "أحذية مجنحة",
+      "description": "الروح القدس للرياح تسكن في هذه الأحذية."
+    },
+    "54": {
+      "name": "احتضان الأرض",
+      "description": "قوة الأرض تحمي مرتديها."
+    },
+    "55": {
+      "name": "لاكي تشام",
+      "description": "سحر محفورة باسم إلهة الحظ"
+    },
+    "56": {
+      "name": "رمز مقدس",
+      "description": "رمز يرتديه أولئك الذين يخدمون الله."
+    },
+    "57": {
+      "name": "خاتم سليمان",
+      "description": "خاتم مع القوة الخفية للجني."
+    },
+    "58": {
+      "name": "قلادة أودين",
+      "description": "قلادة سحرية تمكن أولئك الذين يقاتلون."
+    },
+    "59": {
+      "name": "رقعة عين من الغضب",
+      "description": "رقعة عين يرتديها المتفترسون الأقوياء"
+    },
+    "60": {
+      "name": "تاليسان من الضوء",
+      "description": "ملك الآلهة يسكن في هذا التعويذة"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Pakaian Kasual",
+      "description": "Pakaian yang sangat ringan."
+    },
+    "2": {
+      "name": "Kulit Atas",
+      "description": "Dibuat dengan kulit yang terbaik."
+    },
+    "3": {
+      "name": "Garb Petualang",
+      "description": "Pakaian yang dipakai yang dapat menahan perjalanan yang keras."
+    },
+    "4": {
+      "name": "Kulit Keras",
+      "description": "Rompi kulit yang keras."
+    },
+    "5": {
+      "name": "Brigandine",
+      "description": "Pakaian yang dibuat dengan baja yang diperkuat."
+    },
+    "6": {
+      "name": "Bandana",
+      "description": "Kain ikat kepala yang melindungi kepala."
+    },
+    "7": {
+      "name": "Bandana Kulit",
+      "description": "Topi yang terbuat dari bulu."
+    },
+    "8": {
+      "name": "Bent bulu",
+      "description": "Topi yang terbuat dari bulu."
+    },
+    "9": {
+      "name": "Turban",
+      "description": "Kain tebal dibungkus berulang kali di sekitar kepala seseorang."
+    },
+    "10": {
+      "name": "Bulu Topan",
+      "description": "Topi bergaya dengan bulu dari banyak burung yang indah."
+    },
+    "11": {
+      "name": "Jubah Kapas",
+      "description": "Jubah yang terbuat dari teko tebal."
+    },
+    "12": {
+      "name": "Sutra Cloak",
+      "description": "Sebuah jubah yang terbuat dari sutra halus."
+    },
+    "13": {
+      "name": "Ditabrak Jubah",
+      "description": "Jubah bergaris terukir dengan rune."
+    },
+    "14": {
+      "name": "Hermit Robe",
+      "description": "Jubah yang dikenakan oleh orang tua yang bijaksana."
+    },
+    "15": {
+      "name": "Jubah elemental",
+      "description": "Kekuatan raja roh berdiam di jubah ini."
+    },
+    "16": {
+      "name": "Tembaga Brace",
+      "description": "Ornamen rambut terbuat dari tembaga."
+    },
+    "17": {
+      "name": "Lingkaran",
+      "description": "Sebuah ornamen berbentuk cincin yang terbuat dari besi."
+    },
+    "18": {
+      "name": "Pentalan Rambut Perak",
+      "description": "Aksesori rambut yang meningkatkan sihir."
+    },
+    "19": {
+      "name": "Mithril Circlet",
+      "description": "Lingkaran Mithril terbuat dari mineral ajaib."
+    },
+    "20": {
+      "name": "Mahkota Magi",
+      "description": "Diberdayakan oleh kekuatan peradaban magis kuno."
+    },
+    "21": {
+      "name": "Surat Kulit",
+      "description": "Armor dibuat dengan kulit yang tumpang tindih."
+    },
+    "22": {
+      "name": "Piring Perunggu",
+      "description": "Sebuah breastplate terbuat dari perunggu."
+    },
+    "23": {
+      "name": "Piring Besi",
+      "description": "Sebuah breastplate terbuat dari besi."
+    },
+    "24": {
+      "name": "Piring Mithril",
+      "description": "Dada Mithril terbuat dari mineral ajaib."
+    },
+    "25": {
+      "name": "Piring Naga",
+      "description": "Sebuah breastplate terbuat dari sisik naga."
+    },
+    "26": {
+      "name": "Toping Kulit",
+      "description": "Topi yang terbuat dari kulit."
+    },
+    "27": {
+      "name": "Topi Perunggu",
+      "description": "Topi diperkuat yang dibuat dengan perunggu."
+    },
+    "28": {
+      "name": "Sarett",
+      "description": "Topi yang dibuat dengan baja."
+    },
+    "29": {
+      "name": "Mitril Cap",
+      "description": "Mithir cap terbuat dari mineral ajaib."
+    },
+    "30": {
+      "name": "Cap Naga",
+      "description": "Topi yang terbuat dari sisik naga."
+    },
+    "31": {
+      "name": "Rantai Surat",
+      "description": "Armor dibuat dengan rantai besi."
+    },
+    "32": {
+      "name": "Armor Besi",
+      "description": "Armor yang terbuat dari baja."
+    },
+    "33": {
+      "name": "Surat Pelat",
+      "description": "Ksatria memakai surat piring."
+    },
+    "34": {
+      "name": "Mithril Armour",
+      "description": "Mithril arm yang terbuat dari mineral ajaib."
+    },
+    "35": {
+      "name": "Armor Naga",
+      "description": "Armor terbuat dari sisik naga."
+    },
+    "36": {
+      "name": "Rantai Helm",
+      "description": "Helm yang terbuat dari rantai besi."
+    },
+    "37": {
+      "name": "Helm Besi",
+      "description": "Helm yang terbuat dari baja."
+    },
+    "38": {
+      "name": "Ksatria Helm",
+      "description": "Ksatria memakai helm ini."
+    },
+    "39": {
+      "name": "Mithril Helm",
+      "description": "Helm Mithril terbuat dari mineral ajaib."
+    },
+    "40": {
+      "name": "Pucuk Naga",
+      "description": "Helm yang terbuat dari sisik naga."
+    },
+    "41": {
+      "name": "Buckler",
+      "description": "Sebuah perisai kecil yang digunakan untuk menangkis serangan."
+    },
+    "42": {
+      "name": "Perisai Bulat",
+      "description": "Perisai melingkar dengan rangka baja yang diperkuat."
+    },
+    "43": {
+      "name": "Perisai Spike",
+      "description": "Sebuah perisai dengan paku di permukaannya untuk pelanggaran."
+    },
+    "44": {
+      "name": "Mithril Buckler",
+      "description": "Mithril buckler terbuat dari mineral ajaib."
+    },
+    "45": {
+      "name": "Naga Buckler",
+      "description": "Buckler terbuat dari sisik naga."
+    },
+    "46": {
+      "name": "Perisai Kayu",
+      "description": "Perisai yang dibuat dengan kayu keras."
+    },
+    "47": {
+      "name": "Perisai Besi",
+      "description": "Perisai yang terbuat dari baja."
+    },
+    "48": {
+      "name": "Perisai Ksatria",
+      "description": "Ksatria menggunakan perisai ini."
+    },
+    "49": {
+      "name": "Perisai Mithril",
+      "description": "Perisai Mithril yang terbuat dari mineral ajaib."
+    },
+    "50": {
+      "name": "Perisai Naga",
+      "description": "Perisai terbuat dari sisik naga."
+    },
+    "51": {
+      "name": "Sabuk Dewa Perang",
+      "description": "Sabuk logam diukir dengan nama Dewa Perang."
+    },
+    "52": {
+      "name": "Bagian Pertahanan",
+      "description": "Digantung di hutan sihir untuk pertahanan."
+    },
+    "53": {
+      "name": "Sepatu Bot bersayap",
+      "description": "Roh suci angin tinggal di sepatu bot ini."
+    },
+    "54": {
+      "name": "Pelukan Bumi",
+      "description": "Kekuatan bumi melindungi pemakainya."
+    },
+    "55": {
+      "name": "Keberuntungan Charm",
+      "description": "Pesona terukir dengan nama dewi keberuntungan."
+    },
+    "56": {
+      "name": "Simbol Suci",
+      "description": "Simbol yang dikenakan oleh orang-orang yang melayani Tuhan."
+    },
+    "57": {
+      "name": "Cincin dari Solomon",
+      "description": "Sebuah cincin dengan kekuatan tersembunyi dari jin."
+    },
+    "58": {
+      "name": "Neklace dari Odin",
+      "description": "Kalung ajaib yang memberdayakan mereka yang bertarung."
+    },
+    "59": {
+      "name": "Eyepatch dari Fury",
+      "description": "Sebuah eyepatch yang dikenakan oleh pengamen kuat."
+    },
+    "60": {
+      "name": "Talisman dari Cahaya",
+      "description": "Raja dewa tinggal di dalam jimat ini."
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "カジュアルな服",
+      "description": "非常に軽量な服。"
+    },
+    "2": {
+      "name": "レザートップ",
+      "description": "最高のレザーで作られています。"
+    },
+    "3": {
+      "name": "冒険者のガブ",
+      "description": "過酷な旅に耐えられる着用服。"
+    },
+    "4": {
+      "name": "ハードレザー",
+      "description": "硬化レザーベスト。"
+    },
+    "5": {
+      "name": "ブリガンディーヌ",
+      "description": "強化鋼で作られた服。"
+    },
+    "6": {
+      "name": "バンダナ",
+      "description": "ヘッドを保護するヘッドバンドクロス。"
+    },
+    "7": {
+      "name": "レザーバンダナ",
+      "description": "毛皮で作られた帽子。"
+    },
+    "8": {
+      "name": "毛皮帽子",
+      "description": "毛皮で作られた帽子。"
+    },
+    "9": {
+      "name": "ターバン",
+      "description": "太い布が頭の周りに繰り返し巻き付けた。"
+    },
+    "10": {
+      "name": "フェザーキャップ",
+      "description": "多くの美しい鳥からの羽を持つスタイリッシュな帽子。"
+    },
+    "11": {
+      "name": "コットンローブ",
+      "description": "厚いコッテンで作られたローブ。"
+    },
+    "12": {
+      "name": "シルククローク",
+      "description": "上質な絹で作られたマント。"
+    },
+    "13": {
+      "name": "ルーン・ローブ",
+      "description": "ランが刻まれた裏地付きのローブ。"
+    },
+    "14": {
+      "name": "ハーミット・ローブ",
+      "description": "賢い老人が着ていたローブ"
+    },
+    "15": {
+      "name": "エレメンタル・クローク",
+      "description": "霊王の力はこのローブに宿る。"
+    },
+    "16": {
+      "name": "銅の支柱",
+      "description": "銅製の髪飾り。"
+    },
+    "17": {
+      "name": "サークルト",
+      "description": "鉄製のリング型の飾り。"
+    },
+    "18": {
+      "name": "シルバーヘアピン",
+      "description": "魔法を高めるヘアアクセサリー。"
+    },
+    "19": {
+      "name": "ミトリル・サークルト",
+      "description": "魔法のミネラルで作られたミトリルサークルト。"
+    },
+    "20": {
+      "name": "マジの王冠",
+      "description": "古代の魔法の文明の力によって力づけられて"
+    },
+    "21": {
+      "name": "レザーメール",
+      "description": "重なるレザーで作られたアーマー。"
+    },
+    "22": {
+      "name": "ブロンズプレート",
+      "description": "ブロンズ製の胸当て。"
+    },
+    "23": {
+      "name": "鉄板",
+      "description": "鉄製の胸当て。"
+    },
+    "24": {
+      "name": "ミトリルプレート",
+      "description": "魔法のミネラルで作られたミトリルの胸当て。"
+    },
+    "25": {
+      "name": "ドラゴンプレート",
+      "description": "ドラゴンスケールで作られた胸当て。"
+    },
+    "26": {
+      "name": "レザーキャップ",
+      "description": "革で作った帽子。"
+    },
+    "27": {
+      "name": "ブロンズキャップ",
+      "description": "ブロンズ製の強化帽子。"
+    },
+    "28": {
+      "name": "サレット",
+      "description": "スチール製の帽子"
+    },
+    "29": {
+      "name": "ミトリル・キャップ",
+      "description": "魔法のミネラルで作られたミトリルキャップ。"
+    },
+    "30": {
+      "name": "ドラゴンキャップ",
+      "description": "ドラゴンスケールで作られた帽子。"
+    },
+    "31": {
+      "name": "チェーンメール",
+      "description": "鉄の鎖で作られた装甲。"
+    },
+    "32": {
+      "name": "アイアンアーマー",
+      "description": "鋼鉄製の装甲"
+    },
+    "33": {
+      "name": "プレートメール",
+      "description": "騎士はプレートメールを着用します。"
+    },
+    "34": {
+      "name": "ミトリル・アーマー",
+      "description": "魔法の鉱物で作られたミトリルの鎧。"
+    },
+    "35": {
+      "name": "ドラゴンアーマー",
+      "description": "ドラゴンスケールから作られた鎧。"
+    },
+    "36": {
+      "name": "チェーンヘルム",
+      "description": "鉄の鎖で作られたヘルメット"
+    },
+    "37": {
+      "name": "アイアンヘルム",
+      "description": "スチール製のヘルメット"
+    },
+    "38": {
+      "name": "ナイトヘルム",
+      "description": "騎士はこのヘルメットをかぶる。"
+    },
+    "39": {
+      "name": "ミトリル・ヘルム",
+      "description": "魔法のミネラルで作られたミトリルヘルム。"
+    },
+    "40": {
+      "name": "ドラゴンヘルム",
+      "description": "ドラゴンスケールで作られたヘルメット。"
+    },
+    "41": {
+      "name": "バックラー",
+      "description": "攻撃をかわすために使用される小さな盾。"
+    },
+    "42": {
+      "name": "ラウンドシールド",
+      "description": "強化スチールフレームを備えた円形シールド。"
+    },
+    "43": {
+      "name": "スパイク・シールド",
+      "description": "攻撃のためにその表面にスパイクを持つシールド。"
+    },
+    "44": {
+      "name": "ミトリル・バックラー",
+      "description": "魔法のミネラルで作られたミトリルバックラー。"
+    },
+    "45": {
+      "name": "ドラゴンバックラー",
+      "description": "ドラゴンスケールで作られたバックラー。"
+    },
+    "46": {
+      "name": "ウッドシールド",
+      "description": "硬い木で作った盾。"
+    },
+    "47": {
+      "name": "アイアンシールド",
+      "description": "スチール製のシールド。"
+    },
+    "48": {
+      "name": "ナイトシールド",
+      "description": "騎士はこの盾を使う。"
+    },
+    "49": {
+      "name": "ミトリル・シールド",
+      "description": "魔法のミネラルで作られたミトリルシールド。"
+    },
+    "50": {
+      "name": "ドラゴンシールド",
+      "description": "ドラゴンスケールで作られたシールド。"
+    },
+    "51": {
+      "name": "戦争の神のベルト",
+      "description": "戦争神の名前が刻まれた金属ベルト。"
+    },
+    "52": {
+      "name": "ディフェンスピース",
+      "description": "防衛のために魔法の森にぶら下がっています。"
+    },
+    "53": {
+      "name": "翼のあるブーツ",
+      "description": "風の聖霊は、このブーツに宿る。"
+    },
+    "54": {
+      "name": "地球の抱擁",
+      "description": "地球の力が着用者を守る"
+    },
+    "55": {
+      "name": "ラッキーチャーム",
+      "description": "運の女神の名前が刻まれた魅力。"
+    },
+    "56": {
+      "name": "聖なるシンボル",
+      "description": "神に仕える者が身に着けているシンボル。"
+    },
+    "57": {
+      "name": "ソロモンの指輪",
+      "description": "天才の隠れた力を持つ指輪。"
+    },
+    "58": {
+      "name": "オーディンのネックレス",
+      "description": "戦う者に力を与える魔法のネックレス。"
+    },
+    "59": {
+      "name": "フューリーの眼球",
+      "description": "強力なバーサーが着用するアイパッチ。"
+    },
+    "60": {
+      "name": "タリスマン・オブ・ライト",
+      "description": "神々の王は、このお守りに宿る。"
+    }
+  }
+}

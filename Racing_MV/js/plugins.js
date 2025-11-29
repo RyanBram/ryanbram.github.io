@@ -3,5 +3,6 @@
 var $plugins =
 [
 {"name":"MadeWithMv","status":false,"description":"メイン画面へ進む前に、\"Made with MV\"のスプラッシュ画面もしくはカスタマイズされたスプラッシュ画面を表示します。","parameters":{"Show Made With MV":"true","Made with MV Image":"MadeWithMv","Show Custom Splash":"false","Custom Image":"","Fade Out Time":"120","Fade In Time":"120","Wait Time":"160"}},
-{"name":"RaceBattle","status":true,"description":"レースバトル","parameters":{}}
+{"name":"RaceBattle","status":true,"description":"レースバトル","parameters":{}},
+{"name":"rpg_locale","status":true,"description":"[2.0.0] Multi-language support using i18n mapping files.","parameters":{"Available Languages":"jp,en,id","Language Names":"日本語,English,Indonesian","Default Language":"jp","Locale Folder Path":"locales","Option Name":"Language","Enable Word Wrap":"true","Preserve Manual Line Breaks":"false"}}
 ];

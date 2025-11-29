@@ -1,174 +1,674 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="viewport" content="user-scalable=no" />
-        <link rel="icon" href="icon/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="icon/icon.png" />
-        <link rel="stylesheet" type="text/css" href="fonts/gamefont.css" />
-        <title>RPG MV Ace</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Project Ace - ALPHA</title>
+        <link rel="icon" href="./icon/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="./icon/icon.png" />
+        <style>
+            /* --- CSS Variables and Global Styles --- */
+            :root {
+                --bg: #0f1724;
+                --panel: #0b1220;
+                --accent: #06b6d4;
+                --muted: #9aa6b2;
+            }
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+                overflow: hidden; /* Prevent scrollbar */
+            }
+            body {
+                background: linear-gradient(180deg, #071026 0%, #071428 100%);
+                color: #e6eef6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 18px;
+                box-sizing: border-box; /* Include padding in height calculation */
+            }
+
+            /* --- Main Player Layout --- */
+            .player-container {
+                width: 100%;
+                max-width: 1100px;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.15));
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
+                display: flex;
+                flex-direction: column;
+                height: 100%; /* Changed from 90vh to 100% to fit parent */
+                max-height: 100%; /* Ensure it doesn't exceed */
+                position: relative; /* Needed for positioning the handle */
+            }
+            .game-screen {
+                position: relative;
+                background: black;
+                flex: 1;
+                min-height: 0;
+            }
+
+            /* --- Cover Overlay (YouTube-style) --- */
+            .game-cover-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            .game-cover-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+                visibility: hidden;
+            }
+            .cover-art-background {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                opacity: 0.6;
+            }
+            .cover-art-background.no-image {
+                display: none;
+            }
+            .play-overlay-button {
+                position: relative;
+                z-index: 3;
+                background: rgba(0, 0, 0, 0.7);
+                border: 3px solid white;
+                border-radius: 50%;
+                width: 100px;
+                height: 100px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                /* Use transform instead of flex for better compatibility */
+                transition: all 0.3s ease;
+                padding: 0;
+                /* Ensure button is always visible */
+                flex-shrink: 0;
+            }
+            .play-overlay-button:hover {
+                background: rgba(6, 182, 212, 0.8);
+                transform: scale(1.1);
+                border-color: var(--accent);
+            }
+            .play-overlay-button svg {
+                /* Ensure SVG is properly centered in NW.js */
+                display: block;
+                margin: 0 auto;
+            }
+
+            .game-iframe {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                display: block;
+                background: #000;
+                object-fit: contain;
+                overflow: hidden; /* Hide scrollbar */
+            }
+
+            /* Hide scrollbar inside iframe content */
+            .game-iframe::-webkit-scrollbar {
+                display: none;
+            }
+            .game-iframe {
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+
+            /* --- Controls Bar --- */
+            .controls-bar {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 10px;
+                background: var(--panel);
+                user-select: none; /* Standard syntax */
+                -webkit-user-select: none; /* Safari */
+                -ms-user-select: none; /* IE 10 and IE 11 */
+                transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+                flex-shrink: 0; /* Prevent control bar from shrinking */
+            }
+            .controls-bar--hidden {
+                transform: translateY(100%);
+            }
+            .controls-right-group {
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                margin-left: auto;
+            }
+            .control-button {
+                background: transparent;
+                border: 0;
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                color: var(--muted);
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 600;
+                justify-content: center;
+            }
+            #playReloadButton {
+                width: 95px;
+            }
+            .control-button:hover {
+                color: var(--accent);
+                transform: translateY(-1px);
+            }
+            .icon {
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+            }
+            .volume-control {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .volume-control input[type="range"] {
+                width: 85px;
+                cursor: pointer;
+            }
+
+            /* --- Controls Bar Handle (for hiding/showing in fullscreen) --- */
+            .controls-handle {
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 20px;
+                background-color: var(--panel);
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                cursor: pointer;
+                z-index: 5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--muted);
+                transition: opacity 0.3s, visibility 0.3s, background 0.3s ease-in-out;
+            }
+            .controls-handle:hover {
+                color: var(--accent);
+            }
+            .controls-handle.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            /* --- Fullscreen Mode Specific Styles --- */
+            .player-container:fullscreen .controls-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 10;
+                background: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+            .player-container:fullscreen .virtual-gamepad {
+                bottom: 65px; /* Adjust gamepad position in fullscreen to be above the controls */
+            }
+            .player-container:fullscreen .controls-handle {
+                background-color: rgba(11, 18, 32, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+
+            /* --- Virtual Gamepad Layout --- */
+            .virtual-gamepad {
+                position: absolute;
+                left: 18px;
+                bottom: 18px;
+                right: 18px;
+                pointer-events: none;
+                z-index: 5; /* Above iframe but below controls bar */
+                /* Remove 'top: 0' - let it auto-size based on content height */
+                /* This prevents blocking touch events in areas without buttons */
+            }
+
+            /* Ensure gamepad is completely hidden when not active */
+            .virtual-gamepad.hidden {
+                display: none !important;
+                visibility: hidden;
+                opacity: 0;
+            }
+            .virtual-gamepad > .shoulder-buttons,
+            .virtual-gamepad > .main-gamepad-controls {
+                position: absolute;
+                left: 0;
+                right: 0;
+                pointer-events: none; /* Change to none, let only buttons handle touch */
+            }
+
+            /* Enable pointer-events only on actual buttons */
+            .virtual-gamepad button {
+                pointer-events: auto;
+            }
+
+            /* --- Gamepad Shoulder Buttons (L & R) --- */
+            .shoulder-buttons {
+                display: flex;
+                justify-content: space-between;
+                /* Desktop: max at 50vh (middle of screen), Mobile: align with action buttons */
+                /* Calculate: D-pad height (50px * 3 + 6px * 2 = 162px) + action buttons top row (50px) + some spacing */
+                /* On mobile, position from bottom should be ~212px to align top of L/R with bottom of B button */
+                bottom: min(50vh, calc(50px * 3 + 6px * 2 + 50px));
+            }
+            .shoulder-buttons button {
+                width: 120px;
+                height: 45px;
+                border-radius: 8px;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(80, 80, 90, 0.5);
+                color: #e6eef6;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            /* --- Gamepad D-Pad and Action Buttons Container --- */
+            .main-gamepad-controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                bottom: 0;
+            }
+
+            /* --- Gamepad D-Pad --- */
+            .dpad {
+                display: grid;
+                grid-template-columns: repeat(3, 50px);
+                grid-template-rows: repeat(3, 50px);
+                gap: 6px;
+            }
+            .dpad button {
+                width: 50px;
+                height: 50px;
+                border-radius: 8px;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(93, 93, 93, 0.5);
+                color: #e6eef6;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.2s;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .dpad .center {
+                background: transparent;
+                border: 0;
+            }
+            .dpad .dpad-diag {
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* --- Gamepad SNES-style Action Buttons --- */
+            .action-buttons {
+                display: grid;
+                width: 180px;
+                height: 180px;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                align-items: center;
+                justify-items: center;
+            }
+            .action-buttons button {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                color: #fff;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .snes-y {
+                grid-area: 2 / 1;
+                background-color: #5cb85cbc;
+            } /* Blue */
+            .snes-x {
+                grid-area: 1 / 2;
+                background-color: #0078c2c3;
+            } /* Green */
+            .snes-b {
+                grid-area: 3 / 2;
+                background-color: #f0ac4eb9;
+            } /* Red */
+            .snes-a {
+                grid-area: 2 / 3;
+                background-color: #d9544fb5;
+            } /* Yellow */
+
+            /* --- Utility Classes --- */
+            button.active {
+                background: rgba(6, 182, 212, 0.6) !important;
+                transform: scale(0.95);
+            }
+            .hidden {
+                display: none;
+            }
+
+            /* --- Responsive Design Adjustments --- */
+
+            /* Hide button labels only in portrait mode to save space */
+            @media (orientation: portrait) {
+                .button-label {
+                    display: none;
+                }
+                .control-button {
+                    padding: 8px;
+                    min-width: 36px;
+                }
+                #playReloadButton {
+                    width: auto;
+                }
+                .controls-bar {
+                    gap: 6px;
+                    padding: 8px 10px;
+                }
+                .volume-control input[type="range"] {
+                    width: 70px;
+                }
+            }
+
+            @media (max-width: 700px) {
+                .dpad button,
+                .dpad .dpad-diag,
+                .action-buttons button {
+                    width: 44px;
+                    height: 44px;
+                }
+                .action-buttons {
+                    width: 150px;
+                    height: 150px;
+                }
+                .shoulder-buttons button {
+                    width: 90px;
+                    height: 40px;
+                }
+                /* On mobile, align L/R buttons with the top of bottom action row (B button) */
+                /* Calculate: D-pad height (44px * 3 + 6px * 2 = 144px) + B button position (44px from bottom row) */
+                .shoulder-buttons {
+                    bottom: calc(44px * 3 + 6px * 2 + 44px);
+                }
+            }
+
+            /* Further reduce spacing on very small screens */
+            @media (max-width: 500px) {
+                .controls-bar {
+                    gap: 6px;
+                    padding: 8px;
+                }
+                .controls-right-group {
+                    gap: 6px;
+                }
+                .volume-control {
+                    gap: 6px;
+                }
+                .volume-control input[type="range"] {
+                    width: 60px;
+                }
+            }
+
+            /* --- Portrait Mode: Game Boy Classic Layout --- */
+            @media (orientation: portrait) and (max-width: 700px) {
+                body {
+                    padding: 0;
+                }
+
+                .player-container {
+                    max-width: 100%;
+                    height: 100vh;
+                    border-radius: 0;
+                    flex-direction: column;
+                }
+
+                /* Game screen takes upper half */
+                .game-screen {
+                    flex: 0 0 50vh;
+                    min-height: 50vh;
+                    max-height: 50vh;
+                }
+
+                /* Virtual gamepad repositioned for bottom half */
+                .virtual-gamepad {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    top: 50vh;
+                    background: linear-gradient(180deg, rgba(15, 23, 36, 0.95), rgba(11, 18, 32, 0.98));
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: stretch;
+                    padding: 10px; /* Reduced from 20px */
+                    box-sizing: border-box;
+                }
+
+                /* Reposition shoulder buttons for portrait */
+                .shoulder-buttons {
+                    position: relative;
+                    bottom: auto;
+                    top: 0;
+                    margin-bottom: 20px;
+                    width: 100%;
+                    max-width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 0 10px; /* Reduced padding */
+                    box-sizing: border-box;
+                }
+
+                /* Main controls stay with space-between */
+                .main-gamepad-controls {
+                    position: relative;
+                    bottom: auto;
+                    width: 100%;
+                    max-width: 100%;
+                    padding: 0 10px; /* Reduced padding */
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    box-sizing: border-box;
+                    gap: 10px; /* Add gap between D-pad and actions */
+                }
+
+                /* Controls bar stays at bottom with small height */
+                .controls-bar {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 20;
+                    padding: 6px 8px;
+                    gap: 6px;
+                }
+
+                /* Adjust button sizes for portrait - smaller to fit screen */
+                .dpad {
+                    grid-template-columns: repeat(3, 44px);
+                    grid-template-rows: repeat(3, 44px);
+                    gap: 4px;
+                }
+
+                .dpad button,
+                .dpad .dpad-diag {
+                    width: 44px;
+                    height: 44px;
+                }
+
+                .action-buttons {
+                    width: 140px; /* Reduced from 160px */
+                    height: 140px;
+                }
+
+                .action-buttons button {
+                    width: 44px; /* Reduced from 48px */
+                    height: 44px;
+                }
+
+                .shoulder-buttons button {
+                    width: 90px; /* Reduced from 100px */
+                    height: 38px;
+                    font-size: 14px;
+                }
+            }
+        </style>
     </head>
-    <body style="background-color: black">
-        <!-- Platform Detection & Auto-Redirect Script -->
-        <script type="text/javascript">
-            (function () {
-                /**
-                 * ======================================
-                 * PLATFORM CONFIGURATION
-                 * ======================================
-                 */
-                const CONFIG = {
-                    // Auto-redirect to player.html when in web browser?
-                    autoRedirectInWeb: true,
+    <body>
+        <div class="player-container" id="playerContainer">
+            <div class="game-screen" id="gameScreen">
+                <!-- Cover Overlay (YouTube-style) -->
+                <div class="game-cover-overlay" id="gameCoverOverlay">
+                    <div id="coverArtBackground" class="cover-art-background"></div>
+                    <button class="play-overlay-button" id="playOverlayButton" title="Play Game">
+                        <svg viewBox="0 0 24 24" width="80" height="80" fill="white">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+                </div>
 
-                    // Target redirect
-                    redirectTarget: "player.html",
+                <iframe id="gameIframe" class="game-iframe" src="about:blank" allowfullscreen></iframe>
 
-                    // Delay before redirect (ms) - set 0 for instant
-                    redirectDelay: 0,
+                <div class="virtual-gamepad hidden" id="virtualGamepad" aria-hidden="true">
+                    <section class="shoulder-buttons">
+                        <button data-key="PageUp">L</button>
+                        <button data-key="PageDown">R</button>
+                    </section>
+                    <div class="main-gamepad-controls">
+                        <section class="dpad" role="group" aria-label="D-pad">
+                            <button class="dpad-diag" data-key-diag="ArrowUp,ArrowLeft"></button>
+                            <button data-key="ArrowUp">▲</button>
+                            <button class="dpad-diag" data-key-diag="ArrowUp,ArrowRight"></button>
+                            <button data-key="ArrowLeft">◀</button>
+                            <div class="center"></div>
+                            <button data-key="ArrowRight">▶</button>
+                            <button class="dpad-diag" data-key-diag="ArrowDown,ArrowLeft"></button>
+                            <button data-key="ArrowDown">▼</button>
+                            <button class="dpad-diag" data-key-diag="ArrowDown,ArrowRight"></button>
+                        </section>
+                        <section class="action-buttons">
+                            <button class="snes-y" data-key="Space">Y</button>
+                            <button class="snes-x" data-key="Escape">X</button>
+                            <button class="snes-b" data-key="Enter">B</button>
+                            <button class="snes-a" data-key="Shift">A</button>
+                        </section>
+                    </div>
+                </div>
+            </div>
 
-                    // Show console logs for debugging?
-                    debugMode: true,
+            <div class="controls-bar" id="controlsBar">
+                <button class="control-button" id="playReloadButton" title="Play" aria-pressed="false">
+                    <span class="icon" id="playButtonIcon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </span>
+                    <span id="playButtonLabel" class="button-label">Play</span>
+                </button>
 
-                    // Force mode (for testing)
-                    forceWebMode: false, // true = force redirect to player.html
-                    forceDesktopMode: false, // true = force stay on index.html (disable redirect)
-                };
+                <button class="control-button" id="stopButton" title="Stop">
+                    <span class="icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <rect x="6" y="6" width="12" height="12" rx="1" />
+                        </svg>
+                    </span>
+                    <span class="button-label">Stop</span>
+                </button>
 
-                /**
-                 * ======================================
-                 * PLATFORM DETECTION (Do not edit)
-                 * ======================================
-                 */
+                <div class="volume-control">
+                    <button class="control-button" id="muteButton" title="Mute">
+                        <span id="volumeIcon" class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <span id="muteIcon" class="icon hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+                                ></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="100" title="Volume" />
+                </div>
 
-                // Check for overrides first
-                if (CONFIG.forceDesktopMode) {
-                    if (CONFIG.debugMode) {
-                        console.log("🔧 Platform: Forced Desktop Mode (override active)");
-                    }
-                    return; // Stay on index.html
-                }
+                <div class="controls-right-group">
+                    <button class="control-button" id="toggleGamepadButton" title="Toggle Gamepad" aria-pressed="false">
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zm9 0l-3 3 3 3H22V9h-5.5zm-3 7.5L9 16.5V22h6v-5.5z"
+                                ></path>
+                            </svg>
+                        </span>
+                        <span class="button-label">Gamepad</span>
+                    </button>
 
-                if (CONFIG.forceWebMode) {
-                    if (CONFIG.debugMode) {
-                        console.log("🔧 Platform: Forced Web Mode (override active)");
-                        console.log("🌐 Redirecting to " + CONFIG.redirectTarget + "...");
-                    }
-                    setTimeout(function () {
-                        window.location.href = CONFIG.redirectTarget;
-                    }, CONFIG.redirectDelay);
-                    return;
-                }
-
-                // Check if running in an iframe
-                const isInIframe = window.self !== window.top;
-                if (isInIframe) {
-                    if (CONFIG.debugMode) {
-                        console.log("📺 Running in iframe. Skipping redirect.");
-                    }
-                    return;
-                }
-
-                // Auto-detection
-                // Check for NW.js
-                const isNWjs = typeof nw !== "undefined" && nw.App;
-
-                // Check for Electron
-                const isElectron = typeof process !== "undefined" && process.versions && process.versions.electron;
-
-                // Check for Cordova
-                const isCordova = typeof cordova !== "undefined" || typeof window.cordova !== "undefined";
-
-                // Detect if running as desktop app
-                const isDesktopApp = isNWjs || isElectron || isCordova;
-
-                // Log detection results
-                if (CONFIG.debugMode) {
-                    console.log("=== Platform Detection ===");
-                    console.log("NW.js:", isNWjs);
-                    console.log("Electron:", isElectron);
-                    console.log("Cordova:", isCordova);
-                    console.log("Desktop App:", isDesktopApp);
-                    console.log("Auto-redirect enabled:", CONFIG.autoRedirectInWeb);
-                    console.log("========================");
-                }
-
-                // If running in web browser and auto-redirect is enabled
-                if (!isDesktopApp && CONFIG.autoRedirectInWeb) {
-                    if (CONFIG.debugMode) {
-                        console.log("🌐 Web browser detected! Redirecting to " + CONFIG.redirectTarget + "...");
-                    }
-
-                    // Delay to ensure console message is visible and smooth transition
-                    setTimeout(function () {
-                        window.location.href = CONFIG.redirectTarget;
-                    }, CONFIG.redirectDelay);
-
-                    // Prevent game from loading
-                    return;
-                } else {
-                    if (CONFIG.debugMode) {
-                        console.log("🎮 Desktop app detected. Loading game...");
-                    }
-                }
-            })();
-        </script>
-        <script type="text/javascript" src="js/libs/pixi.js"></script>
-        <script type="text/javascript" src="js/libs/pixi-tilemap.js"></script>
-        <script type="text/javascript" src="js/libs/pixi-picture.js"></script>
-        <script type="text/javascript" src="js/libs/fpsmeter.js"></script>
-        <script type="text/javascript" src="js/libs/lz-string.js"></script>
-        <script type="text/javascript" src="js/libs/iphone-inline-video.browser.js"></script>
-        <script type="text/javascript" src="js/rpg_core.js"></script>
-        <script type="text/javascript" src="js/rpg_managers.js"></script>
-        <script type="text/javascript" src="js/rpg_objects.js"></script>
-        <script type="text/javascript" src="js/rpg_scenes.js"></script>
-        <script type="text/javascript" src="js/rpg_sprites.js"></script>
-        <script type="text/javascript" src="js/rpg_windows.js"></script>
-        <script type="text/javascript" src="js/plugins.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript">
-            // RPG Maker Event external Listener
-            window.addEventListener("message", (event) => {
-                const { type, key, keyEvent, value } = event.data;
-
-                if (type === "key" && key && keyEvent) {
-                    if (!window.Input || !window.Input.keyMapper) {
-                        return;
-                    }
-
-                    const keyCodeMap = {
-                        ArrowUp: 38,
-                        ArrowDown: 40,
-                        ArrowLeft: 37,
-                        ArrowRight: 39,
-                        Enter: 13,
-                        Escape: 27,
-                        Shift: 16,
-                        Space: 32,
-                        PageUp: 33,
-                        PageDown: 34,
-                    };
-
-                    const keyCode = keyCodeMap[key];
-                    if (!keyCode) return;
-
-                    const buttonName = window.Input.keyMapper[keyCode];
-                    if (!buttonName) return;
-
-                    if (keyEvent === "keydown") {
-                        window.Input._currentState[buttonName] = true;
-                    } else if (keyEvent === "keyup") {
-                        window.Input._currentState[buttonName] = false;
-                    }
-                } else if (type === "volume") {
-                    if (window.AudioManager) {
-                        window.AudioManager.masterVolume = parseInt(value, 10) / 100;
-                    }
-                }
-            });
-        </script>
+                    <button class="control-button" id="fullscreenButton" title="Fullscreen">
+                        <span class="icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path
+                                    d="M7 14H5v5h5v-2H7v-3zm12 5h-5v-2h3v-3h2v5zM5 5v5h2V7h3V5H5zm14 0h-5v2h3v3h2V5z"
+                                />
+                            </svg>
+                        </span>
+                        <span class="button-label">Fullscreen</span>
+                    </button>
+                </div>
+            </div>
+            <div class="controls-handle hidden" id="controlsHandle" title="Show controls">
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="m18 15-6-6-6 6" />
+                </svg>
+            </div>
+        </div>
+        <script src="js/libs/panel.js"></script>
     </body>
 </html>

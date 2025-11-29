@@ -1,0 +1,575 @@
+{
+  "ar": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002",
+      "pages": [
+        null,
+        {
+          "list": [
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "ماذا تريد أن تفعل؟"
+              ]
+            },
+            {
+              "parameters": [
+                [
+                  "التسوق",
+                  "مقدمة",
+                  "معركة",
+                  "لعب ميدي"
+                ]
+              ]
+            },
+            {
+              "parameters": [
+                null,
+                "التسوق"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "مقدمة"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "معركة"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "لعب ميدي"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "لعب MIDI"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "3": {
+      "name": "EV003",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "دعونا نمسك العدو!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "أول مكافأة الحياة في \\v[15] نقاط."
+              ]
+            },
+            {
+              "parameters": [
+                "بعد مكافأة يعيش كل \\v[16] نقطة."
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "لقد ربحت المسرح!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "لماذا استسلمت؟"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "لقد خسرت."
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "نتيجتك هي \\v[1] بعد \\v[4] بعد عتارات \\v[4]"
+              ]
+            },
+            {
+              "parameters": [
+                "لقد توفيت \\v[2] مرات واستخدمت قنابل \\v[3]"
+              ]
+            },
+            {
+              "parameters": [
+                "نسبة ضربات الرصاص الخاصة بك هي \\v[5]}٪."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "لقد قتلت أعداء {PRTK\\v[6]}}"
+              ]
+            },
+            {
+              "parameters": [
+                "\\v[7] الأعداء تمكنوا من الفرار."
+              ]
+            },
+            {
+              "parameters": [
+                "لقد تحطمت ضد الأعداء {PRTK\\v[8]}}"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "لقد تخلصت أيضًا من نتيجتك على وحدة تحكم المتصفح"
+              ]
+            },
+            {
+              "parameters": [
+                "سجل."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "id": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002",
+      "pages": [
+        null,
+        {
+          "list": [
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Apa yang ingin kau lakukan?"
+              ]
+            },
+            {
+              "parameters": [
+                [
+                  "Belanja",
+                  "Pendahuluan",
+                  "Pertempuran",
+                  "Bermain Midi"
+                ]
+              ]
+            },
+            {
+              "parameters": [
+                null,
+                "Belanja"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "Pendahuluan"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "Pertempuran"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "Bermain Midi"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Bermain MIDI"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "3": {
+      "name": "EV003",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Mari kita tangkap musuh!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Kehidupan bonus pertama di \\v[15] poin."
+              ]
+            },
+            {
+              "parameters": [
+                "Mengikuti bonus hidup setiap {{PRTK\\[16]}} poin."
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Anda memenangkan panggung!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Mengapa kau menyerah?"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Kau kalah."
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "Skor Anda adalah \\v[1] setelah \\v[4] retries."
+              ]
+            },
+            {
+              "parameters": [
+                "Anda mati {{PRTK\\[2]}} kali dan menggunakan \\v[3] bom."
+              ]
+            },
+            {
+              "parameters": [
+                "Rasio hit peluru Anda adalah \\v[5]%."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Anda membunuh \\v[6] musuh."
+              ]
+            },
+            {
+              "parameters": [
+                "\\v[7] musuh berhasil melarikan diri."
+              ]
+            },
+            {
+              "parameters": [
+                "Anda menabrak musuh \\v[8]."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Saya juga membuang hasil Anda di konsol browser Anda"
+              ]
+            },
+            {
+              "parameters": [
+                "log."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002",
+      "pages": [
+        null,
+        {
+          "list": [
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "何をしたいの?"
+              ]
+            },
+            {
+              "parameters": [
+                [
+                  "ショッピング",
+                  "紹介",
+                  "バトル",
+                  "ミディをプレイする"
+                ]
+              ]
+            },
+            {
+              "parameters": [
+                null,
+                "ショッピング"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "紹介"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "バトル"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "ミディをプレイする"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "MIDIをプレイする"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "3": {
+      "name": "EV003",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "敵を捕まえよう!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "\\v[15] ポイントでの最初のボーナスライフ。"
+              ]
+            },
+            {
+              "parameters": [
+                "ボーナスは、すべての \\v[16] ポイントを生きる。"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "ステージを勝ち取った!"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "なぜ諦めたのか。"
+              ]
+            },
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "負けたね"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "スコアは \\v[1] の retries の後の \\v[1] です。"
+              ]
+            },
+            {
+              "parameters": [
+                "あなたは \\v[2] を何度も死亡し、\\v[3] 爆弾を使用しました。"
+              ]
+            },
+            {
+              "parameters": [
+                "弾丸のヒット率は \\v[5]% です。"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "敵を殺した \\v[6] 。"
+              ]
+            },
+            {
+              "parameters": [
+                "\\v[7] 敵は脱出に成功した。"
+              ]
+            },
+            {
+              "parameters": [
+                "\\v[8] 敵にぶつけました。"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "ブラウザのコンソールに結果もダンプしました"
+              ]
+            },
+            {
+              "parameters": [
+                "ログだ"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

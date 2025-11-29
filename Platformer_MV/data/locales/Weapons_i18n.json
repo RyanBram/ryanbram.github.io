@@ -1,0 +1,24 @@
+{
+  "en": {
+    "1": {
+      "name": "The sword.",
+      "description": "A close-range weapon that can attack the enemy in front of you. \n\\C[16] How to operate \\C[0] Z key",
+      "note": "<shot_way:1>\n<shot_index:7>\n<shot_count:-18>\n<shot_delay:20>\n<shot_se_name:Wind1>\n<shot_se_pitch:150>\n<weight:1>\n<weight:1>\n"
+    },
+    "2": {
+      "name": "Axe",
+      "description": "A close-range weapon that can attack the enemy in front of you. \n\\C[16] How to operate \\C[0] Z key",
+      "note": "<shot_way:2>\n<shot_space:0.3>\n<shot_index:7>\n<shot_count:-16>\n<shot_delay:20>\n<shot_delay:20>\n<shot_delay:20>\n<shot_\\s_name:Wind1>\n<shot_pitch:150>\n<weight:2>\n<weight:2>\n<weight:2>\n"
+    },
+    "3": {
+      "name": "The cane",
+      "description": "A remote weapon that can fly multiple magic bullets and attack distant enemies. \n\\C[16] How to operate \\C[0] Z key",
+      "note": "<shot_way:3>\n<shot_index:5>\n<shot_speed:0.05>\n<shot_count:-10>\n<shot_delay:30>\n<shot_delay:30>\n<shot_\\s_\\\"\n<shot_pitch:150>\n"
+    },
+    "4": {
+      "name": "Bow",
+      "description": "A remote weapon that can fly arrows and attack enemies far away. \n\\C[16] How to operate \\C[0] Z key",
+      "note": "<shot_way:1>\n<shot_index:6>\n<shot_speed:0.1>\n<shot_count:10>\n<shot_delay:50>\n<shot_se_name:CrossBow>\n"
+    }
+  }
+}

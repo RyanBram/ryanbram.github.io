@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Batch Translation Helper - Full Auto Mode</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-hover: #5849d1;
+                --secondary-color: #00b894;
+                --secondary-hover: #00a283;
+                --border-color: #ddd;
+                --background-light: #f4f4f9;
+                --background-white: #fff;
+                --text-dark: #333;
+                --text-light: #666;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: var(--background-light);
+                color: var(--text-dark);
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 800px;
+                background-color: var(--background-white);
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            /* Header */
+            .header {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .header p {
+                font-size: 14px;
+                opacity: 0.9;
+            }
+
+            /* Content */
+            .content {
+                padding: 40px;
+            }
+
+            .section {
+                margin-bottom: 30px;
+                padding: 25px;
+                border: 2px solid var(--border-color);
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+
+            .section:hover {
+                border-color: var(--primary-color);
+                box-shadow: 0 2px 10px rgba(108, 92, 231, 0.1);
+            }
+
+            .section-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 15px;
+                color: var(--text-dark);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .section-title .icon {
+                font-size: 20px;
+            }
+
+            /* File Upload Area */
+            .upload-area {
+                border: 2px dashed var(--border-color);
+                border-radius: 8px;
+                padding: 30px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                background-color: #fafafa;
+            }
+
+            .upload-area:hover {
+                border-color: var(--primary-color);
+                background-color: #f0efff;
+            }
+
+            .upload-area.drag-over {
+                border-color: var(--primary-color);
+                background-color: #f0efff;
+                transform: scale(1.02);
+            }
+
+            .upload-area.has-file {
+                border-color: var(--secondary-color);
+                background-color: #e8f8f5;
+            }
+
+            .upload-icon {
+                font-size: 48px;
+                margin-bottom: 10px;
+            }
+
+            .upload-text {
+                font-size: 16px;
+                font-weight: 500;
+                color: var(--text-dark);
+                margin-bottom: 5px;
+            }
+
+            .upload-hint {
+                font-size: 13px;
+                color: var(--text-light);
+            }
+
+            .file-input {
+                display: none;
+            }
+
+            .file-badge {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 8px 16px;
+                background-color: var(--secondary-color);
+                color: white;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            /* Language Selection */
+            .language-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .language-box {
+                position: relative;
+            }
+
+            .language-box label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--text-dark);
+            }
+
+            .custom-select {
+                position: relative;
+                width: 100%;
+            }
+
+            .select-selected {
+                padding: 12px 16px;
+                background-color: white;
+                border: 2px solid var(--border-color);
+                border-radius: 6px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s;
+            }
+
+            .select-selected:hover {
+                border-color: var(--primary-color);
+            }
+
+            .select-arrow {
+                margin-left: auto;
+                font-size: 12px;
+                transition: transform 0.3s;
+            }
+
+            .select-selected.active .select-arrow {
+                transform: rotate(180deg);
+            }
+
+            .select-items {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                border: 2px solid var(--primary-color);
+                border-top: none;
+                border-radius: 0 0 6px 6px;
+                max-height: 250px;
+                overflow-y: auto;
+                z-index: 99;
+                display: none;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .select-items.show {
+                display: block;
+            }
+
+            .select-item {
+                padding: 12px 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background-color 0.2s;
+            }
+
+            .select-item:hover {
+                background-color: var(--background-light);
+            }
+
+            .select-item.selected {
+                background-color: #e8f0ff;
+                font-weight: 600;
+            }
+
+            .flag-icon {
+                width: 24px;
+                height: 18px;
+                border-radius: 2px;
+                object-fit: cover;
+            }
+
+            /* Target Languages Button */
+            .target-languages-btn {
+                width: 100%;
+                padding: 12px 16px;
+                background-color: white;
+                border: 2px solid var(--border-color);
+                border-radius: 6px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s;
+                font-size: 14px;
+                color: var(--text-dark);
+            }
+
+            .target-languages-btn:hover {
+                border-color: var(--primary-color);
+                background-color: #f0efff;
+            }
+
+            .lang-count-badge {
+                margin-left: auto;
+                background-color: var(--primary-color);
+                color: white;
+                border-radius: 12px;
+                padding: 2px 10px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            /* Modal */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal-content {
+                background-color: white;
+                border-radius: 12px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+                display: flex;
+                flex-direction: column;
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid var(--primary-color);
+            }
+
+            .modal-header h2 {
+                margin: 0;
+                font-size: 20px;
+                color: var(--text-dark);
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #999;
+                padding: 0;
+                width: 35px;
+                height: 35px;
+                line-height: 1;
+                transition: color 0.2s;
+            }
+
+            .modal-close:hover {
+                color: var(--text-dark);
+            }
+
+            .language-list {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 20px;
+                overflow-y: auto;
+                flex: 1;
+                min-height: 0;
+                padding-right: 10px;
+            }
+
+            .language-item {
+                display: flex;
+                align-items: center;
+                padding: 14px 16px;
+                border: 2px solid var(--border-color);
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s;
+                user-select: none;
+            }
+
+            .language-item:hover {
+                background-color: #f0f0f0;
+                border-color: var(--primary-color);
+            }
+
+            .language-item.selected {
+                background-color: #e8f0ff;
+                border-color: var(--primary-color);
+            }
+
+            .language-item input[type="checkbox"] {
+                margin-right: 12px;
+                cursor: pointer;
+                width: 20px;
+                height: 20px;
+                flex-shrink: 0;
+                pointer-events: none;
+            }
+
+            .language-item label {
+                cursor: pointer;
+                flex: 1;
+                user-select: none;
+                pointer-events: none;
+                font-size: 15px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .order-badge {
+                display: inline-block;
+                background-color: var(--primary-color);
+                color: white;
+                border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                text-align: center;
+                font-size: 13px;
+                font-weight: bold;
+                margin-left: auto;
+                flex-shrink: 0;
+            }
+
+            .modal-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 20px;
+                border-top: 2px solid var(--border-color);
+                flex-shrink: 0;
+            }
+
+            .modal-footer .selection-info {
+                font-size: 14px;
+                color: var(--text-light);
+            }
+
+            .modal-footer button {
+                padding: 10px 24px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 14px;
+                transition: all 0.2s;
+            }
+
+            .modal-footer .btn-apply {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .modal-footer .btn-apply:hover {
+                background-color: var(--primary-hover);
+            }
+
+            .modal-footer .btn-apply:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            /* Progress Area */
+            .progress-container {
+                margin-bottom: 15px;
+            }
+
+            .progress-bar-bg {
+                width: 100%;
+                height: 24px;
+                background-color: #e0e0e0;
+                border-radius: 12px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, var(--secondary-color) 0%, #00d4a1 100%);
+                width: 0%;
+                transition: width 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .status-info {
+                margin-top: 15px;
+                padding: 15px;
+                background-color: #f9f9f9;
+                border-radius: 6px;
+                border-left: 4px solid var(--primary-color);
+            }
+
+            .status-info p {
+                font-size: 13px;
+                color: var(--text-dark);
+                line-height: 1.6;
+                margin-bottom: 5px;
+            }
+
+            .status-info p:last-child {
+                margin-bottom: 0;
+            }
+
+            .status-info strong {
+                color: var(--primary-color);
+            }
+
+            .log-area {
+                margin-top: 15px;
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+                padding: 15px;
+                border-radius: 6px;
+                font-family: "Consolas", "Monaco", monospace;
+                font-size: 12px;
+                line-height: 1.5;
+                display: none;
+            }
+
+            .log-area.show {
+                display: block;
+            }
+
+            .log-line {
+                margin-bottom: 3px;
+            }
+
+            .log-success {
+                color: #4ec9b0;
+            }
+
+            .log-error {
+                color: #f48771;
+            }
+
+            .log-info {
+                color: #569cd6;
+            }
+
+            .log-lang {
+                color: #dcdcaa;
+            }
+
+            /* Buttons */
+            .button-group {
+                display: flex;
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 16px 24px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .btn-build {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .btn-build:not(:disabled):hover {
+                background-color: var(--primary-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+            }
+
+            .btn-download {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+
+            .btn-download:not(:disabled):hover {
+                background-color: var(--secondary-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+            }
+
+            .btn-icon {
+                font-size: 20px;
+            }
+
+            /* Footer */
+            .footer {
+                padding: 20px;
+                text-align: center;
+                background-color: var(--background-light);
+                font-size: 12px;
+                color: var(--text-light);
+            }
+
+            .footer a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .footer a:hover {
+                text-decoration: underline;
+            }
+
+            /* Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--primary-color);
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-hover);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1>
+                    <span>🚀</span>
+                    Batch Translation Helper
+                    <span>🚀</span>
+                </h1>
+                <p>Full Automatic Translation - Upload ZIP/JSON, Select Languages, Download Locales</p>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Upload Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="icon">📦</span>
+                        Upload Source ZIP/JSON
+                    </div>
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📂</div>
+                        <div class="upload-text">Click or Drag & Drop .zip or .json file</div>
+                        <div class="upload-hint">
+                            ZIP containing JSON files or individual JSON file (Actors.json, Items.json, Map001.json, etc)
+                        </div>
+                        <div id="file-badge"></div>
+                    </div>
+                    <input type="file" id="file-input" class="file-input" accept=".zip,.json" />
+                </div>
+
+                <!-- Language Selection -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="icon">🌐</span>
+                        Select Languages
+                    </div>
+                    <div class="language-row">
+                        <!-- Source Language -->
+                        <div class="language-box">
+                            <label for="source-lang">Source Language</label>
+                            <div class="custom-select" id="source-select">
+                                <div class="select-selected" id="source-selected">
+                                    <img src="resource/flags/jp.svg" alt="JP" class="flag-icon" />
+                                    <span>Japanese</span>
+                                    <span class="select-arrow">▼</span>
+                                </div>
+                                <div class="select-items" id="source-items"></div>
+                            </div>
+                        </div>
+
+                        <!-- Target Languages -->
+                        <div class="language-box">
+                            <label for="target-lang">Target Languages</label>
+                            <button class="target-languages-btn" id="target-languages-btn">
+                                <span id="target-lang-text">Select Languages...</span>
+                                <span class="lang-count-badge" id="lang-count">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="icon">⚙️</span>
+                        Progress & Status
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar" id="progress-bar">0%</div>
+                        </div>
+                    </div>
+                    <div class="status-info" id="status-info">
+                        <p><strong>Status:</strong> Waiting for ZIP or JSON file...</p>
+                        <p><strong>Files:</strong> 0 / 0</p>
+                        <p><strong>Current:</strong> -</p>
+                    </div>
+                    <div class="log-area" id="log-area"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <button class="btn btn-build" id="btn-build" disabled>
+                        <span class="btn-icon">🔨</span>
+                        Build Translations
+                    </button>
+                    <button class="btn btn-download" id="btn-download" disabled>
+                        <span class="btn-icon">📥</span>
+                        <span id="download-text">Download Locales.zip</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                Powered by <a href="https://browser.mt/" target="_blank">Bergamot Translator</a> • RPG Maker MV/MZ
+                Translation Helper
+            </div>
+        </div>
+
+        <!-- Language Selection Modal -->
+        <div id="language-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🌐 Select Target Languages</h2>
+                    <button class="modal-close" id="modal-close-btn">&times;</button>
+                </div>
+                <div class="language-list" id="language-list">
+                    <!-- Language checkboxes will be generated here -->
+                </div>
+                <div class="modal-footer">
+                    <span class="selection-info" id="selection-info">0 selected</span>
+                    <button class="btn-apply" id="apply-languages-btn" disabled>Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSZip Library -->
+        <script type="text/javascript" src="js/libs/jszip.min.js"></script>
+        <!-- Translation Engine & Builder (local standalone files) -->
+        <script type="text/javascript" src="js/libs/translation_engine.js"></script>
+        <script type="text/javascript" src="js/libs/translation_builder_i18n.js"></script>
+
+        <!-- Batch Controller -->
+        <script type="text/javascript">
+            // ============================================
+            // BATCH TRANSLATION CONTROLLER
+            // ============================================
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                // --- State ---
+                let zipFile = null;
+                let zipContent = {};
+                let sourceLang = "jp";
+                let selectedTargetLanguages = []; // Array of language codes
+                let languageSelectionOrder = 0;
+                let processedFiles = {};
+                let downloadBlob = null;
+                let isSingleJson = false;
+
+                // --- Available Languages ---
+                const availableLanguages = [
+                    { code: "ar", name: "Arabic", flag: "resource/flags/sa.svg" },
+                    { code: "zh", name: "Chinese", flag: "resource/flags/cn.svg" },
+                    { code: "en", name: "English", flag: "resource/flags/gb.svg" },
+                    { code: "de", name: "German", flag: "resource/flags/de.svg" },
+                    { code: "es", name: "Spanish", flag: "resource/flags/es.svg" },
+                    { code: "fr", name: "French", flag: "resource/flags/fr.svg" },
+                    { code: "id", name: "Indonesian", flag: "resource/flags/id.svg" },
+                    { code: "jp", name: "Japanese", flag: "resource/flags/jp.svg" },
+                    { code: "ko", name: "Korean", flag: "resource/flags/kr.svg" },
+                    { code: "pt", name: "Portuguese", flag: "resource/flags/pt.svg" },
+                    { code: "ru", name: "Russian", flag: "resource/flags/ru.svg" },
+                ];
+
+                // --- Engine ---
+                const i18nEngine = new TranslationEngineI18n();
+
+                // --- Check if Bergamot is available ---
+                let translatorReady = false;
+                window.addEventListener("translatorStatus", (e) => {
+                    translatorReady = e.detail.ready;
+                    if (!translatorReady) {
+                        log("⚠️ Bergamot translator not available. Make sure server is running.", "error");
+                        updateStatus("Error: Translator not available. Run with web server.", 0, 0, 0, "-");
+                    }
+                });
+
+                // --- DOM Elements ---
+                const ui = {
+                    uploadArea: document.getElementById("upload-area"),
+                    fileInput: document.getElementById("file-input"),
+                    fileBadge: document.getElementById("file-badge"),
+
+                    sourceSelect: document.getElementById("source-select"),
+                    sourceSelected: document.getElementById("source-selected"),
+                    sourceItems: document.getElementById("source-items"),
+
+                    targetLanguagesBtn: document.getElementById("target-languages-btn"),
+                    targetLangText: document.getElementById("target-lang-text"),
+                    langCountBadge: document.getElementById("lang-count"),
+
+                    languageModal: document.getElementById("language-modal"),
+                    languageList: document.getElementById("language-list"),
+                    modalCloseBtn: document.getElementById("modal-close-btn"),
+                    selectionInfo: document.getElementById("selection-info"),
+                    applyLanguagesBtn: document.getElementById("apply-languages-btn"),
+
+                    progressBar: document.getElementById("progress-bar"),
+                    statusInfo: document.getElementById("status-info"),
+                    logArea: document.getElementById("log-area"),
+
+                    btnBuild: document.getElementById("btn-build"),
+                    btnDownload: document.getElementById("btn-download"),
+                    downloadText: document.getElementById("download-text"),
+                };
+
+                // ============================================
+                // SOURCE LANGUAGE SELECTOR
+                // ============================================
+
+                function initSourceLanguageSelector() {
+                    ui.sourceItems.innerHTML = availableLanguages
+                        .map(
+                            (lang) => `
+                            <div class="select-item" data-value="${lang.code}">
+                                <img src="${lang.flag}" alt="${lang.code}" class="flag-icon" />
+                                <span>${lang.name}</span>
+                            </div>
+                        `
+                        )
+                        .join("");
+
+                    // Set initial selection
+                    ui.sourceItems.querySelector('[data-value="jp"]')?.classList.add("selected");
+                }
+
+                ui.sourceSelected.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    ui.sourceItems.classList.toggle("show");
+                    ui.sourceSelected.classList.toggle("active");
+                });
+
+                ui.sourceItems.addEventListener("click", (e) => {
+                    const item = e.target.closest(".select-item");
+                    if (!item) return;
+
+                    const value = item.dataset.value;
+                    const lang = availableLanguages.find((l) => l.code === value);
+                    if (!lang) return;
+
+                    sourceLang = value;
+                    ui.sourceSelected.innerHTML = `
+                        <img src="${lang.flag}" alt="${lang.code}" class="flag-icon" />
+                        <span>${lang.name}</span>
+                        <span class="select-arrow">▼</span>
+                    `;
+
+                    ui.sourceItems.querySelectorAll(".select-item").forEach((el) => el.classList.remove("selected"));
+                    item.classList.add("selected");
+                    ui.sourceItems.classList.remove("show");
+                    ui.sourceSelected.classList.remove("active");
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener("click", () => {
+                    ui.sourceItems.classList.remove("show");
+                    ui.sourceSelected.classList.remove("active");
+                });
+
+                // ============================================
+                // TARGET LANGUAGES MODAL
+                // ============================================
+
+                function initLanguageModal() {
+                    ui.languageList.innerHTML = "";
+
+                    availableLanguages.forEach((lang) => {
+                        const item = document.createElement("div");
+                        item.className = "language-item";
+                        item.dataset.langCode = lang.code;
+
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.id = `lang-${lang.code}`;
+                        checkbox.value = lang.code;
+
+                        const label = document.createElement("label");
+                        label.htmlFor = `lang-${lang.code}`;
+                        label.innerHTML = `
+                            <img src="${lang.flag}" alt="${lang.code}" class="flag-icon" />
+                            <span>${lang.name}</span>
+                        `;
+
+                        const orderBadge = document.createElement("span");
+                        orderBadge.className = "order-badge";
+                        orderBadge.style.display = "none";
+
+                        item.appendChild(checkbox);
+                        item.appendChild(label);
+                        item.appendChild(orderBadge);
+
+                        // Click handler
+                        item.addEventListener("click", (e) => {
+                            const wasChecked = checkbox.checked;
+                            checkbox.checked = !wasChecked;
+
+                            if (checkbox.checked) {
+                                languageSelectionOrder++;
+                                item.dataset.order = languageSelectionOrder;
+                                orderBadge.textContent = languageSelectionOrder;
+                                orderBadge.style.display = "inline-block";
+                                item.classList.add("selected");
+                            } else {
+                                item.classList.remove("selected");
+                                orderBadge.style.display = "none";
+                                delete item.dataset.order;
+                                reorderLanguages();
+                            }
+
+                            updateSelectionInfo();
+                        });
+
+                        ui.languageList.appendChild(item);
+                    });
+                }
+
+                function reorderLanguages() {
+                    const selectedItems = Array.from(ui.languageList.querySelectorAll(".language-item.selected"));
+                    selectedItems.sort((a, b) => parseInt(a.dataset.order) - parseInt(b.dataset.order));
+
+                    selectedItems.forEach((item, index) => {
+                        const newOrder = index + 1;
+                        item.dataset.order = newOrder;
+                        const badge = item.querySelector(".order-badge");
+                        if (badge) badge.textContent = newOrder;
+                    });
+
+                    languageSelectionOrder = selectedItems.length;
+                }
+
+                function openLanguageModal() {
+                    languageSelectionOrder = 0;
+                    initLanguageModal();
+
+                    // Pre-select previously selected languages
+                    selectedTargetLanguages.forEach((langCode, index) => {
+                        const item = ui.languageList.querySelector(`[data-lang-code="${langCode}"]`);
+                        if (item) {
+                            const checkbox = item.querySelector("input");
+                            const orderBadge = item.querySelector(".order-badge");
+
+                            checkbox.checked = true;
+                            item.classList.add("selected");
+
+                            languageSelectionOrder++;
+                            item.dataset.order = languageSelectionOrder;
+                            orderBadge.textContent = languageSelectionOrder;
+                            orderBadge.style.display = "inline-block";
+                        }
+                    });
+
+                    updateSelectionInfo();
+                    ui.languageModal.classList.add("active");
+                }
+
+                function closeLanguageModal() {
+                    ui.languageModal.classList.remove("active");
+                }
+
+                function updateSelectionInfo() {
+                    const checkedBoxes = ui.languageList.querySelectorAll('input[type="checkbox"]:checked');
+                    const count = checkedBoxes.length;
+
+                    ui.selectionInfo.textContent = `${count} selected`;
+                    ui.applyLanguagesBtn.disabled = count === 0;
+                }
+
+                function applyLanguageSelection() {
+                    const selectedItems = ui.languageList.querySelectorAll(".language-item.selected");
+
+                    if (selectedItems.length === 0) {
+                        alert("⚠️ Please select at least one language!");
+                        return;
+                    }
+
+                    // Sort by order and save
+                    const sortedItems = Array.from(selectedItems).sort(
+                        (a, b) => parseInt(a.dataset.order) - parseInt(b.dataset.order)
+                    );
+
+                    selectedTargetLanguages = sortedItems.map((item) => item.dataset.langCode);
+
+                    // Update UI
+                    updateTargetLanguagesButton();
+                    closeLanguageModal();
+                    updateBuildButtonState();
+                }
+
+                function updateTargetLanguagesButton() {
+                    ui.langCountBadge.textContent = selectedTargetLanguages.length;
+
+                    if (selectedTargetLanguages.length === 0) {
+                        ui.targetLangText.textContent = "Select Languages...";
+                        return;
+                    }
+
+                    if (selectedTargetLanguages.length === 1) {
+                        const lang = availableLanguages.find((l) => l.code === selectedTargetLanguages[0]);
+                        ui.targetLangText.textContent = lang ? lang.name : "Select Languages...";
+                    } else {
+                        const flagImages = selectedTargetLanguages
+                            .slice(0, 3)
+                            .map((code) => {
+                                const lang = availableLanguages.find((l) => l.code === code);
+                                if (!lang) return "";
+                                return `<img src="${lang.flag}" alt="${lang.code}" style="width: 20px; height: 15px; margin-right: 2px; border-radius: 2px;">`;
+                            })
+                            .join("");
+
+                        ui.targetLangText.innerHTML = flagImages || "Select Languages...";
+                    }
+                }
+
+                // Event listeners
+                ui.targetLanguagesBtn.addEventListener("click", openLanguageModal);
+                ui.modalCloseBtn.addEventListener("click", closeLanguageModal);
+                ui.applyLanguagesBtn.addEventListener("click", applyLanguageSelection);
+
+                ui.languageModal.addEventListener("click", (e) => {
+                    if (e.target === ui.languageModal) {
+                        closeLanguageModal();
+                    }
+                });
+
+                // ============================================
+                // FILE UPLOAD HANDLERS
+                // ============================================
+
+                ui.uploadArea.addEventListener("click", () => ui.fileInput.click());
+
+                ui.uploadArea.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    ui.uploadArea.classList.add("drag-over");
+                });
+
+                ui.uploadArea.addEventListener("dragleave", () => {
+                    ui.uploadArea.classList.remove("drag-over");
+                });
+
+                ui.uploadArea.addEventListener("drop", async (e) => {
+                    e.preventDefault();
+                    ui.uploadArea.classList.remove("drag-over");
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        await handleFileUpload(files[0]);
+                    }
+                });
+
+                ui.fileInput.addEventListener("change", async (e) => {
+                    if (e.target.files.length > 0) {
+                        await handleFileUpload(e.target.files[0]);
+                    }
+                });
+
+                // ============================================
+                // ZIP FILE PROCESSING
+                // ============================================
+
+                async function handleFileUpload(file) {
+                    if (!file || (!file.name.endsWith(".zip") && !file.name.endsWith(".json"))) {
+                        alert("⚠️ File must be .zip or .json format");
+                        return;
+                    }
+
+                    log("📦 Reading file...", "info");
+                    updateStatus("Reading file...", 0, 0, 0, "-");
+
+                    try {
+                        if (file.name.endsWith(".json")) {
+                            // Handle individual JSON file
+                            isSingleJson = true;
+                            const content = await file.text();
+                            const jsonData = JSON.parse(content);
+                            zipContent = {};
+                            zipContent[file.name] = jsonData;
+
+                            zipFile = file;
+                            ui.uploadArea.classList.add("has-file");
+                            ui.fileBadge.innerHTML = `<div class="file-badge">${file.name} (1 file)</div>`;
+
+                            log(`✅ JSON loaded successfully: ${file.name}`, "success");
+                            updateStatus(
+                                "JSON loaded successfully. Ready to build!",
+                                0,
+                                1,
+                                0,
+                                "-"
+                            );
+                        } else {
+                            // Handle ZIP file
+                            isSingleJson = false;
+                            const zip = new JSZip();
+                            const zipData = await zip.loadAsync(file);
+
+                            // Extract JSON files
+                            const jsonFiles = Object.keys(zipData.files).filter(
+                                (name) => name.endsWith(".json") && !name.includes("__MACOSX")
+                            );
+
+                            if (jsonFiles.length === 0) {
+                                throw new Error("No JSON files found in ZIP");
+                            }
+
+                            zipContent = {};
+                            for (const filename of jsonFiles) {
+                                const content = await zipData.files[filename].async("text");
+                                try {
+                                    zipContent[filename] = JSON.parse(content);
+                                } catch (e) {
+                                    log(`⚠️ Failed to parse ${filename}: ${e.message}`, "error");
+                                }
+                            }
+
+                            zipFile = file;
+                            ui.uploadArea.classList.add("has-file");
+                            ui.fileBadge.innerHTML = `<div class="file-badge">${file.name} (${
+                                Object.keys(zipContent).length
+                            } files)</div>`;
+
+                            log(`✅ ZIP loaded successfully: ${Object.keys(zipContent).length} JSON files`, "success");
+                            updateStatus(
+                                "ZIP loaded successfully. Ready to build!",
+                                0,
+                                Object.keys(zipContent).length,
+                                0,
+                                "-"
+                            );
+                        }
+
+                        updateBuildButtonState();
+                    } catch (error) {
+                        log(`❌ Error reading file: ${error.message}`, "error");
+                        alert(`❌ Failed to read file:\n${error.message}`);
+                        resetUploadState();
+                    }
+                }
+
+                // ============================================
+                // BUILD PROCESS (Strategy 1: All JSONs per Language)
+                // ============================================
+
+                ui.btnBuild.addEventListener("click", async () => {
+                    if (!zipFile || Object.keys(zipContent).length === 0) {
+                        alert("⚠️ Please upload a ZIP or JSON file first");
+                        return;
+                    }
+
+                    if (selectedTargetLanguages.length === 0) {
+                        alert("⚠️ Please select at least one target language");
+                        return;
+                    }
+
+                    if (!window.BergamotTranslator) {
+                        alert("⚠️ Translator not ready. Please wait or refresh the page.");
+                        return;
+                    }
+
+                    // Disable buttons
+                    ui.btnBuild.disabled = true;
+                    ui.btnDownload.disabled = true;
+
+                    // Show log
+                    ui.logArea.classList.add("show");
+                    ui.logArea.innerHTML = "";
+
+                    log("🚀 Starting batch translation...", "info");
+                    log(`📊 Strategy: Process all ${Object.keys(zipContent).length} JSONs per language`, "info");
+                    log(`🌐 Languages: ${selectedTargetLanguages.length} target(s)`, "info");
+
+                    try {
+                        processedFiles = {};
+                        const fileNames = Object.keys(zipContent);
+                        const totalFiles = fileNames.length;
+                        const totalLanguages = selectedTargetLanguages.length;
+                        const totalOperations = totalFiles * totalLanguages;
+                        let completedOperations = 0;
+
+                        // Map jp to ja for Bergamot
+                        const bergamotSourceLang = sourceLang === "jp" ? "ja" : sourceLang;
+
+                        // STRATEGY 1: Process all JSONs for ONE language, then move to next language
+                        for (let langIndex = 0; langIndex < totalLanguages; langIndex++) {
+                            const targetLang = selectedTargetLanguages[langIndex];
+                            const bergamotTargetLang = targetLang === "jp" ? "ja" : targetLang;
+                            const langName = availableLanguages.find((l) => l.code === targetLang)?.name || targetLang;
+
+                            log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
+                            log(`🌐 Processing Language ${langIndex + 1}/${totalLanguages}: ${langName}`, "lang");
+                            log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
+
+                            if (bergamotSourceLang === bergamotTargetLang) {
+                                log(`⚠️ Skipping ${langName} (same as source)`, "info");
+                                continue;
+                            }
+
+                            // Create translator for this language (will load model once)
+                            log(`📥 Loading translation model for ${langName}...`, "info");
+
+                            // Process all JSON files with this language
+                            for (let fileIndex = 0; fileIndex < totalFiles; fileIndex++) {
+                                const filename = fileNames[fileIndex];
+                                const jsonData = zipContent[filename];
+                                const baseName = filename.replace(".json", "");
+
+                                log(`  📄 [${fileIndex + 1}/${totalFiles}] ${filename}`, "info");
+
+                                try {
+                                    // Extract text
+                                    const textPaths = i18nEngine.extract(jsonData);
+
+                                    if (textPaths.length === 0) {
+                                        log(`    ⚠️ No translatable text`, "info");
+                                        completedOperations++;
+                                        updateStatus(
+                                            `Processing ${langName}...`,
+                                            completedOperations,
+                                            totalOperations,
+                                            langIndex + 1,
+                                            filename
+                                        );
+                                        continue;
+                                    }
+
+                                    log(`    📝 Extracted ${textPaths.length} texts`, "info");
+
+                                    // Prepare text for translation
+                                    const sourceTexts = textPaths.map((p) => p.text).join("\n");
+
+                                    // Translate using Bergamot
+                                    log(`    🔄 Translating...`, "info");
+
+                                    const translatedText = await window.BergamotTranslator.translate(
+                                        sourceTexts,
+                                        bergamotSourceLang,
+                                        bergamotTargetLang
+                                    );
+
+                                    // Build i18n mapping
+                                    const translatedLines = translatedText.split("\n");
+
+                                    // Initialize file if not exists
+                                    if (!processedFiles[`${baseName}_i18n.json`]) {
+                                        processedFiles[`${baseName}_i18n.json`] = {};
+                                    }
+
+                                    // Build and merge i18n for this language
+                                    const i18nMapping = i18nEngine.buildI18nMapping(
+                                        textPaths,
+                                        translatedLines,
+                                        targetLang
+                                    );
+                                    processedFiles[`${baseName}_i18n.json`][targetLang] = i18nMapping[targetLang];
+
+                                    log(`    ✅ Success: ${translatedLines.length} translations`, "success");
+                                } catch (error) {
+                                    log(`    ❌ Error: ${error.message}`, "error");
+                                }
+
+                                completedOperations++;
+                                const progress = Math.round((completedOperations / totalOperations) * 100);
+                                ui.progressBar.style.width = `${progress}%`;
+                                ui.progressBar.textContent = `${progress}%`;
+                                updateStatus(
+                                    `Processing ${langName}...`,
+                                    completedOperations,
+                                    totalOperations,
+                                    langIndex + 1,
+                                    filename
+                                );
+                            }
+
+                            log(`✅ Completed ${langName}: ${totalFiles} files processed`, "success");
+                        }
+
+                        if (Object.keys(processedFiles).length === 0) {
+                            throw new Error("No files were successfully processed");
+                        }
+
+                        // Create ZIP or JSON
+                        if (isSingleJson && Object.keys(processedFiles).length === 1) {
+                            log("\n� Creating i18n file...", "info");
+                        } else {
+                            log("\n�📦 Creating locales.zip...", "info");
+                        }
+                        await createLocalesZip();
+
+                        // Update download button text
+                        if (isSingleJson && Object.keys(processedFiles).length === 1) {
+                            const filename = Object.keys(processedFiles)[0];
+                            ui.downloadText.textContent = `Download ${filename}`;
+                        } else {
+                            ui.downloadText.textContent = "Download Locales.zip";
+                        }
+
+                        log("✅ Batch translation completed!", "success");
+                        log(
+                            `📊 Summary: ${Object.keys(processedFiles).length} files × ${totalLanguages} languages`,
+                            "info"
+                        );
+                        updateStatus(
+                            "Completed! Ready to download.",
+                            totalOperations,
+                            totalOperations,
+                            totalLanguages,
+                            "Done"
+                        );
+
+                        ui.btnDownload.disabled = false;
+                    } catch (error) {
+                        log(`❌ Build failed: ${error.message}`, "error");
+                        alert(`❌ Build failed:\n${error.message}`);
+                        ui.btnBuild.disabled = false;
+                    }
+                });
+
+                // ============================================
+                // CREATE LOCALES ZIP
+                // ============================================
+
+                async function createLocalesZip() {
+                    if (isSingleJson && Object.keys(processedFiles).length === 1) {
+                        // For single JSON input, output single _i18n.json file
+                        const filename = Object.keys(processedFiles)[0];
+                        const content = processedFiles[filename];
+                        downloadBlob = new Blob([JSON.stringify(content, null, 2)], { type: "application/json" });
+                        log(`✅ ${filename} ready for download`, "success");
+                    } else {
+                        // For ZIP input or multiple files, create ZIP
+                        const zip = new JSZip();
+                        const localesFolder = zip.folder("locales");
+
+                        // Add all processed i18n files
+                        for (const [filename, content] of Object.entries(processedFiles)) {
+                            localesFolder.file(filename, JSON.stringify(content, null, 2));
+                        }
+
+                        // Generate blob
+                        downloadBlob = await zip.generateAsync({ type: "blob" });
+                        log("✅ locales.zip ready for download", "success");
+                    }
+                }
+
+                // ============================================
+                // DOWNLOAD HANDLER
+                // ============================================
+
+                ui.btnDownload.addEventListener("click", () => {
+                    if (!downloadBlob) {
+                        alert("⚠️ No file to download");
+                        return;
+                    }
+
+                    const url = URL.createObjectURL(downloadBlob);
+                    const a = document.createElement("a");
+                    a.href = url;
+
+                    if (isSingleJson && Object.keys(processedFiles).length === 1) {
+                        const filename = Object.keys(processedFiles)[0];
+                        a.download = filename;
+                        log(`📥 ${filename} downloaded successfully`, "success");
+                    } else {
+                        a.download = "locales.zip";
+                        log("📥 locales.zip downloaded successfully", "success");
+                    }
+
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+
+                // ============================================
+                // HELPER FUNCTIONS
+                // ============================================
+
+                function updateStatus(message, current, total, langProgress, currentFile) {
+                    const sourceLangObj = availableLanguages.find((l) => l.code === sourceLang);
+                    const targetLangsText =
+                        selectedTargetLanguages.length > 0
+                            ? selectedTargetLanguages
+                                  .map((c) => availableLanguages.find((l) => l.code === c)?.name || c)
+                                  .join(", ")
+                            : "None";
+
+                    ui.statusInfo.innerHTML = `
+                        <p><strong>Status:</strong> ${message}</p>
+                        <p><strong>Progress:</strong> ${current} / ${total} operations</p>
+                        <p><strong>Languages:</strong> ${langProgress} / ${selectedTargetLanguages.length} (${
+                        sourceLangObj?.name || sourceLang
+                    } → ${targetLangsText})</p>
+                        <p><strong>Current:</strong> ${currentFile}</p>
+                    `;
+                }
+
+                function log(message, type = "info") {
+                    const line = document.createElement("div");
+                    line.className = `log-line log-${type}`;
+                    line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                    ui.logArea.appendChild(line);
+                    ui.logArea.scrollTop = ui.logArea.scrollHeight;
+                }
+
+                function updateBuildButtonState() {
+                    const hasZip = zipFile !== null && Object.keys(zipContent).length > 0;
+                    const hasLanguages = selectedTargetLanguages.length > 0;
+                    ui.btnBuild.disabled = !(hasZip && hasLanguages);
+                }
+
+                function resetUploadState() {
+                    zipFile = null;
+                    zipContent = {};
+                    processedFiles = {};
+                    isSingleJson = false;
+                    ui.uploadArea.classList.remove("has-file");
+                    ui.fileBadge.innerHTML = "";
+                    ui.btnBuild.disabled = true;
+                    ui.btnDownload.disabled = true;
+                    ui.downloadText.textContent = "Download Locales.zip";
+                    ui.progressBar.style.width = "0%";
+                    ui.progressBar.textContent = "0%";
+                }
+
+                // ============================================
+                // INITIALIZE
+                // ============================================
+
+                initSourceLanguageSelector();
+                updateTargetLanguagesButton();
+                updateStatus("Waiting for ZIP or JSON file...", 0, 0, 0, "-");
+                log("🌟 Batch Translation Helper ready", "success");
+
+                // Check if running in server mode
+                if (!window.location.protocol.startsWith("http")) {
+                    log("⚠️ Running in LOCAL mode. Translation may not work.", "error");
+                    updateStatus("⚠️ Run with web server for translation features", 0, 0, 0, "-");
+                }
+            });
+        </script>
+    </body>
+</html>

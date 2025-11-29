@@ -1,1 +1,0 @@
-TouchInput.update = function() {};

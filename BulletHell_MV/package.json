@@ -1,16 +1,12 @@
 {
-    "name": "",
+    "name": "rmmz-game",
     "main": "index.html",
-    "js-flags": "--expose-gc",
+    "chromium-args": "--force-color-profile=srgb",
     "window": {
-        "title": "",
-        "toolbar": false,
+        "title": "bullethell",
         "width": 816,
         "height": 624,
+        "position": "center",
         "icon": "icon/icon.png"
-    },
-    "dependencies": {
-        "concat": "^1.0.3",
-        "jsdoc": "^3.6.2"
     }
 }

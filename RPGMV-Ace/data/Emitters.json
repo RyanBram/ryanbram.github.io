@@ -1,0 +1,851 @@
+{
+  "emitters": [
+    {
+      "id": 1,
+      "name": "Basic Straight Shot",
+      "description": "Single straight bullet upward - Rank D/C/B",
+      "type": "base",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 10,
+        "sprite": null,
+        "ranks": ["D", "C", "B"],
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "speed": 5,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Left Side Shot",
+      "description": "Bullet from left side - Rank C only",
+      "type": "base",
+      "params": {
+        "x": "-w/2",
+        "y": 0,
+        "period": 25,
+        "ranks": ["C"],
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "Right Side Shot",
+      "description": "Bullet from right side - Rank C only",
+      "type": "base",
+      "params": {
+        "x": "w/2",
+        "y": 0,
+        "period": 25,
+        "ranks": ["C"],
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "Left Side Shot Fast",
+      "description": "Fast bullet from left side - Rank B",
+      "type": "base",
+      "params": {
+        "x": "-w/2",
+        "y": 0,
+        "period": 10,
+        "ranks": ["B"],
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "speed": 5,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "Right Side Shot Fast",
+      "description": "Fast bullet from right side - Rank B",
+      "type": "base",
+      "params": {
+        "x": "w/2",
+        "y": 0,
+        "period": 10,
+        "ranks": ["B"],
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "speed": 5,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 6,
+      "name": "Small Spray",
+      "description": "3-way spray pattern - Rank A",
+      "type": "spray",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "a": "3 * pi / 2 - pi / 16",
+        "b": "3 * pi / 2 + pi / 16",
+        "n": 3,
+        "period": 10,
+        "sprite": null,
+        "ranks": ["A"],
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "speed": 5,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "Wide Spray",
+      "description": "5-way spray pattern - Rank S",
+      "type": "spray",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "a": "3 * pi / 2 - pi / 16",
+        "b": "3 * pi / 2 + pi / 16",
+        "n": 5,
+        "period": 10,
+        "sprite": null,
+        "ranks": ["S"],
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "speed": 5,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name": "Wide Shot Basic",
+      "description": "10-way wide shot - Rank D",
+      "type": "spray",
+      "params": {
+        "x": "0",
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["D"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 16",
+        "b": "3 * pi / 2 + pi / 16",
+        "n": 10,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name": "Wide Shot Left",
+      "description": "10-way left angled - Rank C",
+      "type": "spray",
+      "params": {
+        "x": "-w/4",
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["C"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 16",
+        "b": "3 * pi / 2 + pi / 64",
+        "n": 10,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "Wide Shot Right",
+      "description": "10-way right angled - Rank C",
+      "type": "spray",
+      "params": {
+        "x": "w/4",
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["C"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 64",
+        "b": "3 * pi / 2 + pi / 16",
+        "n": 10,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 11,
+      "name": "Wide Shot Right Extended",
+      "description": "10-way extended right - Rank B/A",
+      "type": "spray",
+      "params": {
+        "x": "w/4",
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["B", "A"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 64",
+        "b": "3 * pi / 2 + pi / 8",
+        "n": 10,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 12,
+      "name": "Wide Shot Left Extended",
+      "description": "10-way extended left - Rank B/A",
+      "type": "spray",
+      "params": {
+        "x": "-w/4",
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["B", "A"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 8",
+        "b": "3 * pi / 2 + pi / 64",
+        "n": 10,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 13,
+      "name": "Super Wide Shot",
+      "description": "20-way super wide - Rank S",
+      "type": "spray",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 75,
+        "sprite": null,
+        "ranks": ["S"],
+        "index": 0,
+        "direction": 8,
+        "animated": true,
+        "a": "3 * pi / 2 - pi / 4",
+        "b": "3 * pi / 2 + pi / 4",
+        "n": 20,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 14,
+      "name": "Helper Rotate 1",
+      "description": "Rotating helper drone upward",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 10,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "3 * pi / 2",
+        "radius": 50,
+        "dt": 0.05,
+        "bullet": {
+          "speed": 7,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 15,
+      "name": "Helper Rotate 2",
+      "description": "Rotating helper drone downward",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 10,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "pi / 2",
+        "radius": 50,
+        "dt": 0.05,
+        "bullet": {
+          "speed": 7,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 16,
+      "name": "Helper Small Rotate 1",
+      "description": "Small rotating helper - Rank B/A/S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 30,
+        "sprite": "$Helpers",
+        "ranks": ["B", "A", "S"],
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "0",
+        "radius": 25,
+        "dt": -0.075,
+        "bullet": {
+          "speed": 4,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 17,
+      "name": "Helper Small Rotate 2",
+      "description": "Small rotating helper opposite - Rank B/A/S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 30,
+        "sprite": "$Helpers",
+        "ranks": ["B", "A", "S"],
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "pi",
+        "radius": 25,
+        "dt": -0.075,
+        "bullet": {
+          "speed": 4,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 18,
+      "name": "Helper Small Rotate 3",
+      "description": "Small rotating helper side 1 - Rank S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 30,
+        "sprite": "$Helpers",
+        "ranks": ["S"],
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "pi / 2",
+        "radius": 25,
+        "dt": -0.075,
+        "bullet": {
+          "speed": 4,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 19,
+      "name": "Helper Small Rotate 4",
+      "description": "Small rotating helper side 2 - Rank S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 30,
+        "sprite": "$Helpers",
+        "ranks": ["S"],
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "3 * pi / 2",
+        "radius": 25,
+        "dt": -0.075,
+        "bullet": {
+          "speed": 4,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 20,
+      "name": "Helper Large Rotate 1",
+      "description": "Large rotating helper - Rank S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 30,
+        "sprite": "$Helpers",
+        "ranks": ["S"],
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "0",
+        "radius": 50,
+        "dt": 0.05,
+        "bullet": {
+          "speed": 7,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 21,
+      "name": "Helper Large Rotate 2",
+      "description": "Large rotating helper opposite - Rank S",
+      "type": "rotate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 10,
+        "ranks": ["S"],
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 8,
+        "animation_speed": 30,
+        "animated": true,
+        "theta": "pi",
+        "radius": 50,
+        "dt": 0.05,
+        "bullet": {
+          "speed": 7,
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 8,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 22,
+      "name": "Shotgun Small",
+      "description": "20 bullets burst - Rank D",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["D"],
+        "angle": "3 * pi / 2",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 20,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 23,
+      "name": "Shotgun Medium",
+      "description": "40 bullets burst - Rank C",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["C"],
+        "angle": "3 * pi / 2",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 40,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 24,
+      "name": "Shotgun Large",
+      "description": "60 bullets burst - Rank B",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["B"],
+        "angle": "3 * pi / 2",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 60,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 25,
+      "name": "Shotgun Huge",
+      "description": "100 bullets burst - Rank A",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["A"],
+        "angle": "3 * pi / 2",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 100,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 26,
+      "name": "Shotgun Super Left",
+      "description": "100 bullets burst left angle - Rank S",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["S"],
+        "angle": "3 * pi / 2 - pi / 64",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 100,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 27,
+      "name": "Shotgun Super Right",
+      "description": "100 bullets burst right angle - Rank S",
+      "type": "burst",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "period": 120,
+        "ranks": ["S"],
+        "angle": "3 * pi / 2 + pi / 64",
+        "sprite": null,
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "shots": 100,
+        "dispersion": "w / 2",
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 4,
+          "frame": 1,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 28,
+      "name": "Probe Left",
+      "description": "Homing probe emitter left",
+      "type": "probe",
+      "params": {
+        "x": -47,
+        "y": -15,
+        "period": 60,
+        "radius": 50,
+        "shooting_frames": 60,
+        "speed": 4,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "speed": 40,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 29,
+      "name": "Probe Right",
+      "description": "Homing probe emitter right - Rank C/B/A/S",
+      "type": "probe",
+      "params": {
+        "x": 47,
+        "y": -15,
+        "period": 60,
+        "radius": 50,
+        "ranks": ["C", "B", "A", "S"],
+        "shooting_frames": 60,
+        "speed": 4,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "speed": 40,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 30,
+      "name": "Probe Bottom Right",
+      "description": "Homing probe emitter bottom right - Rank B/A/S",
+      "type": "probe",
+      "params": {
+        "x": 29,
+        "y": 40,
+        "period": 60,
+        "radius": 50,
+        "ranks": ["B", "A", "S"],
+        "shooting_frames": 60,
+        "speed": 4,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "speed": 40,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 31,
+      "name": "Probe Bottom Left",
+      "description": "Homing probe emitter bottom left - Rank A/S",
+      "type": "probe",
+      "params": {
+        "x": -29,
+        "y": 40,
+        "period": 60,
+        "radius": 50,
+        "ranks": ["A", "S"],
+        "shooting_frames": 60,
+        "speed": 4,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "speed": 40,
+          "animated": false
+        }
+      }
+    },
+    {
+      "id": 32,
+      "name": "Probe Top",
+      "description": "Homing probe emitter top - Rank S",
+      "type": "probe",
+      "params": {
+        "x": 0,
+        "y": -50,
+        "period": 60,
+        "radius": 50,
+        "ranks": ["S"],
+        "shooting_frames": 60,
+        "speed": 4,
+        "sprite": "$Helpers",
+        "index": 0,
+        "direction": 2,
+        "animated": false,
+        "bullet": {
+          "sprite": "$Bullets",
+          "index": 0,
+          "direction": 2,
+          "frame": 1,
+          "speed": 40,
+          "animated": false
+        }
+      }
+    }
+  ],
+  "groups": {
+    "101": [1, 2, 3, 4, 5, 6, 7],
+    "102": [8, 9, 10, 11, 12, 13],
+    "103": [14, 15, 16, 17, 18, 19, 20, 21],
+    "104": [22, 23, 24, 25, 26, 27],
+    "105": [22, 23, 24, 25, 26, 27]
+  }
+}

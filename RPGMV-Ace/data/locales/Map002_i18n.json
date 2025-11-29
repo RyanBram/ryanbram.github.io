@@ -1,0 +1,920 @@
+{
+  "ar": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002"
+    },
+    "3": {
+      "name": "EV003"
+    },
+    "4": {
+      "name": "EV004"
+    },
+    "5": {
+      "name": "EV005"
+    },
+    "6": {
+      "name": "EV006"
+    },
+    "7": {
+      "name": "EV007"
+    },
+    "8": {
+      "name": "EV008"
+    },
+    "9": {
+      "name": "EV009"
+    },
+    "10": {
+      "name": "EV010"
+    },
+    "11": {
+      "name": "EV011"
+    },
+    "12": {
+      "name": "EV012"
+    },
+    "13": {
+      "name": "EV013"
+    },
+    "14": {
+      "name": "EV014"
+    },
+    "15": {
+      "name": "EV015"
+    },
+    "16": {
+      "name": "EV016"
+    },
+    "17": {
+      "name": "EV017",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "انتبهوا! مصغر يقترب!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "18": {
+      "name": "EV018"
+    },
+    "19": {
+      "name": "EV019",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "كان ذلك قريباً، لكن من الآن فصاعداً"
+              ]
+            },
+            {
+              "parameters": [
+                "سيكون أصعب."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "20": {
+      "name": "EV020"
+    },
+    "21": {
+      "name": "EV021"
+    },
+    "22": {
+      "name": "EV022"
+    },
+    "23": {
+      "name": "EV023"
+    },
+    "24": {
+      "name": "EV024",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "مصغرة أخرى! حافظ على تركيزك!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "25": {
+      "name": "EV025"
+    },
+    "26": {
+      "name": "EV026"
+    },
+    "27": {
+      "name": "EV027"
+    },
+    "28": {
+      "name": "EV028"
+    },
+    "29": {
+      "name": "EV029"
+    },
+    "30": {
+      "name": "EV030"
+    },
+    "31": {
+      "name": "EV031"
+    },
+    "32": {
+      "name": "EV032"
+    },
+    "33": {
+      "name": "EV033"
+    },
+    "34": {
+      "name": "EV034"
+    },
+    "35": {
+      "name": "EV035"
+    },
+    "36": {
+      "name": "EV036",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "المعركة الحقيقية تبدأ الآن."
+              ]
+            },
+            {
+              "parameters": [
+                "أبقِ عينيك متقشرتين!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "37": {
+      "name": "EV037"
+    },
+    "38": {
+      "name": "EV038"
+    },
+    "39": {
+      "name": "EV039"
+    },
+    "40": {
+      "name": "EV040"
+    },
+    "41": {
+      "name": "EV041"
+    },
+    "42": {
+      "name": "EV042"
+    },
+    "43": {
+      "name": "EV043"
+    },
+    "44": {
+      "name": "EV044"
+    },
+    "45": {
+      "name": "EV045"
+    },
+    "46": {
+      "name": "EV046",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "مرحباً بك في ساحة المعركة، مبتدئ"
+              ]
+            },
+            {
+              "parameters": [
+                "الأعداء أقوى من"
+              ]
+            },
+            {
+              "parameters": [
+                "أنت، لذا هدفك الأساسي هو"
+              ]
+            },
+            {
+              "parameters": [
+                "للبقاء على قيد الحياة."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(انقر / اضغط على الشاشة لتحريك"
+              ]
+            },
+            {
+              "parameters": [
+                "شخصية، يمكنك أيضا استخدام"
+              ]
+            },
+            {
+              "parameters": [
+                "مفاتيح الأسهم.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "عندما تسنح لك الفرصة، استجب للعدو"
+              ]
+            },
+            {
+              "parameters": [
+                "اطلق النار بسلاحك الخاص!"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(اضغط على الفضاء لاطلاق النار. إذا كنت تستخدم"
+              ]
+            },
+            {
+              "parameters": [
+                "الماوس أو شاشة اللمس، وإطلاق النار هو"
+              ]
+            },
+            {
+              "parameters": [
+                "تلقائي.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "في بعض الأحيان قد تحصل على محاصرة، واستخدام"
+              ]
+            },
+            {
+              "parameters": [
+                "قنبلة لتدمير رصاص العدو والتعامل"
+              ]
+            },
+            {
+              "parameters": [
+                "أضرار هائلة في نفس الوقت."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(انقر بزر الماوس الأيسر أو انقر نقرًا مزدوجًا أو اضغط على SHIFT"
+              ]
+            },
+            {
+              "parameters": [
+                "لرمي قنبلة. إذا كان مخزونك فارغاً"
+              ]
+            },
+            {
+              "parameters": [
+                "أنت من الحظ.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "دعونا نرى ما أنت مصنوع من!"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "id": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002"
+    },
+    "3": {
+      "name": "EV003"
+    },
+    "4": {
+      "name": "EV004"
+    },
+    "5": {
+      "name": "EV005"
+    },
+    "6": {
+      "name": "EV006"
+    },
+    "7": {
+      "name": "EV007"
+    },
+    "8": {
+      "name": "EV008"
+    },
+    "9": {
+      "name": "EV009"
+    },
+    "10": {
+      "name": "EV010"
+    },
+    "11": {
+      "name": "EV011"
+    },
+    "12": {
+      "name": "EV012"
+    },
+    "13": {
+      "name": "EV013"
+    },
+    "14": {
+      "name": "EV014"
+    },
+    "15": {
+      "name": "EV015"
+    },
+    "16": {
+      "name": "EV016"
+    },
+    "17": {
+      "name": "EV017",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Hati-hati! Sebuah miniboss mendekat!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "18": {
+      "name": "EV018"
+    },
+    "19": {
+      "name": "EV019",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Itu dekat, tapi mulai sekarang pada hal-hal"
+              ]
+            },
+            {
+              "parameters": [
+                "akan lebih sulit."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "20": {
+      "name": "EV020"
+    },
+    "21": {
+      "name": "EV021"
+    },
+    "22": {
+      "name": "EV022"
+    },
+    "23": {
+      "name": "EV023"
+    },
+    "24": {
+      "name": "EV024",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Miniboss lain! Tetap fokus!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "25": {
+      "name": "EV025"
+    },
+    "26": {
+      "name": "EV026"
+    },
+    "27": {
+      "name": "EV027"
+    },
+    "28": {
+      "name": "EV028"
+    },
+    "29": {
+      "name": "EV029"
+    },
+    "30": {
+      "name": "EV030"
+    },
+    "31": {
+      "name": "EV011"
+    },
+    "32": {
+      "name": "EV032"
+    },
+    "33": {
+      "name": "EV033"
+    },
+    "34": {
+      "name": "EV034"
+    },
+    "35": {
+      "name": "EV035"
+    },
+    "36": {
+      "name": "EV036",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Pertempuran yang sesungguhnya dimulai sekarang."
+              ]
+            },
+            {
+              "parameters": [
+                "Jaga mata Anda terkelupakan!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "37": {
+      "name": "EV0307"
+    },
+    "38": {
+      "name": "EV038"
+    },
+    "39": {
+      "name": "EV039"
+    },
+    "40": {
+      "name": "EV040"
+    },
+    "41": {
+      "name": "EV041"
+    },
+    "42": {
+      "name": "EV042"
+    },
+    "43": {
+      "name": "EV043"
+    },
+    "44": {
+      "name": "EV044"
+    },
+    "45": {
+      "name": "EV045"
+    },
+    "46": {
+      "name": "EV046",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Selamat datang di medan perang, rookie."
+              ]
+            },
+            {
+              "parameters": [
+                "Musuh-musuhnya lebih kuat dari"
+              ]
+            },
+            {
+              "parameters": [
+                "Anda, jadi tujuan utama Anda adalah"
+              ]
+            },
+            {
+              "parameters": [
+                "untuk bertahan hidup."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(Klik / Ketetan di layar untuk memindahkan Anda"
+              ]
+            },
+            {
+              "parameters": [
+                "karakter, Anda juga bisa menggunakan"
+              ]
+            },
+            {
+              "parameters": [
+                "kunci panah.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Ketika Anda mendapatkan kesempatan, tanggapi musuh"
+              ]
+            },
+            {
+              "parameters": [
+                "Tembak dengan senjata Anda sendiri!"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(Hak perekan sPACE untuk menembak. Jika Anda menggunakan a"
+              ]
+            },
+            {
+              "parameters": [
+                "mouse atau layar sentuh, pemotretan adalah"
+              ]
+            },
+            {
+              "parameters": [
+                "otomatis.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Terkadang Anda mungkin terpojok, gunakan"
+              ]
+            },
+            {
+              "parameters": [
+                "Bom untuk menghancurkan peluru dan kesepakatan musuh"
+              ]
+            },
+            {
+              "parameters": [
+                "kerusakan yang luar biasa pada saat yang sama."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(Kklik kanan, ketukan ganda atau tekan SHIFT"
+              ]
+            },
+            {
+              "parameters": [
+                "untuk melempar bom. Jika stok Anda kosong,"
+              ]
+            },
+            {
+              "parameters": [
+                "Anda tidak beruntung.)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Mari kita lihat apa yang Anda terbuat dari!"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002"
+    },
+    "3": {
+      "name": "EV003"
+    },
+    "4": {
+      "name": "EV004"
+    },
+    "5": {
+      "name": "EV005"
+    },
+    "6": {
+      "name": "EV006"
+    },
+    "7": {
+      "name": "EV007"
+    },
+    "8": {
+      "name": "EV008"
+    },
+    "9": {
+      "name": "EV009"
+    },
+    "10": {
+      "name": "EV010"
+    },
+    "11": {
+      "name": "EV011"
+    },
+    "12": {
+      "name": "EV012"
+    },
+    "13": {
+      "name": "EV013"
+    },
+    "14": {
+      "name": "EV014"
+    },
+    "15": {
+      "name": "EV015"
+    },
+    "16": {
+      "name": "EV016"
+    },
+    "17": {
+      "name": "EV017",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "気をつけて! ミニボスが近づいてくる!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "18": {
+      "name": "EV018"
+    },
+    "19": {
+      "name": "EV019",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "近かったけど、これからは物事"
+              ]
+            },
+            {
+              "parameters": [
+                "より難しくなります。"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "20": {
+      "name": "EV020"
+    },
+    "21": {
+      "name": "EV021"
+    },
+    "22": {
+      "name": "EV022"
+    },
+    "23": {
+      "name": "EV023"
+    },
+    "24": {
+      "name": "EV024",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "ミニボスがまた! 集中して!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "25": {
+      "name": "EV025"
+    },
+    "26": {
+      "name": "EV026"
+    },
+    "27": {
+      "name": "EV027"
+    },
+    "28": {
+      "name": "EV028"
+    },
+    "29": {
+      "name": "EV029"
+    },
+    "30": {
+      "name": "EV030"
+    },
+    "31": {
+      "name": "EV031"
+    },
+    "32": {
+      "name": "EV032"
+    },
+    "33": {
+      "name": "EV033"
+    },
+    "34": {
+      "name": "EV034"
+    },
+    "35": {
+      "name": "EV035"
+    },
+    "36": {
+      "name": "EV036",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "本当の戦いが今から始まる。"
+              ]
+            },
+            {
+              "parameters": [
+                "目を輝かせて!"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "37": {
+      "name": "EV037"
+    },
+    "38": {
+      "name": "EV038"
+    },
+    "39": {
+      "name": "EV039"
+    },
+    "40": {
+      "name": "EV040"
+    },
+    "41": {
+      "name": "EV041"
+    },
+    "42": {
+      "name": "EV042"
+    },
+    "43": {
+      "name": "EV043"
+    },
+    "44": {
+      "name": "EV044"
+    },
+    "45": {
+      "name": "EV045"
+    },
+    "46": {
+      "name": "EV046",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "戦場へようこそルーキー"
+              ]
+            },
+            {
+              "parameters": [
+                "敵はより強力だ。"
+              ]
+            },
+            {
+              "parameters": [
+                "あなた、あなたの主な目的は"
+              ]
+            },
+            {
+              "parameters": [
+                "生き残るために"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(画面をクリックすると移動します)"
+              ]
+            },
+            {
+              "parameters": [
+                "文字は、また、"
+              ]
+            },
+            {
+              "parameters": [
+                "矢印キー)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "チャンスを掴もったら敵に反応する"
+              ]
+            },
+            {
+              "parameters": [
+                "自分の武器で火を!"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(スペースを押して撮影。 Aを使っている場合"
+              ]
+            },
+            {
+              "parameters": [
+                "マウスかタッチスクリーン、射撃はあります"
+              ]
+            },
+            {
+              "parameters": [
+                "自動。)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "時には追い詰められ、"
+              ]
+            },
+            {
+              "parameters": [
+                "敵の弾丸と取引を破壊する爆弾"
+              ]
+            },
+            {
+              "parameters": [
+                "同時に甚大な被害を"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "(右クリック、ダブルタップ、またはShiftを押します)"
+              ]
+            },
+            {
+              "parameters": [
+                "爆弾を投げる。 在庫が空いている場合、"
+              ]
+            },
+            {
+              "parameters": [
+                "運が悪かった)"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "何ででているか見てみましょう!"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

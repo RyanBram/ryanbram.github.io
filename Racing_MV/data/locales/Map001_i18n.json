@@ -1,0 +1,170 @@
+{
+  "en": {
+    "1": {
+      "name": "Race concession",
+      "pages": [
+        {
+          "list": [
+            null,
+            {
+              "parameters": [
+                "Do you want to start the race?"
+              ]
+            },
+            {
+              "parameters": [
+                [
+                  "yes.",
+                  "No"
+                ]
+              ]
+            },
+            {
+              "parameters": [
+                null,
+                "yes."
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                "Which race are you going to do?"
+              ]
+            },
+            {
+              "parameters": [
+                [
+                  "Two straight lines only course (no competition)",
+                  "Two straight lines only course (competition)",
+                  "Five-headed general course (no obstacles)",
+                  "Eight-head general course (with obstacles)",
+                  "Tutorial course (with help)"
+                ]
+              ]
+            },
+            {
+              "parameters": [
+                null,
+                "Two straight lines only course (no competition)"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                "1st:{{PROTECTED:\\V[11]}}, 2nd:{{PROTECTED:\\V[12]}}"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                null,
+                "Two straight lines only course (competition)"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                "1st:{{PROTECTED:\\V[11]}}, 2nd:{{PROTECTED:\\V[12]}}"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                null,
+                "Five-headed general course (no obstacles)"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                "1st:{{PROTECTED:\\V[11]}}, 2nd:{{PROTECTED:\\V[12]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "3rd:{{PROTECTED:\\V[13]}}, 4th:{{PROTECTED:\\V[14]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "5:{{PROTECTED:\\V[15]}}"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                null,
+                "Eight-head general course (with obstacles)"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                "1st:{{PROTECTED:\\V[11]}}, 2nd:{{PROTECTED:\\V[12]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "3rd:{{PROTECTED:\\V[13]}}, 4th:{{PROTECTED:\\V[14]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "5th:{{PROTECTED:\\V[15]}}, 6th:{{PROTECTED:\\V[16]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "7th:{{PROTECTED:\\V[17]}}, 8th:{{PROTECTED:\\V[18]}},"
+              ]
+            },
+            null,
+            {
+              "parameters": [
+                null,
+                "Tutorial course (with help)"
+              ]
+            },
+            null,
+            null,
+            {
+              "parameters": [
+                "1st:{{PROTECTED:\\V[11]}}, 2nd:{{PROTECTED:\\V[12]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "3rd:{{PROTECTED:\\V[13]}}, 4th:{{PROTECTED:\\V[14]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "5th:{{PROTECTED:\\V[15]}}, 6th:{{PROTECTED:\\V[16]}},"
+              ]
+            },
+            {
+              "parameters": [
+                "7th:{{PROTECTED:\\V[17]}}, 8th:{{PROTECTED:\\V[18]}},"
+              ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                null,
+                "No"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

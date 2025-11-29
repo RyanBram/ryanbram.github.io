@@ -1,0 +1,114 @@
+{
+  "en": {
+    "1": {
+      "name": "EV001"
+    },
+    "2": {
+      "name": "EV002",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "There is no deck where the card game can be played."
+              ]
+            },
+            {
+              "parameters": [
+                "Please set up a deck with the deck editing of the main menu."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "3": {
+      "name": "EV003",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "There is no deck where the card game can be played."
+              ]
+            },
+            {
+              "parameters": [
+                "Please set up a deck with the deck editing of the main menu."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "4": {
+      "name": "EV004",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "parameters": [
+                "There is no deck where the card game can be played."
+              ]
+            },
+            {
+              "parameters": [
+                "Please set up a deck with the deck editing of the main menu."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "5": {
+      "name": "EV005",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            {
+              "parameters": [
+                "The function of type bonus has been disabled."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "6": {
+      "name": "EV006",
+      "pages": [
+        {
+          "list": [
+            null,
+            null,
+            {
+              "parameters": [
+                "The Type Bonus feature has been activated."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "ar": {
+    "1": {
+      "name": "الضربة الضربة",
+      "message1": "%1 قد سقطت!",
+      "message2": "%1 هو قتل!",
+      "message4": "%1 يحيي!",
+      "note": "سيتم إضافة الحالة رقم 1 تلقائيًا عندما يصل \nHP إلى 0."
+    },
+    "2": {
+      "name": "الحرس"
+    },
+    "3": {
+      "name": "خالدة"
+    },
+    "4": {
+      "name": "السم",
+      "message1": "%1 مسموم!",
+      "message2": "%1 مسموم!",
+      "message4": "%1 لم تعد مسمومة!"
+    },
+    "5": {
+      "name": "أعمى",
+      "message1": "%1 هو أعمى!",
+      "message2": "%1 هو أعمى!",
+      "message4": "%1 لم تعد أعمى!"
+    },
+    "6": {
+      "name": "صمت",
+      "message1": "%1 تم إسكاته!",
+      "message2": "%1 تم إسكاته!",
+      "message4": "%1 لم يعد صامتا!"
+    },
+    "7": {
+      "name": "الغضب",
+      "message1": "%1 غاضب!",
+      "message2": "%1 غاضب!",
+      "message4": "%1 لم يعد غاضبا!"
+    },
+    "8": {
+      "name": "الارتباك",
+      "message1": "%1 مرتبك!",
+      "message2": "%1 مرتبك!",
+      "message4": "%1 لم يعد مرتبكا!"
+    },
+    "9": {
+      "name": "سحر",
+      "message1": "%1 مفتون!",
+      "message2": "%1 مفتون!",
+      "message4": "%1 لم تعد مفتونة!"
+    },
+    "10": {
+      "name": "النوم",
+      "message1": "%1 ينام!",
+      "message2": "%1 ينام!",
+      "message3": "%1 نائم.",
+      "message4": "%1 يستيقظ!"
+    },
+    "11": {
+      "name": "الشلل",
+      "message1": "%1 يصبح مشلولة!",
+      "message2": "%1 مشلولة!",
+      "message3": "%1 غير قادر على التحرك!",
+      "message4": "%1 لم يعد مشلولة!"
+    },
+    "12": {
+      "name": "ستون",
+      "message1": "%1 يفقد التوازن!",
+      "message2": "%1 يفقد التوازن!",
+      "message3": "%1 لم يستعيد التوازن...",
+      "message4": "%1 يستعيد التوازن!"
+    },
+    "13": {
+      "name": "غطاء"
+    },
+    "14": {
+      "name": "استفزاز"
+    },
+    "15": {
+      "name": "إخفاء"
+    },
+    "16": {
+      "name": "إتش بي ريجن"
+    },
+    "17": {
+      "name": "النائب ريغن"
+    },
+    "18": {
+      "name": "تي بي ريجين"
+    },
+    "19": {
+      "name": "الجسم الحديدي"
+    },
+    "20": {
+      "name": "الهجوم المضاد"
+    },
+    "21": {
+      "name": "السحر التهرب"
+    },
+    "22": {
+      "name": "ماجيك انعكاس"
+    },
+    "23": {
+      "name": "قوة الإطفاء",
+      "message1": "%1 يكتسب قوة النار!",
+      "message2": "%1 يكتسب قوة النار!"
+    },
+    "24": {
+      "name": "قوة الجليد",
+      "message1": "%1 يكتسب قوة الجليد!",
+      "message2": "%1 يكتسب قوة الجليد!"
+    },
+    "25": {
+      "name": "قوة الرعد",
+      "message1": "%1 يكتسب قوة الرعد!",
+      "message2": "%1 يكتسب قوة الرعد!"
+    },
+    "26": {
+      "name": "حارسة الإسهال"
+    },
+    "27": {
+      "name": "MP تكلفة أسفل"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Knockout",
+      "message1": "%1 telah jatuh!",
+      "message2": "%1 dibunuh!",
+      "message4": "%1 bangkit kembali!",
+      "note": "Negara # 1 akan secara otomatis ditambahkan ketika\nHP mencapai 0."
+    },
+    "2": {
+      "name": "Penjaga"
+    },
+    "3": {
+      "name": "Immortal"
+    },
+    "4": {
+      "name": "Racun",
+      "message1": "%1 diracuni!",
+      "message2": "%1 diracuni!",
+      "message4": "%1 tidak lagi diracuni!"
+    },
+    "5": {
+      "name": "Buta",
+      "message1": "%1 sudah dibutakan!",
+      "message2": "%1 sudah dibutakan!",
+      "message4": "%1 tidak lagi buta!"
+    },
+    "6": {
+      "name": "Keheningan",
+      "message1": "%1 dibungkam!",
+      "message2": "%1 dibungkam!",
+      "message4": "%1 tidak lagi dibungkam!"
+    },
+    "7": {
+      "name": "Rage",
+      "message1": "%1 sangat marah!",
+      "message2": "%1 sangat marah!",
+      "message4": "%1 tidak lagi marah!"
+    },
+    "8": {
+      "name": "Kebingungan",
+      "message1": "%1 bingung!",
+      "message2": "%1 bingung!",
+      "message4": "%1 tidak lagi bingung!"
+    },
+    "9": {
+      "name": "Kekenyamanan",
+      "message1": "%1 adalah terpesona!",
+      "message2": "%1 adalah terpesona!",
+      "message4": "%1 tidak lagi terpesona!"
+    },
+    "10": {
+      "name": "Tidur",
+      "message1": "%1 jatuh tertidur!",
+      "message2": "%1 jatuh tertidur!",
+      "message3": "%1 sedang tidur.",
+      "message4": "%1 bangun!"
+    },
+    "11": {
+      "name": "Kelumpuhan",
+      "message1": "%1 menjadi lumpuh!",
+      "message2": "%1 lumpuh!",
+      "message3": "%1 tidak dapat bergerak!",
+      "message4": "%1 tidak lagi lumpuh!"
+    },
+    "12": {
+      "name": "Stun",
+      "message1": "%1 kehilangan keseimbangan!",
+      "message2": "%1 kehilangan keseimbangan!",
+      "message3": "%1 belum mendapatkan kembali keseimbangan ......",
+      "message4": "%1 mendapatkan keseimbangan!"
+    },
+    "13": {
+      "name": "Penutup"
+    },
+    "14": {
+      "name": "Provok"
+    },
+    "15": {
+      "name": "Bersembunyi"
+    },
+    "16": {
+      "name": "HP Regen"
+    },
+    "17": {
+      "name": "Anggota Parlemen Regen"
+    },
+    "18": {
+      "name": "TP Regen"
+    },
+    "19": {
+      "name": "Ironbody"
+    },
+    "20": {
+      "name": "Serangan Bali Kontra"
+    },
+    "21": {
+      "name": "Sihir Menghindari"
+    },
+    "22": {
+      "name": "Refleksi Sihir"
+    },
+    "23": {
+      "name": "Angkatan Api",
+      "message1": "%1 memperoleh kekuatan api!",
+      "message2": "%1 memperoleh kekuatan api!"
+    },
+    "24": {
+      "name": "Kekuatan Es",
+      "message1": "%1 memperoleh kekuatan es!",
+      "message2": "%1 memperoleh kekuatan es!"
+    },
+    "25": {
+      "name": "Kekuatan Guntur",
+      "message1": "%1 memperoleh kekuatan guntur!",
+      "message2": "%1 memperoleh kekuatan guntur!"
+    },
+    "26": {
+      "name": "Penjaga penyakit"
+    },
+    "27": {
+      "name": "MP Biaya Turun"
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "ノックアウト",
+      "message1": "%1 が倒れました。",
+      "message2": "%1 が殺されています!",
+      "message4": "%1 復活!",
+      "note": "状態#1は、\nHPが0に達すると自動的に追加されます。"
+    },
+    "2": {
+      "name": "ガード"
+    },
+    "3": {
+      "name": "不滅"
+    },
+    "4": {
+      "name": "毒物",
+      "message1": "%1 は毒です!",
+      "message2": "%1 は毒です!",
+      "message4": "%1 は、もはや毒ではありません。"
+    },
+    "5": {
+      "name": "ブラインド",
+      "message1": "%1 が盲目に!",
+      "message2": "%1 が盲目に!",
+      "message4": "%1 は失明しなくなりました。"
+    },
+    "6": {
+      "name": "沈黙",
+      "message1": "%1 が沈黙!",
+      "message2": "%1 が沈黙!",
+      "message4": "%1 は、もはや沈黙していません。"
+    },
+    "7": {
+      "name": "レイジ",
+      "message1": "%1 が激怒!",
+      "message2": "%1 が激怒!",
+      "message4": "%1 はもう怒られません!"
+    },
+    "8": {
+      "name": "混乱",
+      "message1": "%1 が混乱!",
+      "message2": "%1 が混乱!",
+      "message4": "%1 は混乱しなくなりました。"
+    },
+    "9": {
+      "name": "魅惑",
+      "message1": "%1 が魅せられました!",
+      "message2": "%1 が魅せられました!",
+      "message4": "%1 は、もう魅了されていません。"
+    },
+    "10": {
+      "name": "睡眠",
+      "message1": "%1 が眠りにつく!",
+      "message2": "%1 が眠りにつく!",
+      "message3": "%1 は眠っている。",
+      "message4": "%1 が目覚めました!"
+    },
+    "11": {
+      "name": "麻痺",
+      "message1": "%1 が麻痺します!",
+      "message2": "%1 が麻痺!",
+      "message3": "%1 が動けない!",
+      "message4": "%1 は、もはや麻痺していません。"
+    },
+    "12": {
+      "name": "スタン",
+      "message1": "%1 バランスを崩します!",
+      "message2": "%1 バランスを崩します!",
+      "message3": "%1 はバランスを取り戻していません。",
+      "message4": "%1 がバランスを取り戻す!"
+    },
+    "13": {
+      "name": "カバー"
+    },
+    "14": {
+      "name": "プロヴォーク"
+    },
+    "15": {
+      "name": "隠す"
+    },
+    "16": {
+      "name": "HP レーゲン"
+    },
+    "17": {
+      "name": "MPレーゲン"
+    },
+    "18": {
+      "name": "TP レーゲン"
+    },
+    "19": {
+      "name": "アイアンボディ"
+    },
+    "20": {
+      "name": "反撃"
+    },
+    "21": {
+      "name": "マジック・エバデ"
+    },
+    "22": {
+      "name": "マジックリフレクト"
+    },
+    "23": {
+      "name": "消防隊",
+      "message1": "%1 が火の力を獲得!",
+      "message2": "%1 が火の力を獲得!"
+    },
+    "24": {
+      "name": "アイスフォース",
+      "message1": "%1が氷の力を獲得!",
+      "message2": "%1が氷の力を獲得!"
+    },
+    "25": {
+      "name": "サンダーフォース",
+      "message1": "%1 が雷のパワーを獲得!",
+      "message2": "%1 が雷のパワーを獲得!"
+    },
+    "26": {
+      "name": "エイルメントガード"
+    },
+    "27": {
+      "name": "MPコストダウン"
+    }
+  }
+}

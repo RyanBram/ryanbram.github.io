@@ -1,0 +1,2051 @@
+{
+  "ar": {
+    "1": {
+      "name": "الهجوم",
+      "description": "يتلف العدو.",
+      "message1": "%1 الهجمات!",
+      "note": "سيتم استخدام مهارة #1 عند تحديد \n الأمر الهجوم."
+    },
+    "2": {
+      "name": "الحرس",
+      "description": "يحمي المستخدم ويقلل من الأضرار التي يتم اتخاذها.",
+      "message1": "%1 الحراس.",
+      "note": "سيتم استخدام مهارة #2 عند تحديد \n الأمر الحرس."
+    },
+    "3": {
+      "name": "هجوم مزدوج",
+      "description": "يهدي العدو مرتين!",
+      "message1": "%1 الهجمات!"
+    },
+    "4": {
+      "name": "هجوم مزدوج",
+      "description": "يهاجم اثنين من الأعداء العشوائيين.",
+      "message1": "%1 الهجمات!"
+    },
+    "5": {
+      "name": "هجوم ثلاثي",
+      "description": "يهاجم ثلاثة أعداء عشوائيين.",
+      "message1": "%1 الهجمات!"
+    },
+    "6": {
+      "name": "الهروب",
+      "description": "عمل العدو. يتسبب في فرار العدو من المعركة.",
+      "message1": "%1 يهرب."
+    },
+    "7": {
+      "name": "انتظر",
+      "description": "لا يفعل شيئاً",
+      "message1": "%1 ينتظر."
+    },
+    "8": {
+      "name": "تنفس النار",
+      "description": "يَضِيّرَ الضررَ يَضِرَ",
+      "message1": "%1 يستخدم %2!"
+    },
+    "9": {
+      "name": "تنفس الجليد",
+      "description": "يَضِيدَ ضررَ الثلجَ إلى جميع الأعداءِ.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "10": {
+      "name": "صدمة",
+      "description": "يَضِيدَ ضررَ الثلجَ إلى جميع الأعداءِ.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "11": {
+      "name": "سحابة السموم",
+      "description": "تسمم كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "12": {
+      "name": "سحابة داكنة",
+      "description": "أعمى كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "13": {
+      "name": "نسيان السحابة",
+      "description": "يسكت كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "14": {
+      "name": "سونيك موجة",
+      "description": "يخلط بين جميع الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "15": {
+      "name": "أغنية الارتباك",
+      "description": "يخلط بين جميع الأعداء.",
+      "message1": "%1 يغني %2!"
+    },
+    "16": {
+      "name": "التنفس النوم",
+      "description": "يضع كل الأعداء للنوم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "17": {
+      "name": "حبوب النوم",
+      "description": "يضع كل الأعداء للنوم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "18": {
+      "name": "شللل التنفس",
+      "description": "يشل كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "19": {
+      "name": "المشلل ستار",
+      "description": "يشل عدوا واحدا.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "20": {
+      "name": "كريب الاجتيز",
+      "description": "محاولة لذهلة العدو.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "21": {
+      "name": "بوديسلم",
+      "description": "يتلف العدو ويحاول أن يذعن العدو."
+    },
+    "22": {
+      "name": "صراخ",
+      "description": "يهز كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "23": {
+      "name": "مصاص دماء",
+      "description": "يُم�تِمُم�ُعَم�ُ HP العدو.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "24": {
+      "name": "التأمل",
+      "description": "استعادة HP المستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "25": {
+      "name": "--------------"
+    },
+    "26": {
+      "name": "اتّه",
+      "description": "يعيد HP إلى حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "27": {
+      "name": "اتم الثاني",
+      "description": "يعيد HP إلى حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "28": {
+      "name": "اتم الثالث",
+      "description": "يعيد HP إلى حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "29": {
+      "name": "الانتعاش",
+      "description": "يعيد HP إلى جميع الحلفاء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "30": {
+      "name": "الاسترداد الثاني",
+      "description": "يعيد HP إلى جميع الحلفاء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "31": {
+      "name": "علاج",
+      "description": "يعاطم السم والمشلول.",
+      "message1": "%1 يلقي %2!"
+    },
+    "32": {
+      "name": "علاج الثاني",
+      "description": "علاج العديد من أمراض الحالة.",
+      "message1": "%1 يلقي %2!"
+    },
+    "33": {
+      "name": "رفع",
+      "description": "إحياء حليف ساقط.",
+      "message1": "%1 يلقي %2!"
+    },
+    "34": {
+      "name": "رفع الثاني",
+      "description": "يحيي حليفًا سقط مع الكثير من HP.",
+      "message1": "%1 يلقي %2!"
+    },
+    "35": {
+      "name": "السم",
+      "description": "تسمم كل الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "36": {
+      "name": "أعمى",
+      "description": "أعمى كل الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "37": {
+      "name": "صمت",
+      "description": "يسكت كل الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "38": {
+      "name": "الخلط",
+      "description": "يخلط بين جميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "39": {
+      "name": "النوم",
+      "description": "يضع كل الأعداء للنوم.",
+      "message1": "%1 يلقي %2!"
+    },
+    "40": {
+      "name": "شللل",
+      "description": "يشل كل الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "41": {
+      "name": "سلاح التنفس",
+      "description": "زيادة ATK أحد الحلفاء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "42": {
+      "name": "درع التنفس",
+      "description": "زيادة DEF حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "43": {
+      "name": "التنفس الإلهي",
+      "description": "زيادة MDF حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "44": {
+      "name": "التحرك السريع",
+      "description": "زيادة AGI حليف واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "45": {
+      "name": "سلاح لعنكير",
+      "description": "خفض جميع الأعداء."
+    },
+    "46": {
+      "name": "كرروع لعنة",
+      "description": "خفض جميع الأعداء ديف.",
+      "message1": "%1 يلقي %2!"
+    },
+    "47": {
+      "name": "لعنقة الإله",
+      "description": "خفض جميع الأعداء MDF.",
+      "message1": "%1 يلقي %2!"
+    },
+    "48": {
+      "name": "الحركة البطيّة",
+      "description": "خفض جميع الأعداء AGI.",
+      "message1": "%1 يلقي %2!"
+    },
+    "49": {
+      "name": "تصريف الحياة",
+      "description": "يصرف HP من عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "50": {
+      "name": "مانا تصريف",
+      "description": "يصرف النائب من عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "51": {
+      "name": "حريق",
+      "description": "يهّي أضرار إطلاق النار على عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "52": {
+      "name": "حريق الثاني",
+      "description": "يهّي أضرار إطلاق النار على عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "53": {
+      "name": "الشعلة",
+      "description": "يَضِيّرَ الضررَ يَضِرَ",
+      "message1": "%1 يلقي %2!"
+    },
+    "54": {
+      "name": "اللهب الثاني",
+      "description": "يَضِيّرَ الضررَ يَضِرَ",
+      "message1": "%1 يلقي %2!"
+    },
+    "55": {
+      "name": "الجليد",
+      "description": "400 + a.mat * 2 - b.mdf * 2",
+      "message1": "%1 يلقي %2!"
+    },
+    "56": {
+      "name": "الجليد الثاني",
+      "description": "يلحق الضرر بالجليد إلى عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "57": {
+      "name": "بيزارد",
+      "description": "يَضِيدَ ضررَ الثلجَ إلى جميع الأعداءِ.",
+      "message1": "%1 يلقي %2!"
+    },
+    "58": {
+      "name": "بيزارد الثاني",
+      "description": "يَضِيدَ ضررَ الثلجَ إلى جميع الأعداءِ.",
+      "message1": "%1 يلقي %2!"
+    },
+    "59": {
+      "name": "الرعد",
+      "description": "صفقات أضرار البرق لأحد الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "60": {
+      "name": "ثندر الثاني",
+      "description": "صفقات أضرار البرق لأحد الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "61": {
+      "name": "سبارك",
+      "description": "صفقات أضرار البرق لجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "62": {
+      "name": "سبارك الثاني",
+      "description": "صفقات أضرار البرق لجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "63": {
+      "name": "الماء",
+      "description": "يهّض الماء إلى عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "64": {
+      "name": "موجة",
+      "description": "يلحق أضرار المياه بجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "65": {
+      "name": "الحجر",
+      "description": "يهوي الضرر الأرضي لعدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "66": {
+      "name": "كويك",
+      "description": "ي الصفقات الأضرار الأرضية لجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "67": {
+      "name": "الرياح",
+      "description": "يهّض أضرار الرياح لعدو واحد."
+    },
+    "68": {
+      "name": "تورنادو",
+      "description": "يهّض أضرار الرياح لجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "69": {
+      "name": "القديس",
+      "description": "يلحق الضرر المقدس بعدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "70": {
+      "name": "ضوء النجوم",
+      "description": "يهوا ضرر مقدس لجميع الأعداء",
+      "message1": "%1 يلقي %2!"
+    },
+    "71": {
+      "name": "الظل",
+      "description": "يهّي الضرر المظلم لعدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "72": {
+      "name": "الظلام",
+      "description": "ي Deals الأضرار المظلمة لجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "73": {
+      "name": "انفجار",
+      "description": "صفقات الدفاع متجاهلا الأضرار التي لحقت عدو واحد.",
+      "message1": "%1 يلقي %2!"
+    },
+    "74": {
+      "name": "النووية",
+      "description": "صفقات الدفاع متجاهلا الأضرار التي لحقت بجميع الأعداء.",
+      "message1": "%1 يلقي %2!"
+    },
+    "75": {
+      "name": "--------------"
+    },
+    "76": {
+      "name": "سلاح النار",
+      "description": "ل 5 المنعطفات، يكتسب المستخدم سمة النار.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "77": {
+      "name": "سلاح الجليد",
+      "description": "ل 5 المنعطفات ، يكتسب المستخدم سمة الجليد.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "78": {
+      "name": "سلاح الرعد",
+      "description": "ل 5 المنعطفات ، يكتسب المستخدم سمة البرق.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "79": {
+      "name": "--------------"
+    },
+    "80": {
+      "name": "هجوم قوي",
+      "description": "هجوم قوي ضد عدو واحد",
+      "message1": "%1 يستخدم %2!"
+    },
+    "81": {
+      "name": "كليف",
+      "description": "هجوم على كل الأعداء",
+      "message1": "%1 يستخدم %2!"
+    },
+    "82": {
+      "name": "بيرسيركرز رور",
+      "description": "ل 5 المنعطفات، وزيادة ATK من الحزب.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "83": {
+      "name": "رقص بيرسيركر",
+      "description": "مهارة الأكس. هجوم قوي ضد 3 أعداء عشوائيين.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "84": {
+      "name": "رمال العملاق",
+      "description": "مهارة الفأس. هجوم قوي على كل الأعداء",
+      "message1": "%1 يستخدم %2!"
+    },
+    "85": {
+      "name": "معالجة",
+      "description": "الهجوم الذي قد يعوض توازن العدو.\nالتعويض يعتمد على هجوم المستخدم و DEF.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "86": {
+      "name": "شقرا",
+      "description": "المستخدم يعالج جميع أمراض الحالة.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "87": {
+      "name": "نمر ستانس",
+      "description": "لمدة 3 المنعطفات، هجوم مضاد وإلغاء هجمات العدو.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "88": {
+      "name": "لا ركلة الظل",
+      "description": "التعامل الدفاع تجاهل الأضرار لجميع الأعداء.\nالمهارة يؤدي أسرع من المعتاد.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "89": {
+      "name": "مخلب الرقص",
+      "description": "مهارة مخلب. ي الصفقات الأضرار التي لحقت عدو واحد مرتين.\nيتجاهل الدفاع. "
+    },
+    "90": {
+      "name": "غطاء",
+      "description": "ل 1 بدوره، وحماية الحلفاء مع انخفاض HP.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "91": {
+      "name": "استفزاز",
+      "description": "ل 5 المنعطفات ، من المرجح أن يتعرض المستخدم للهجوم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "92": {
+      "name": "الحرس الخارق",
+      "description": "لمدة 3 المنعطفات ، قلل بشدة من الأضرار المادية التي تم اتخاذها.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "93": {
+      "name": "إعادة التعزيز",
+      "description": "لمدة 5 المنعطفات ، تعزز بشكل كبير DEF للحفلة.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "94": {
+      "name": "صفر العاصفة",
+      "description": "مهارة الرمح. هجوم قوي على 3 أعداء عشوائيين.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "95": {
+      "name": "أورا بليد",
+      "description": "مهارة السيف. العدو المعتدى عليه قد يكون صامتا.\nالـي يستند الـ Damage إلى ATK و MAT المستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "96": {
+      "name": "تبديد",
+      "description": "يلغي سحر العدو.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "97": {
+      "name": "الحاجز السحري",
+      "description": "لمدة 5 المنعطفات ، تعزز بشكل كبير DEF للحفلة.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "98": {
+      "name": "تعزيز",
+      "description": "ل 5 المنعطفات، يمنح المستخدم النار والجليد، وبرق \nتعز.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "99": {
+      "name": "شفرة مشعة",
+      "description": "مهارة السيف. هجوم سحري قوي لجميع الأعداء.\nالـي يعتمد الـ Damage على هجوم المستخدم و MAT.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "100": {
+      "name": "يورويوشي",
+      "description": "صفقات الدفاع متجاهلا الأضرار التي لحقت عدو واحد.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "101": {
+      "name": "الشنتو مكياكو",
+      "description": "يزيد قليلا من TP.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "102": {
+      "name": "هاسو",
+      "description": "ل 5 منعطفات ، زيادة ATK و DEF للمستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "103": {
+      "name": "تسوباميكاشي",
+      "description": "كاتانا سكيل. كل هجوم ضد كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "104": {
+      "name": "أوقا موغن جين",
+      "description": "كاتانا سكيل. يهاجم جميع الأعداء 4 مرات.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "105": {
+      "name": "كسر سلاح",
+      "description": "يهاجم العدو ويخفض الهجوم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "106": {
+      "name": "كسر الدروع",
+      "description": "يهاجم العدو ويخفض DEF.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "107": {
+      "name": "صفر الظل",
+      "description": "لمدة 5 المنعطفات ، زيادة AGI بشكل كبير للمستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "108": {
+      "name": "ثلاثية طلقة",
+      "description": "مهارة القوس. هجوم قوي ضد 3 أعداء عشوائيين.\nالهاد يعتمد على هجوم المستخدم و AGI.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "109": {
+      "name": "الألف السهم",
+      "description": "مهارة القوس. هجوم قوي ضد جميع الأعداء 3 مرات.\nالعد يعتمد الـ Damage على هجوم المستخدم و AGI.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "110": {
+      "name": "فانيش",
+      "description": "ل 5 المنعطفات ، من غير المرجح أن يتعرض المستخدم للهجوم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "111": {
+      "name": "شعلة",
+      "description": "أعمى كل الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "112": {
+      "name": "الحظ اللص",
+      "description": "لمدة 8 المنعطفات ، زيادة كبيرة في LUK للمستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "113": {
+      "name": "الحافة القاتلة",
+      "description": "مهارة الخنجر. هجوم قوي يضرب عدو واحد مرتين.\nالضرة تعتمد على هجوم المستخدم و LUK.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "114": {
+      "name": "الحافة الشجاع",
+      "description": "مهارة الخنجر. هجوم قوي يضرب 4 أعداء عشوائيين.\nيعتمد الـ Damage على هجوم المستخدم و LUK.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "115": {
+      "name": "مباركة الروح",
+      "description": "لمدة 3 منعطفات ، يزداد DEF للحزب.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "116": {
+      "name": "أنفاس الجني",
+      "description": "لمدة 4 المنعطفات، تجديد حزب HP.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "117": {
+      "name": "إرادة الله",
+      "description": "الأضرار المقدسة ضد جميع الأعداء.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "118": {
+      "name": "احتضان الآلهة",
+      "description": "لمدة 7 المنعطفات ، زيادة كبيرة في DEF و MDF للحفلة.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "119": {
+      "name": "ماجيك انعكاس",
+      "description": "ل 1 بدوره، تعكس الهجمات السحرية العدو.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "120": {
+      "name": "تهجئة محسنة",
+      "description": "لمدة 5 المنعطفات ، تزيد بشكل كبير من MAT المستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "121": {
+      "name": "كابوس",
+      "description": "يضع جميع الأعداء للنوم ويخفض بشكل كبير MDF.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "122": {
+      "name": "التورنت السحري",
+      "description": "يستعيد 50% من MaxMP.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "123": {
+      "name": "نبض سحري",
+      "description": "لمدة 4 المنعطفات ، المستخدم لديه MP regen.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "124": {
+      "name": "مقاومة الإملائي",
+      "description": "لمدة 3 المنعطفات ، يتهرب المستخدم من جميع الهجمات السحرية.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "125": {
+      "name": "مانا الحاجز",
+      "description": "ل 5 المنعطفات ، الحزب محصن ضد أمراض الحالة.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "126": {
+      "name": "باطني الكلام",
+      "description": "لمدة 5 منعطفات ، قلل من تكلفة MP من نوبات المستخدم.",
+      "message1": "%1 يستخدم %2!"
+    },
+    "127": {
+      "name": "باعث --------",
+      "description": "إطلاق نار مستقيم للأمام نمط متوازن أساسي.",
+      "note": "<bhell:الباعث: [101]>"
+    },
+    "128": {
+      "name": "طلقة مستقيمة",
+      "description": "إطلاق نار مستقيم للأمام نمط متوازن أساسي.",
+      "note": "<bhell:الباعث: [101]>"
+    },
+    "129": {
+      "name": "رذاذ واسع",
+      "description": "نمط رش واسع. ارتفاع معدل الحرائق، ويغطي مساحة كبيرة.",
+      "note": "<bhell:الباعث: [102]>"
+    },
+    "130": {
+      "name": "الطائرات بدون طيار المساعدة",
+      "description": "طائرات بدون طيار مساعدة دوارة. النمط المداري المعقد.",
+      "note": "<bhell:الباعث: [14 ، 15 ، 16 ، 17 ، 18 ، 19 ، 20 ، 21]"
+    },
+    "131": {
+      "name": "انفجار بندقية",
+      "description": "نمط انفجار بندقية. معدل أبطيء، ضرر هائل لكل طلقة.",
+      "note": "<bhell:الباعثينات: [22, 23, 24, 25, 26, 27]"
+    },
+    "132": {
+      "name": "نظام التحقيق",
+      "description": "نظام مسبار هومينغ. الاستهداف التلقائي.",
+      "note": "<bhell:الباعث: [28, 29, 30, 31, 32]"
+    },
+    "133": {
+      "name": "قنبلة ------------",
+      "description": "إطلاق نار مستقيم للأمام نمط متوازن أساسي."
+    },
+    "134": {
+      "name": "قنبلة مائية",
+      "description": "قنبلة عنصر الماء. يمسح شاشة من رصاص العدو.",
+      "note": "<bhell:bomb: {\"sprite\": \"$الرفرات\", \"الإندكس\": 0, \"التوجيه\": 2, \"الإطار\": 1، \"الفئة\": \"BHell_Bomb_Water\", \"se\": {\"الاسم\": \"الاصياح2\"، \"الحجم\": 100، \"بان\": 0}}"
+    },
+    "135": {
+      "name": "قنبلة الرياح",
+      "description": "قنبلة عنصر الرياح. دفع الأعداء بعيدا.",
+      "note": "<bhell:bomb: {\"sprite\": \"$الرفر\", \"الفهرس\": 0, \"التوجيه\": 4، \"الإطار\": 1، \"الفئة\": \"BHell_Bomb_Wind\"، \"se\": {\"الاسم\": \"الانشطر2\"، \"الحجم\": 100، \"بان\": 0}}>"
+    },
+    "136": {
+      "name": "قنبلة الرعد",
+      "description": "قنبلة عنصر الرعد. مقذوفات عالية السرعة.",
+      "note": "<bhell:bomb: {\"sprite\": \"$الرفر\", \"الفهرس\": 0, \"التوجيه\": 4, \"الإطار\": 1، \"السرعة\": 9, \"الفئة\": \"BHell_Bomb_Thunder\", \"se\": {\"الاسم\": \"الاستنفجار2\", \"الحجم\": 100, \"pan\": 0}"
+    },
+    "137": {
+      "name": "قنبلة جليدية",
+      "description": "قنبلة عنصر الجليد. تجميد الأعداء في لحظة.",
+      "note": "<bhell:bomb: {\"sprite\": \"$الرذان\", \"الإندكس\": 0, \"التوجيه\": 4، \"أيقونة\": \"أيقونة\", \"أيقونة\", \"أيقونة\": 65, \"الإطار\": 1، \"الفئة\": \"BHell_Bomb_Ice\", \"se\": {\"name\": \"إطلاق\", \"الحجم\": 100"
+    },
+    "138": {
+      "name": "قنبلة الجاذبية",
+      "description": "قنبلة الجاذبية. يسحب الأعداء والرصاص إلى المركز.",
+      "note": "<bhell:bmb: {\"sprite\": \"$الرفرات\", \"الإندكس\": 0, \"التوجيه\": 4، \"الإطار\": 1، \"الفئة\": \"BHell_Bomb_Gravity\"، \"se\": {\"الاسم\": \"Collapse4\"، \"الحجم\": 100، \"pan\": 0}}>"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Serangan",
+      "description": "Merusak musuh.",
+      "message1": "%1 serangan!",
+      "note": "Skill # 1 akan digunakan saat Anda memilih \n"
+    },
+    "2": {
+      "name": "Penjaga",
+      "description": "Melindungi pengguna dan mengurangi kerusakan yang diambil.",
+      "message1": "%1 penjaga.",
+      "note": "Skill # 2 akan digunakan saat Anda memilih \n perintah Garda."
+    },
+    "3": {
+      "name": "Serangan Ganda",
+      "description": "Memukul musuh dua kali!",
+      "message1": "%1 serangan!"
+    },
+    "4": {
+      "name": "Serangan Ganda",
+      "description": "Menyerang dua musuh acak.",
+      "message1": "%1 serangan!"
+    },
+    "5": {
+      "name": "Serangan Tiga Kali Lipat",
+      "description": "Menyerang tiga musuh acak.",
+      "message1": "%1 serangan!"
+    },
+    "6": {
+      "name": "Melarikan diri",
+      "description": "Tindakan musuh. Menyebabkan musuh melarikan diri dari pertempuran.",
+      "message1": "%1 melarikan diri."
+    },
+    "7": {
+      "name": "Tunggu",
+      "description": "Tidak melakukan apa-apa.",
+      "message1": "%1 menunggu."
+    },
+    "8": {
+      "name": "Nafas Api",
+      "description": "Menangani kerusakan api untuk semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "9": {
+      "name": "Nafas Es",
+      "description": "Menghadapi kerusakan es pada semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "10": {
+      "name": "Terkejut",
+      "description": "Menghadapi kerusakan es pada semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "11": {
+      "name": "Awan Racun",
+      "description": "Racun semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "12": {
+      "name": "Awan Gelap",
+      "description": "Blinds semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "13": {
+      "name": "Lupakan Cloud",
+      "description": "Membungkam semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "14": {
+      "name": "Gelombang Sonic",
+      "description": "Mengkonfkankan semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "15": {
+      "name": "Lagu Kebingungan",
+      "description": "Mengkonfkankan semua musuh.",
+      "message1": "%1 bernyanyi %2!"
+    },
+    "16": {
+      "name": "Tidur Napas",
+      "description": "Menempatkan semua musuh untuk tidur.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "17": {
+      "name": "Serbuk sari tidur",
+      "description": "Menempatkan semua musuh untuk tidur.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "18": {
+      "name": "Lumpus Napas",
+      "description": "Melumir semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "19": {
+      "name": "Lumpuh Tatapung",
+      "description": "Melumi satu musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "20": {
+      "name": "Tendangan Memanip",
+      "description": "Mencoba untuk mengejutkan musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "21": {
+      "name": "Bodyslam",
+      "description": "Kerusakan musuh dan mencoba untuk stun musuh."
+    },
+    "22": {
+      "name": "Berteriak",
+      "description": "Mengi dan menakjubkan semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "23": {
+      "name": "Vampir",
+      "description": "Menanyai HP musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "24": {
+      "name": "Meditasi",
+      "description": "Memulihkan HP pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "25": {
+      "name": "----------------------------"
+    },
+    "26": {
+      "name": "Penyembuhkan",
+      "description": "Mengembalikan HP ke satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "27": {
+      "name": "Penyembuh II",
+      "description": "Mengembalikan HP ke satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "28": {
+      "name": "Penyembuhkan III",
+      "description": "Mengembalikan HP ke satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "29": {
+      "name": "Pemulihan",
+      "description": "Mengembalikan HP ke semua sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "30": {
+      "name": "Pemulihan II",
+      "description": "Mengembalikan HP ke semua sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "31": {
+      "name": "Obat",
+      "description": "Obat racun dan kelumpuhan.",
+      "message1": "%1 cor %2!"
+    },
+    "32": {
+      "name": "Obat II",
+      "description": "Mengejikan banyak penyakit status.",
+      "message1": "%1 cor %2!"
+    },
+    "33": {
+      "name": "Meningkatkan",
+      "description": "Menghidupkan kembali sekutu yang jatuh.",
+      "message1": "%1 cor %2!"
+    },
+    "34": {
+      "name": "Meningkatkan II",
+      "description": "Menghidupkan kembali sekutu yang jatuh dengan banyak HP.",
+      "message1": "%1 cor %2!"
+    },
+    "35": {
+      "name": "Racun",
+      "description": "Racun semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "36": {
+      "name": "Buta",
+      "description": "Blinds semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "37": {
+      "name": "Keheningan",
+      "description": "Membungkam semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "38": {
+      "name": "Confuse",
+      "description": "Mengkonfkankan semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "39": {
+      "name": "Tidur",
+      "description": "Menempatkan semua musuh untuk tidur.",
+      "message1": "%1 cor %2!"
+    },
+    "40": {
+      "name": "Paralyze",
+      "description": "Melumir semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "41": {
+      "name": "Senjata Napas",
+      "description": "Tingkatkan ATK satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "42": {
+      "name": "Armor Napas",
+      "description": "Tingkatkan DEF satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "43": {
+      "name": "Nafas Ilahi",
+      "description": "Tingkatkan MDF satu sekutu.",
+      "message1": "%1 cor %2!"
+    },
+    "44": {
+      "name": "Langkah Cepat",
+      "description": "Tingkatkan satu sekutu AGI.",
+      "message1": "%1 cor %2!"
+    },
+    "45": {
+      "name": "Senjata Kutu Kutu",
+      "description": "Turunkan semua musuh ' ATK."
+    },
+    "46": {
+      "name": "Rumor Kutu Rumor",
+      "description": "Turunkan semua musuh 'DEF.",
+      "message1": "%1 cor %2!"
+    },
+    "47": {
+      "name": "Kutuan Ilahi",
+      "description": "Turunkan semua musuh 'MDF.",
+      "message1": "%1 cor %2!"
+    },
+    "48": {
+      "name": "Langkah Lambat",
+      "description": "Turunkan semua musuh' AGI.",
+      "message1": "%1 cor %2!"
+    },
+    "49": {
+      "name": "Drain Kehidupan",
+      "description": "Menguras HP dari satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "50": {
+      "name": "Pengerisan Mana",
+      "description": "Menguras MP dari satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "51": {
+      "name": "Api",
+      "description": "Menangani kerusakan akibat kebakaran pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "52": {
+      "name": "Api II",
+      "description": "Menangani kerusakan akibat kebakaran pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "53": {
+      "name": "Api",
+      "description": "Menangani kerusakan api untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "54": {
+      "name": "Api II",
+      "description": "Menangani kerusakan api untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "55": {
+      "name": "Es",
+      "description": "400 + a.mat * 2 - b.mdf * 2",
+      "message1": "%1 cor %2!"
+    },
+    "56": {
+      "name": "Es II",
+      "description": "Menghadapi kerusakan es pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "57": {
+      "name": "Badai salju",
+      "description": "Menghadapi kerusakan es pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "58": {
+      "name": "Badai salju II",
+      "description": "Menghadapi kerusakan es pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "59": {
+      "name": "Guntur",
+      "description": "Menangani kerusakan petir pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "60": {
+      "name": "Guntur II",
+      "description": "Menangani kerusakan petir pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "61": {
+      "name": "Perci Api",
+      "description": "Menangani kerusakan petir untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "62": {
+      "name": "Spark II",
+      "description": "Menangani kerusakan petir untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "63": {
+      "name": "Air",
+      "description": "Menghadapi kerusakan air pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "64": {
+      "name": "Gelombang",
+      "description": "Menangani kerusakan air untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "65": {
+      "name": "Batu",
+      "description": "Menangani kerusakan bumi pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "66": {
+      "name": "Quke",
+      "description": "Menangani kerusakan bumi pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "67": {
+      "name": "Angin",
+      "description": "Menangani kerusakan angin pada satu musuh."
+    },
+    "68": {
+      "name": "Tornado",
+      "description": "Menangani kerusakan angin untuk semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "69": {
+      "name": "Santo",
+      "description": "Menangani kerusakan suci pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "70": {
+      "name": "cahaya bintang",
+      "description": "Menghadapi kerusakan suci pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "71": {
+      "name": "Teguh",
+      "description": "Menghadapi kerusakan gelap pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "72": {
+      "name": "Kegelapan",
+      "description": "Menangani kerusakan gelap pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "73": {
+      "name": "Meljesak",
+      "description": "Kesepakatan pertahanan mengabaikan kerusakan pada satu musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "74": {
+      "name": "Nuklir",
+      "description": "Kesepakatan pertahanan mengabaikan kerusakan pada semua musuh.",
+      "message1": "%1 cor %2!"
+    },
+    "75": {
+      "name": "----------------------------"
+    },
+    "76": {
+      "name": "Senjata Api",
+      "description": "Untuk 5 putaran, pengguna mendapatkan atribut api.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "77": {
+      "name": "Senjata Es",
+      "description": "Untuk 5 putaran, pengguna mendapatkan atribut es.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "78": {
+      "name": "Guntur Senjata",
+      "description": "Untuk 5 belokan, pengguna mendapatkan atribut petir.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "79": {
+      "name": "----------------------------"
+    },
+    "80": {
+      "name": "Serangan yang kuat",
+      "description": "Serangan yang kuat terhadap satu musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "81": {
+      "name": "Cleave",
+      "description": "Serangan terhadap semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "82": {
+      "name": "Roar Berserker",
+      "description": "Untuk 5 putaran, meningkatkan ATK pesta.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "83": {
+      "name": "Tarian Berserker",
+      "description": "Keterampilan kapak. Serangan kuat terhadap 3 musuh acak.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "84": {
+      "name": "Giant's Rampage",
+      "description": "Keterampilan Axe. Serangan yang kuat terhadap semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "85": {
+      "name": "Tackle",
+      "description": "Serangan yang dapat mengimbangi keseimbangan musuh.\nKeu didasarkan pada ATK pengguna dan DEF.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "86": {
+      "name": "Chakra",
+      "description": "Pengguna menyembuhkan semua penyakit status.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "87": {
+      "name": "Sikap Harimau",
+      "description": "Untuk 3 putaran, serangan balik dan batalkan serangan musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "88": {
+      "name": "Tidak Bayangan Tendangan",
+      "description": "Kesepakatan pertahanan mengabaikan kerusakan pada semua musuh.\nSkill memicu lebih cepat dari biasanya.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "89": {
+      "name": "Tari Cakar",
+      "description": "Keterampilan Cakar. Menghadapi kerusakan pada satu musuh dua kali.\nIg pertahanan. "
+    },
+    "90": {
+      "name": "Penutup",
+      "description": "Untuk 1 turn, lindungi sekutu dengan HP rendah.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "91": {
+      "name": "Provok",
+      "description": "Selama 5 putaran, pengguna lebih mungkin diserang.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "92": {
+      "name": "Penjaga Super",
+      "description": "Untuk 3 putaran, sangat mengurangi kerusakan fisik yang diambil.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "93": {
+      "name": "Memulihkan",
+      "description": "Untuk 5 putaran, sangat meningkatkan DEF untuk pesta.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "94": {
+      "name": "Badai Nol",
+      "description": "Keterampilan Tombak. Serangan yang kuat untuk 3 musuh acak.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "95": {
+      "name": "Aura Blade",
+      "description": "Keterampilan Pedang. Musuh yang diserang dapat dibungkam.\nDamage didasarkan pada ATK dan MAT pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "96": {
+      "name": "Menghilangi",
+      "description": "Membatalkan pesona musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "97": {
+      "name": "Penghalang Sihir",
+      "description": "Untuk 5 putaran, sangat meningkatkan DEF untuk pesta.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "98": {
+      "name": "Penguat",
+      "description": "Untuk 5 putaran, berikan api pengguna, es, dan atribut petir\n.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "99": {
+      "name": "Pisau Radiant",
+      "description": "Keterampilan Pedang. Serangan ajaib yang kuat untuk semua musuh.\nDamage didasarkan pada ATK dan MAT pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "100": {
+      "name": "Yoroidoshi",
+      "description": "Kesepakatan pertahanan mengabaikan kerusakan pada satu musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "101": {
+      "name": "Shintou Mekkyaku",
+      "description": "Meningkatkan sedikit TP.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "102": {
+      "name": "Hassou",
+      "description": "Untuk 5 putaran, tingkatkan ATK dan DEF pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "103": {
+      "name": "Tsubamekaeshi",
+      "description": "Kemampuan Keterampilan. Semua keluar serangan terhadap semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "104": {
+      "name": "Ouka Mugen jin",
+      "description": "Kemampuan Keterampilan. Menyerang semua musuh 4 kali.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "105": {
+      "name": "Pemutusan Senjata",
+      "description": "Menyerang musuh dan menurunkan ATK.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "106": {
+      "name": "Armor Break Break",
+      "description": "Menyerang musuh dan menurunkan DEF.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "107": {
+      "name": "Nol Bayangan",
+      "description": "Untuk 5 putaran, sangat meningkatkan AGI untuk pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "108": {
+      "name": "Tripple Ditembak",
+      "description": "Keterampilan Busur. Serangan yang kuat terhadap 3 musuh acak.\nKeu didasarkan pada ATK dan AGI pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "109": {
+      "name": "Seribu Panah",
+      "description": "Keterampilan Busur. Serangan yang kuat terhadap semua musuh 3 kali.\nKeu didasarkan pada ATK dan AGI pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "110": {
+      "name": "Menghilang",
+      "description": "Untuk 5 putaran, pengguna cenderung tidak diserang.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "111": {
+      "name": "Suar",
+      "description": "Blinds semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "112": {
+      "name": "Keberuntungan Pencuri",
+      "description": "Untuk 8 putaran, sangat meningkatkan LUK untuk pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "113": {
+      "name": "Keunggulan Pembunuh",
+      "description": "Keterampilan Belati. Serangan kuat mengenai satu musuh dua kali.\n Damamage didasarkan pada ATK dan LUK pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "114": {
+      "name": "Tepi yang Berani",
+      "description": "Keterampilan Belati. Serangan yang kuat hits 4 musuh acak.\nDamage didasarkan pada pengguna ATK dan LUK.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "115": {
+      "name": "Berkat Roh",
+      "description": "Untuk 3 putaran, DEF partai meningkat.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "116": {
+      "name": "Nafas Peri",
+      "description": "Untuk 4 belokan, regenerasi HP partai.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "117": {
+      "name": "Kehendak Allah",
+      "description": "Kerusakan suci terhadap semua musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "118": {
+      "name": "Pelukan Dewi",
+      "description": "Untuk 7 putaran, sangat meningkatkan DEF dan MDF untuk pesta.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "119": {
+      "name": "Refleksi Sihir",
+      "description": "Untuk 1 belokan, renungkan serangan sihir musuh.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "120": {
+      "name": "Mantra yang ditingkatkan",
+      "description": "Untuk 5 putaran, sangat meningkatkan MAKAN pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "121": {
+      "name": "Mimpi Buruk",
+      "description": "Menempatkan semua musuh untuk tidur dan sangat menurunkan MDF mereka.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "122": {
+      "name": "Sihir Torrent",
+      "description": "Memulihkan 50% dari MaxMP.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "123": {
+      "name": "Magic Pulse",
+      "description": "Untuk 4 putaran, pengguna memiliki MP regen.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "124": {
+      "name": "Perlawanan Mantra",
+      "description": "Untuk 3 putaran, pengguna menghindari semua serangan ajaib.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "125": {
+      "name": "Penghalang Mana",
+      "description": "Selama 5 putaran, partai kebal terhadap penyakit status.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "126": {
+      "name": "Mantra Mystic",
+      "description": "Untuk 5 putaran, kurangi biaya MP mantra untuk pengguna.",
+      "message1": "%1 menggunakan %2!"
+    },
+    "127": {
+      "name": "Emitter -----------------",
+      "description": "Tembakan lurus ke depan. Pola seimbang dasar.",
+      "note": "<bhell: emitters: [101]>"
+    },
+    "128": {
+      "name": "Tembakan Lurus",
+      "description": "Tembakan lurus ke depan. Pola seimbang dasar.",
+      "note": "<bhell: emitters: [101]>"
+    },
+    "129": {
+      "name": "Semprotan Lebar",
+      "description": "Pola semprotan lebar. Tingkat kebakaran yang tinggi, mencakup area yang luas.",
+      "note": "<bhell: emitters: [102]>"
+    },
+    "130": {
+      "name": "Drone Pembantu",
+      "description": "Berputar membantu drone. Pola orbital yang kompleks.",
+      "note": "<bhell:emitters: [14, 15, 16, 17, 18, 19, 20, 21]>"
+    },
+    "131": {
+      "name": "Shotgun Burst",
+      "description": "Pola ledakan senapan. Tingkat lambat, kerusakan besar per tembakan.",
+      "note": "<bhell: emitters: [22, 23, 24, 25, 26, 27]>"
+    },
+    "132": {
+      "name": "Sistem Probe",
+      "description": "Sistem probe homing. Penargetan otomatis.",
+      "note": "<bhell: emitters: [28, 29, 30, 31, 32]>"
+    },
+    "133": {
+      "name": "Bom -------------------",
+      "description": "Tembakan lurus ke depan. Pola seimbang dasar."
+    },
+    "134": {
+      "name": "Bom Air",
+      "description": "Bom elemen air. Membersihkan layar peluru musuh.",
+      "note": "<bhell:bomb: {\"sprite\": \"$ Bullets\", \"indeks\": 0, \"direction\": 2, \"frame\": 1, \"kelas\": \"BHell_Bomb_Water\", \"se\" Se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    },
+    "135": {
+      "name": "Bom Angin",
+      "description": "Bom elemen angin. Mendorong musuh menjauh.",
+      "note": "<bhell:bomb: {\"sprite\": \"$ Bullets\", \"indeks\": 0, \"direction\": 4, \"frame\": 1, \"kelas\": \"BHell_Bomb_Wind\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    },
+    "136": {
+      "name": "Bom Guntur",
+      "description": "Bom unsur guntur. Proyektil kecepatan tinggi.",
+      "note": "<bhell:bomb: {\"sprite\": \"$ Bullets\", \"indeks\": 0, \"arah\": 4, \"frame\": 1, \"speed\": 9, \"kelas\": \"Hell_Bomb_Thunder\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}"
+    },
+    "137": {
+      "name": "Bom Es",
+      "description": "Bom elemen es. Membekukan musuh sesaat.",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"indeks\": 0, \"arah\": 4, \"ikon\": \"IconSet\", \"icon_index\": 65, \"frame\": 1, \"kelas\": \"Hell_Bomb_Ice\", \"se\": {\"nama\": \"Explosion2\", \"volume\": 100, \"pitch\": 100"
+    },
+    "138": {
+      "name": "Bom Gravity",
+      "description": "Bom gravitasi. Menarik musuh dan peluru ke tengah.",
+      "note": "<bhell: bom: {\"sprite\": \"$ Bullets\", \"indeks\": 0, \"arah\": 4, \"frame\": 1, \"kelas\": \"BHell_Bomb_Gravity\", \"se\": {\"name\": \"Collapse4\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}"
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "攻撃",
+      "description": "敵にダメージを与える。",
+      "message1": "%1 攻撃!",
+      "note": "スキル#1は、攻撃コマンドを選択すると「{{NWLN」が使用されます。"
+    },
+    "2": {
+      "name": "ガード",
+      "description": "ユーザーを保護し、損傷を減らします。",
+      "message1": "%1 ガード。",
+      "note": "スキル#2は、\nthe Guardコマンドを選択すると使用されます。"
+    },
+    "3": {
+      "name": "デュアルアタック",
+      "description": "敵を2回殴れ!",
+      "message1": "%1 攻撃!"
+    },
+    "4": {
+      "name": "ダブルアタック",
+      "description": "ランダムな敵2人を攻撃。",
+      "message1": "%1 攻撃!"
+    },
+    "5": {
+      "name": "トリプルアタック",
+      "description": "3人の敵を襲う。",
+      "message1": "%1 攻撃!"
+    },
+    "6": {
+      "name": "エスケープ",
+      "description": "敵のアクション 敵を戦闘から逃がす。",
+      "message1": "%1 がフリー。"
+    },
+    "7": {
+      "name": "待って",
+      "description": "何もしない。",
+      "message1": "%1 が待ちます。"
+    },
+    "8": {
+      "name": "火の呼吸",
+      "description": "すべての敵に火のダメージを与える。",
+      "message1": "%1 を使って %2!"
+    },
+    "9": {
+      "name": "アイスブレス",
+      "description": "すべての敵に氷のダメージを与える。",
+      "message1": "%1 を使って %2!"
+    },
+    "10": {
+      "name": "ショック",
+      "description": "すべての敵に氷のダメージを与える。",
+      "message1": "%1 を使って %2!"
+    },
+    "11": {
+      "name": "ポイズンクラウド",
+      "description": "すべての敵を毒殺する。",
+      "message1": "%1 を使って %2!"
+    },
+    "12": {
+      "name": "ダーククラウド",
+      "description": "すべての敵を盲目にする。",
+      "message1": "%1 を使って %2!"
+    },
+    "13": {
+      "name": "クラウドを忘れる",
+      "description": "すべての敵を沈黙させる。",
+      "message1": "%1 を使って %2!"
+    },
+    "14": {
+      "name": "ソニックウェーブ",
+      "description": "すべての敵を混乱する。",
+      "message1": "%1 を使って %2!"
+    },
+    "15": {
+      "name": "混乱の歌",
+      "description": "すべての敵を混乱する。",
+      "message1": "%1 が %2 を歌います!"
+    },
+    "16": {
+      "name": "睡眠呼吸",
+      "description": "すべての敵を眠らせる。",
+      "message1": "%1 を使って %2!"
+    },
+    "17": {
+      "name": "睡眠花粉",
+      "description": "すべての敵を眠らせる。",
+      "message1": "%1 を使って %2!"
+    },
+    "18": {
+      "name": "呼吸を麻痺",
+      "description": "すべての敵を麻痺する",
+      "message1": "%1 を使って %2!"
+    },
+    "19": {
+      "name": "パラライズ・スター",
+      "description": "たった一人の敵を麻痺する。",
+      "message1": "%1 を使って %2!"
+    },
+    "20": {
+      "name": "スイープキック",
+      "description": "敵を唸らせる。",
+      "message1": "%1 を使って %2!"
+    },
+    "21": {
+      "name": "ボディスラム",
+      "description": "敵を唸らせる。"
+    },
+    "22": {
+      "name": "シャウト",
+      "description": "すべての敵を�滅",
+      "message1": "%1 を使って %2!"
+    },
+    "23": {
+      "name": "ヴァンパイア",
+      "description": "敵のHPを吸収する。",
+      "message1": "%1 を使って %2!"
+    },
+    "24": {
+      "name": "瞑想",
+      "description": "ユーザーのHPを回復。",
+      "message1": "%1 を使って %2!"
+    },
+    "25": {
+      "name": "---------------------"
+    },
+    "26": {
+      "name": "ヘル",
+      "description": "HPを1つの同盟国に復元します。",
+      "message1": "%1 casts %2!"
+    },
+    "27": {
+      "name": "ヘルII",
+      "description": "HPを1つの同盟国に復元します。",
+      "message1": "%1 casts %2!"
+    },
+    "28": {
+      "name": "ヒールIII",
+      "description": "HPを1つの同盟国に復元します。",
+      "message1": "%1 casts %2!"
+    },
+    "29": {
+      "name": "回復",
+      "description": "すべての味方にHPを復元します。",
+      "message1": "%1 casts %2!"
+    },
+    "30": {
+      "name": "回復II",
+      "description": "すべての味方にHPを復元します。",
+      "message1": "%1 casts %2!"
+    },
+    "31": {
+      "name": "キュア",
+      "description": "毒とparalsysを治す。",
+      "message1": "%1 casts %2!"
+    },
+    "32": {
+      "name": "キュアII",
+      "description": "多くのステータスの病気を治します。",
+      "message1": "%1 casts %2!"
+    },
+    "33": {
+      "name": "昇給",
+      "description": "倒れた同盟国を復活させる",
+      "message1": "%1 casts %2!"
+    },
+    "34": {
+      "name": "レイ・II",
+      "description": "倒れた同盟国をHPで復活させる。",
+      "message1": "%1 casts %2!"
+    },
+    "35": {
+      "name": "毒物",
+      "description": "すべての敵を毒する。",
+      "message1": "%1 casts %2!"
+    },
+    "36": {
+      "name": "ブラインド",
+      "description": "すべての敵を盲目にする。",
+      "message1": "%1 casts %2!"
+    },
+    "37": {
+      "name": "沈黙",
+      "description": "すべての敵を沈黙させる。",
+      "message1": "%1 casts %2!"
+    },
+    "38": {
+      "name": "混乱",
+      "description": "すべての敵を混乱する。",
+      "message1": "%1 casts %2!"
+    },
+    "39": {
+      "name": "睡眠",
+      "description": "すべての敵を眠らせる。",
+      "message1": "%1 casts %2!"
+    },
+    "40": {
+      "name": "麻痺",
+      "description": "すべての敵を麻痺する",
+      "message1": "%1 casts %2!"
+    },
+    "41": {
+      "name": "ブレスウェポン",
+      "description": "同盟国のATKを1つ増やす。",
+      "message1": "%1 casts %2!"
+    },
+    "42": {
+      "name": "ブレスアーマー",
+      "description": "同盟国のDEFを1つ増やす。",
+      "message1": "%1 casts %2!"
+    },
+    "43": {
+      "name": "神聖な呼吸",
+      "description": "同盟国のMDFを1つ増やす。",
+      "message1": "%1 casts %2!"
+    },
+    "44": {
+      "name": "クイックムー",
+      "description": "同盟国のAGIを1つ増やす。",
+      "message1": "%1 casts %2!"
+    },
+    "45": {
+      "name": "呪い兵器",
+      "description": "すべての敵の攻撃を減"
+    },
+    "46": {
+      "name": "呪いの鎧",
+      "description": "すべての敵のDEFを下げる。",
+      "message1": "%1 casts %2!"
+    },
+    "47": {
+      "name": "神の呪い",
+      "description": "すべての敵のMDFを下げます。",
+      "message1": "%1 casts %2!"
+    },
+    "48": {
+      "name": "スロームー",
+      "description": "すべての敵のAGIを下げます。",
+      "message1": "%1 casts %2!"
+    },
+    "49": {
+      "name": "ライフドレイン",
+      "description": "敵からHPを排出する。",
+      "message1": "%1 casts %2!"
+    },
+    "50": {
+      "name": "マナ・ドレイン",
+      "description": "MPを1つの敵から排出します。",
+      "message1": "%1 casts %2!"
+    },
+    "51": {
+      "name": "火",
+      "description": "敵に火のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "52": {
+      "name": "火II",
+      "description": "敵に火のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "53": {
+      "name": "炎",
+      "description": "すべての敵に火のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "54": {
+      "name": "フレイムII",
+      "description": "すべての敵に火のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "55": {
+      "name": "氷",
+      "description": "400 + a.mat * 2 - b.mdf * 2",
+      "message1": "%1 casts %2!"
+    },
+    "56": {
+      "name": "アイスII",
+      "description": "氷のダメージを1人の敵に与える。",
+      "message1": "%1 casts %2!"
+    },
+    "57": {
+      "name": "ブリザード",
+      "description": "すべての敵に氷のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "58": {
+      "name": "ブリザード2世",
+      "description": "すべての敵に氷のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "59": {
+      "name": "サンダー",
+      "description": "雷によるダメージを1つの敵に与える。",
+      "message1": "%1 casts %2!"
+    },
+    "60": {
+      "name": "サンダーII",
+      "description": "雷によるダメージを1つの敵に与える。",
+      "message1": "%1 casts %2!"
+    },
+    "61": {
+      "name": "スパーク",
+      "description": "すべての敵に雷のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "62": {
+      "name": "スパークII",
+      "description": "すべての敵に雷のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "63": {
+      "name": "水",
+      "description": "一人の敵に水害を与える。",
+      "message1": "%1 casts %2!"
+    },
+    "64": {
+      "name": "ウェーブ",
+      "description": "すべての敵に水害を与える。",
+      "message1": "%1 casts %2!"
+    },
+    "65": {
+      "name": "ストーン",
+      "description": "1つの敵に地球のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "66": {
+      "name": "クケ",
+      "description": "すべての敵に土のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "67": {
+      "name": "風",
+      "description": "敵に風害を与える。"
+    },
+    "68": {
+      "name": "竜巻",
+      "description": "すべての敵に風のダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "69": {
+      "name": "聖者",
+      "description": "敵に聖なるダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "70": {
+      "name": "スターライト",
+      "description": "すべての敵に聖なるダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "71": {
+      "name": "シェイド",
+      "description": "暗いダメージを1つの敵に与える。",
+      "message1": "%1 casts %2!"
+    },
+    "72": {
+      "name": "闇",
+      "description": "すべての敵に暗いダメージを与える。",
+      "message1": "%1 casts %2!"
+    },
+    "73": {
+      "name": "バースト",
+      "description": "防御は1つの敵へのダメージを無視します。",
+      "message1": "%1 casts %2!"
+    },
+    "74": {
+      "name": "原子力",
+      "description": "すべての敵へのダメージを無視して防御をディルします。",
+      "message1": "%1 casts %2!"
+    },
+    "75": {
+      "name": "---------------------"
+    },
+    "76": {
+      "name": "火の武器",
+      "description": "5ターンの場合、ユーザーはfire属性を獲得します。",
+      "message1": "%1 を使って %2!"
+    },
+    "77": {
+      "name": "氷の武器",
+      "description": "5ターンの場合、ユーザーはice属性を獲得します。",
+      "message1": "%1 を使って %2!"
+    },
+    "78": {
+      "name": "サンダー・ウェポン",
+      "description": "5ターンの場合、ユーザーはLightning属性を獲得します。",
+      "message1": "%1 を使って %2!"
+    },
+    "79": {
+      "name": "---------------------"
+    },
+    "80": {
+      "name": "強力な攻撃",
+      "description": "敵に対する強い攻撃",
+      "message1": "%1 を使って %2!"
+    },
+    "81": {
+      "name": "クリーブ",
+      "description": "すべての敵に対する攻撃",
+      "message1": "%1 を使って %2!"
+    },
+    "82": {
+      "name": "ベルサーカーのロアー",
+      "description": "5ターンのために、パーティーのATKを増やします。",
+      "message1": "%1 を使って %2!"
+    },
+    "83": {
+      "name": "バーサーカーのダンス",
+      "description": "斧のスキル 3つのランダムな敵に対する強力な攻撃。",
+      "message1": "%1 を使って %2!"
+    },
+    "84": {
+      "name": "巨人の暴れ",
+      "description": "斧スキル すべての敵に対する強力な攻撃。",
+      "message1": "%1 を使って %2!"
+    },
+    "85": {
+      "name": "タックル",
+      "description": "敵のバランスを相殺する可能性のある攻撃。{{NWLNN}}ダメージはユーザーのATKとDEFに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "86": {
+      "name": "チャクラ",
+      "description": "ユーザーはすべてのステータスの病気を治します。",
+      "message1": "%1 を使って %2!"
+    },
+    "87": {
+      "name": "タイガー・スタンス",
+      "description": "3ターンは、反撃し、敵の攻撃をキャンセルします。",
+      "message1": "%1 を使って %2!"
+    },
+    "88": {
+      "name": "ノー・シャドウ・キック",
+      "description": "すべての敵へのダメージを無視して防御をディルします。\n通常よりも早くスキルトリガーをトリガーします。",
+      "message1": "%1 を使って %2!"
+    },
+    "89": {
+      "name": "クローダンス",
+      "description": "爪のスキル 敵に2回ダメージを与える\nIgnores防御。 "
+    },
+    "90": {
+      "name": "カバー",
+      "description": "1ターンのために、低いHPで同盟国を保護します。",
+      "message1": "%1 を使って %2!"
+    },
+    "91": {
+      "name": "プロヴォーク",
+      "description": "5ターンの場合、ユーザーは攻撃される可能性が高くなります。",
+      "message1": "%1 を使って %2!"
+    },
+    "92": {
+      "name": "スーパーガード",
+      "description": "3ターンのために、取られる物理的な損傷を大幅に減らします。",
+      "message1": "%1 を使って %2!"
+    },
+    "93": {
+      "name": "再強化",
+      "description": "5ターンの場合、パーティーのDEFを大幅にブーストします。",
+      "message1": "%1 を使って %2!"
+    },
+    "94": {
+      "name": "ゼロ・ストム",
+      "description": "スピアースキル 3つのランダムな敵に強力な攻撃。",
+      "message1": "%1 を使って %2!"
+    },
+    "95": {
+      "name": "オーラブレード",
+      "description": "剣のスキル 攻撃された敵は沈黙することができます。\nダメージはユーザーのATKとMATに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "96": {
+      "name": "ディスペル",
+      "description": "敵のエンチャントをキャンセル。",
+      "message1": "%1 を使って %2!"
+    },
+    "97": {
+      "name": "マジックバリア",
+      "description": "5ターンの場合、パーティーのDEFを大幅にブーストします。",
+      "message1": "%1 を使って %2!"
+    },
+    "98": {
+      "name": "補強",
+      "description": "5ターンの場合、ユーザーの火、氷、および雷に属性を与えます。",
+      "message1": "%1 を使って %2!"
+    },
+    "99": {
+      "name": "ラディアントブレード",
+      "description": "剣のスキル すべての敵への強力な魔法の攻撃。{{NWLNN}}Damageは、ユーザーのATKとMATに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "100": {
+      "name": "よろろおし",
+      "description": "防御は1つの敵へのダメージを無視します。",
+      "message1": "%1 を使って %2!"
+    },
+    "101": {
+      "name": "新東メククヤク",
+      "description": "TPを少し増やします。",
+      "message1": "%1 を使って %2!"
+    },
+    "102": {
+      "name": "ハッスー",
+      "description": "5ターンは、ユーザーのATKとDEFを増やします。",
+      "message1": "%1 を使って %2!"
+    },
+    "103": {
+      "name": "つばめカエシ",
+      "description": "カタナスキル。 すべての敵に対する攻撃。",
+      "message1": "%1 を使って %2!"
+    },
+    "104": {
+      "name": "オウカ・ムゲンジン",
+      "description": "カタナスキル。 敵を4回攻撃する。",
+      "message1": "%1 を使って %2!"
+    },
+    "105": {
+      "name": "武器休憩",
+      "description": "敵を攻撃して攻撃を低下。",
+      "message1": "%1 を使って %2!"
+    },
+    "106": {
+      "name": "アーマーブレイク",
+      "description": "敵を攻撃してDEFを下げます。",
+      "message1": "%1 を使って %2!"
+    },
+    "107": {
+      "name": "ゼロシャドウ",
+      "description": "5ターンの場合、ユーザーにとってAGIを大幅にブーストします。",
+      "message1": "%1 を使って %2!"
+    },
+    "108": {
+      "name": "トリプルショット",
+      "description": "ボウスキル 3つのランダムな敵に対する強力な攻撃。{{NWLNN}}Damageは、ユーザーのATKとAGIに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "109": {
+      "name": "サウザンドアローズ",
+      "description": "ボウスキル 敵全員に3回攻撃。{{NWLNN}}DamageはユーザーのATKとAGIをベースにしています。",
+      "message1": "%1 を使って %2!"
+    },
+    "110": {
+      "name": "ヴァニッシュ",
+      "description": "5ターンの場合、ユーザーは攻撃される可能性が低くなります。",
+      "message1": "%1 を使って %2!"
+    },
+    "111": {
+      "name": "フレア",
+      "description": "すべての敵を盲目にする。",
+      "message1": "%1 を使って %2!"
+    },
+    "112": {
+      "name": "泥棒の運",
+      "description": "8ターンの場合、ユーザーにとってLUKを大幅にブーストします。",
+      "message1": "%1 を使って %2!"
+    },
+    "113": {
+      "name": "アサシン・エッジ",
+      "description": "ダガースキル 強い攻撃は1つの敵を2回襲います。{{NWLNN}}ダメージはユーザーのATKとLUKに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "114": {
+      "name": "ヴァリアントエッジ",
+      "description": "ダガースキル 強力な攻撃は4つのランダムな敵にヒットします。{{NWLNN}}DamageはユーザーのATKとLUKに基づいています。",
+      "message1": "%1 を使って %2!"
+    },
+    "115": {
+      "name": "霊の祝福",
+      "description": "3ターンの場合、パーティーのDFが増加します。",
+      "message1": "%1 を使って %2!"
+    },
+    "116": {
+      "name": "妖精の呼吸",
+      "description": "4ターンで、パーティーのHPを再生します。",
+      "message1": "%1 を使って %2!"
+    },
+    "117": {
+      "name": "神の意志",
+      "description": "すべての敵に対する聖なるダメージ。",
+      "message1": "%1 を使って %2!"
+    },
+    "118": {
+      "name": "女神の抱擁",
+      "description": "7ターンの場合、パーティー用のDEFとMDFを大幅に増やします。",
+      "message1": "%1 を使って %2!"
+    },
+    "119": {
+      "name": "マジックリフレクト",
+      "description": "1ターンは、敵の魔法の攻撃を反映します。",
+      "message1": "%1 を使って %2!"
+    },
+    "120": {
+      "name": "強化呪文",
+      "description": "5ターンの場合、ユーザーのMATを大幅に増やします。",
+      "message1": "%1 を使って %2!"
+    },
+    "121": {
+      "name": "悪夢",
+      "description": "すべての敵を眠りに置き、彼らのMDFを大幅に下げます。",
+      "message1": "%1 を使って %2!"
+    },
+    "122": {
+      "name": "マジック・トレント",
+      "description": "MaxMPの50%を回収。",
+      "message1": "%1 を使って %2!"
+    },
+    "123": {
+      "name": "マジックパルス",
+      "description": "4ターンの場合、ユーザーはMP regenを持っています。",
+      "message1": "%1 を使って %2!"
+    },
+    "124": {
+      "name": "呪文抵抗",
+      "description": "3ターンの間、ユーザーはすべての魔法の攻撃を回避します。",
+      "message1": "%1 を使って %2!"
+    },
+    "125": {
+      "name": "マナバリア",
+      "description": "5ターンのために、パーティーはステータスの病気に免疫があります。",
+      "message1": "%1 を使って %2!"
+    },
+    "126": {
+      "name": "ミスティック・スペル",
+      "description": "5ターンの場合、ユーザーの呪文のMPコストを削減します。",
+      "message1": "%1 を使って %2!"
+    },
+    "127": {
+      "name": "エミッター -----------------------------------",
+      "description": "ストレートショット。 基本的なバランスパターン",
+      "note": "<bhell:emitters: [101]>"
+    },
+    "128": {
+      "name": "ストレートショット",
+      "description": "ストレートショット。 基本的なバランスパターン",
+      "note": "<bhell:emitters: [101]>"
+    },
+    "129": {
+      "name": "ワイドスプレー",
+      "description": "広いスプレーパターン。 高い火率は、広い区域をカバーします。",
+      "note": "<bhell:emitters: [102]>"
+    },
+    "130": {
+      "name": "ヘルパードローン",
+      "description": "回転ヘルパードローン。 複雑な軌道パターン",
+      "note": "<bhell:emitters: [14, 15, 16, 17, 18, 19, 20, 21]>"
+    },
+    "131": {
+      "name": "ショットガンバースト",
+      "description": "ショットガンバーストパターン。 スローレート、ショットあたりの大規模なダメージ。",
+      "note": "<bhell:emitters: [22, 23, 24, 25, 26, 27]>"
+    },
+    "132": {
+      "name": "プローブシステム",
+      "description": "ホーミングプローブシステム。 自動ターゲティング",
+      "note": "<bhell:emitters: [28, 29, 30, 31, 32]>"
+    },
+    "133": {
+      "name": "爆弾 ---------------",
+      "description": "ストレートショット。 基本的なバランスパターン"
+    },
+    "134": {
+      "name": "水爆弾",
+      "description": "水中爆弾 敵の弾丸の画面をクリアします。",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"index\": 0, \"direction\": 2, \"frame\": 1, \"class\": \"BHell_Bomb_Water\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    },
+    "135": {
+      "name": "風爆弾",
+      "description": "風の要素爆弾 敵を押しのく。",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"index\": 0, \"direction\": 4, \"frame\": 1, \"class\": \"BHell_Bomb_Wind\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    },
+    "136": {
+      "name": "サンダーボム",
+      "description": "サンダー・エレメンタル・ボム 高速発射体",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"index\": 0, \"direction\": 4, \"frame\": 1, \"speed\": 9, \"class\": \"BHell_Bomb_Thunder\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    },
+    "137": {
+      "name": "氷の爆弾",
+      "description": "氷の元素爆弾 一時的に敵を凍る。",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"index\": 0, \"direction\": 4, \"icon\": \"IconSet\", \"icon_index\": 65, \"frame\": 1, \"class\": \"BHell_Bomb_Ice\", \"se\": {\"name\": \"Explosion2\", \"volume\": 100, \"pitch\": 100, \"p\""
+    },
+    "138": {
+      "name": "重力爆弾",
+      "description": "重力爆弾 敵と弾丸を中央に引っ張ります。",
+      "note": "<bhell:bomb: {\"sprite\": \"$Bullets\", \"index\": 0, \"direction\": 4, \"frame\": 1, \"class\": \"Bhell_Bomb_Gravity\", \"se\": {\"name\": \"Collapse4\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>"
+    }
+  }
+}

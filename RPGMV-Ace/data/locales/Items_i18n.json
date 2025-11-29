@@ -1,0 +1,224 @@
+{
+  "ar": {
+    "1": {
+      "name": "البودية",
+      "description": "يستعيد 500 حصان."
+    },
+    "2": {
+      "name": "هاي بtion",
+      "description": "يستعيد 2,500 حصان."
+    },
+    "3": {
+      "name": "البودية الكاملة",
+      "description": "استعادة كل HP."
+    },
+    "4": {
+      "name": "المياه السحرية",
+      "description": "يستعيد 200 ميجابكسل.."
+    },
+    "5": {
+      "name": "المنبهات",
+      "description": "يستعيد حليفه من الموت.."
+    },
+    "6": {
+      "name": "الترياق",
+      "description": "يعالج السم."
+    },
+    "7": {
+      "name": "تبديد عشب",
+      "description": "يعالج العديد من أمراض الحالة."
+    },
+    "8": {
+      "name": "اليكسير",
+      "description": "استعادة جميع HP و MP."
+    },
+    "9": {
+      "name": "الحياة حتى",
+      "description": "يزيد MaxHP بنسبة 50."
+    },
+    "10": {
+      "name": "مانا أب",
+      "description": "يزيد MaxHP بمقدار 10."
+    },
+    "11": {
+      "name": "الطاقة تصل",
+      "description": "يزيد ATK بنسبة 3."
+    },
+    "12": {
+      "name": "الحرس حتى",
+      "description": "يزيد DEF بنسبة 3."
+    },
+    "13": {
+      "name": "السحر حتى",
+      "description": "يزيد MAT بنسبة 3."
+    },
+    "14": {
+      "name": "مقاومة حتى",
+      "description": "يزيد MDF بنسبة 3."
+    },
+    "15": {
+      "name": "سرعة تصل",
+      "description": "يزيد AGI بنسبة 3."
+    },
+    "16": {
+      "name": "الحظ حتى",
+      "description": "يزيد LUK بنسبة 3."
+    },
+    "17": {
+      "name": "دانماكو ----------"
+    },
+    "18": {
+      "name": "تيمبس",
+      "description": "إطلاق العوام الطائرة في مراحل Bullet Hell",
+      "note": "<bhell_الفاعل:12>"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Jajak Pendapat",
+      "description": "Memulihkan 500 HP."
+    },
+    "2": {
+      "name": "Hi-Potion",
+      "description": "Memulihkan 2.500 HP."
+    },
+    "3": {
+      "name": "Ramong Penuh",
+      "description": "Memulihkan semua HP."
+    },
+    "4": {
+      "name": "Air Sihir",
+      "description": "Memulihkan 200 MP."
+    },
+    "5": {
+      "name": "Stimulan",
+      "description": "Memulihkan sekutu dari kematian."
+    },
+    "6": {
+      "name": "Penangkaan",
+      "description": "Memperlakukan racun."
+    },
+    "7": {
+      "name": "Menghilangkan Herb",
+      "description": "Memperlakukan banyak penyakit status."
+    },
+    "8": {
+      "name": "Elixir",
+      "description": "Mengembalikan semua HP dan MP."
+    },
+    "9": {
+      "name": "Kehidupan Up",
+      "description": "Meningkatkan MaxHP sebesar 50."
+    },
+    "10": {
+      "name": "Mana Up",
+      "description": "Meningkatkan MaxHP sebesar 10."
+    },
+    "11": {
+      "name": "Power Up",
+      "description": "Meningkatkan ATK dengan 3."
+    },
+    "12": {
+      "name": "Penjaga Ke Atas",
+      "description": "Meningkatkan DEF dengan 3."
+    },
+    "13": {
+      "name": "Sihir Up",
+      "description": "Meningkatkan MATI dengan 3."
+    },
+    "14": {
+      "name": "Menca ke Atas",
+      "description": "Meningkatkan MDF sebesar 3."
+    },
+    "15": {
+      "name": "Kecepatan Naik",
+      "description": "Meningkatkan AGI dengan 3."
+    },
+    "16": {
+      "name": "Keberuntungan",
+      "description": "Meningkatkan LUK sebesar 3."
+    },
+    "17": {
+      "name": "Danmaku -----------------"
+    },
+    "18": {
+      "name": "Tempest",
+      "description": "Membuka kunci pesawat Tempest di tahap Bullet Hell",
+      "note": "<bhell_aktor:12>"
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "ポーション",
+      "description": "500HPを回収。"
+    },
+    "2": {
+      "name": "ハイポション",
+      "description": "2,500 HPを回収。"
+    },
+    "3": {
+      "name": "フルポーション",
+      "description": "すべてのHPを回復します。"
+    },
+    "4": {
+      "name": "マジックウォーター",
+      "description": "200MPを回収。"
+    },
+    "5": {
+      "name": "覚醒剤",
+      "description": "死から同盟国を回復。"
+    },
+    "6": {
+      "name": "解毒剤",
+      "description": "毒を扱います。"
+    },
+    "7": {
+      "name": "ディスペルハーブ",
+      "description": "多くのステータスの病気を治療します。"
+    },
+    "8": {
+      "name": "エリクサー",
+      "description": "HPとMPをすべて復元します。"
+    },
+    "9": {
+      "name": "ライフアップ",
+      "description": "MaxHPを50に増やす。"
+    },
+    "10": {
+      "name": "マナアップ",
+      "description": "MaxHPを10に増やします。"
+    },
+    "11": {
+      "name": "パワーアップ",
+      "description": "ATKを3に増やす。"
+    },
+    "12": {
+      "name": "ガードアップ",
+      "description": "DEFを3に増やす。"
+    },
+    "13": {
+      "name": "マジックアップ",
+      "description": "MATを3に増やす。"
+    },
+    "14": {
+      "name": "レジストアップ",
+      "description": "MDFを3に増やす。"
+    },
+    "15": {
+      "name": "スピードアップ",
+      "description": "AGIが3に増加。"
+    },
+    "16": {
+      "name": "ラッキーアップ",
+      "description": "LUKを3に増やす。"
+    },
+    "17": {
+      "name": "ダンマク ---------------"
+    },
+    "18": {
+      "name": "テンペスト",
+      "description": "弾丸地獄の段階でテンペスト航空機のロックを解除する",
+      "note": "<bhell_actor:12>"
+    }
+  }
+}

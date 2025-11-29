@@ -1,0 +1,182 @@
+{
+  "ar": {
+    "1": {
+      "name": "هارولد",
+      "nickname": "ساحر مبارز",
+      "profile": "مبارز متجول يبحث عن سيده.\nهو الشخص الذي أتقن السيف السحري."
+    },
+    "2": {
+      "name": "تيريزا",
+      "nickname": "جولدن ريبر",
+      "profile": "محارب مخضرم قاتل في العديد من ساحات القتال. \nتصبح غير قابلة للسيطرة في المعركة عندما تكون ملتصق."
+    },
+    "3": {
+      "name": "مارشا",
+      "nickname": "ستار سير",
+      "profile": "النسقي الذي يتجنب السكان من خلال العيش في الجبال. إنها تبحث عن الهوية الحقيقية للنجم الشرير"
+    },
+    "4": {
+      "name": "لوسيوس",
+      "nickname": "منقذ يوحنا",
+      "profile": "رجل كان مصيره أن يصبح قديساً هو \n مليء بالعاطفة ويعطي حباً متساوياً للعدو."
+    },
+    "5": {
+      "name": "جاستن",
+      "nickname": "تجول بالادين",
+      "profile": "تم تجريده من وضعه. يتجول حول حماية \nالآخرين ويبقى وفياً لمدونة الشرف."
+    },
+    "6": {
+      "name": "آمي",
+      "nickname": "رياح بلا شكل",
+      "profile": "شبابها مرتبط بالكراهية إنها تتصرف مثل \nالتصدع بسبب حياتها."
+    },
+    "7": {
+      "name": "فيكتوريا",
+      "nickname": "الأخضر الداكن",
+      "profile": "فتاة ترعرع بها أرواح الغابات إنها تحب الطبيعة وتحمي الغابة من الاضطراب."
+    },
+    "8": {
+      "name": "آلان",
+      "nickname": "كابوس رشيق",
+      "profile": "مشعوذ يسلم الخوف للبشرية ولكن من خلال a\nالفشل التناسخ ، فقد ذاكرته."
+    },
+    "9": {
+      "name": "سيرينا",
+      "nickname": "قبضة الرعد",
+      "profile": "والدها قاتل رئيسي. في جميع أنحاء الشباب لها \n، وقالت انها تتقن تقنيات القتال."
+    },
+    "10": {
+      "name": "كاييناكس",
+      "nickname": "حافة الفجر",
+      "profile": "وهو المالك الحالي لشفرة تاكيشي. له \nالسيارات هي السوائل والحادة مثل السكين."
+    },
+    "11": {
+      "name": "دانماكو ----------"
+    },
+    "12": {
+      "name": "تيمبس",
+      "profile": "طيار طائرة مقاتلة. سلاح وقنبلة من المهارات Unlocked بواسطة عنصر طائرة مقاتلة.",
+      "note": "<bhkell:hitch_w: w/2>\n<bhhell:h: h/2>\n<bhhell:select_se: {\"الاسم\": \"Sound1\", \"الحجم\": 100, \"pitch\": 100, \"pan\": 0}>\n<bhhll:spawn_se: {\"الاسم\": \"الاسم\": \"القطرة\", \"المجلد\": 100, \"الحجم\": 100, \"الحجم\"\": 100، \"pan\": 0}>\n<bhell:death_se: {\"الاسم\": \"الذئاب\"، \"الحجم\": 100، \"النبرة\": 100، \"بان\": 0}>\n"
+    }
+  },
+  "id": {
+    "1": {
+      "name": "Harold",
+      "nickname": "Pendekar Sihir",
+      "profile": "Seorang pendekar pedang yang mengembara mencari tuannya.\nHe adalah orang yang telah menguasai Magic Sword."
+    },
+    "2": {
+      "name": "Therese",
+      "nickname": "Reaper Emas",
+      "profile": "Seorang prajurit veteran yang bertempur di banyak medan perang.\nDia menjadi tak terkendali dalam pertempuran ketika mengamuk."
+    },
+    "3": {
+      "name": "Marsha",
+      "nickname": "Seer Bintang",
+      "profile": "Seorang pertapa yang menghindari penduduk dengan tinggal di the\nmountins. Dia mencari identitas sejati dari bintang jahat."
+    },
+    "4": {
+      "name": "Lucius",
+      "nickname": "Penyepor dari John",
+      "profile": "Seorang pria yang takdirnya adalah menjadi orang suci. He\n penuh gairah dan memberikan cinta yang sama kepada musuh."
+    },
+    "5": {
+      "name": "Yustinus",
+      "nickname": "Wandering Paladin",
+      "profile": "Dilucuti dari statusnya. Dia mengembara di sekitar melindungi\n orang lain dan tetap setia pada kode kehormatannya."
+    },
+    "6": {
+      "name": "amy",
+      "nickname": "Angin Tak Berbentuk",
+      "profile": "Masa mudanya terikat oleh kebencian. Dia bertindak seperti \n perbuatan-perbuatan menurut hidupnya."
+    },
+    "7": {
+      "name": "Victoria",
+      "nickname": "Pertujuan Hijau Gelap",
+      "profile": "Seorang gadis yang dibesarkan oleh roh-roh hutan. Dia mencintai \n alam dan melindungi hutan dari gangguan."
+    },
+    "8": {
+      "name": "Alan",
+      "nickname": "Mimpi Buruk Rahmat",
+      "profile": "Seorang penyihir yang menyampaikan ketakutan kepada umat manusia. Tetapi melalui a\n reinkarnasi yang gagal, ia telah kehilangan ingatannya."
+    },
+    "9": {
+      "name": "Sirena",
+      "nickname": "Guntur Fist",
+      "profile": "Ayahnya adalah seorang pembunuh utama. Sepanjang her\nyouth, dia menguasai teknik bertarung."
+    },
+    "10": {
+      "name": "Cainax",
+      "nickname": "Keunggulan Fajar",
+      "profile": "Dia adalah pemilik pisau Takeshi saat ini. Penggeraknya yang nya\n cair dan tajam seperti pisau."
+    },
+    "11": {
+      "name": "Danmaku -----------------"
+    },
+    "12": {
+      "name": "Tempest",
+      "profile": "Pilot jet tempur. Senjata dan bom dari keterampilan. Dibuka oleh item Fighter Jet.",
+      "note": "<bhell:hitbox_w: w/2>{\n<bhell:hitbox_h: h/2>\n<bhell:select_se: {\"name\": \"Sound1\", \"volume\": 100, \"pitch\": \"pan\": 0}}\n<bhell:spawn_se: {\"name\": \"Cat\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}}>\n<bhell: death_se: {\"name\": \"Wolf\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}>\n"
+    }
+  },
+  "jp": {
+    "1": {
+      "name": "ハロルド",
+      "nickname": "マジック・ソーズマン",
+      "profile": "主人を探している放浪の剣士。\n彼は魔法の剣をマスターした人です。"
+    },
+    "2": {
+      "name": "テレーズ",
+      "nickname": "ゴールデンリーパー",
+      "profile": "多くの戦場で戦ったベテラン戦士。\n彼女はベルセルクで戦闘で制御不能になる。"
+    },
+    "3": {
+      "name": "マーシャ",
+      "nickname": "スター・シーラー",
+      "profile": "\n山に住むことによって大衆を避ける隠者。 彼女は邪悪な星の正体を求める。"
+    },
+    "4": {
+      "name": "ルキウス",
+      "nickname": "ジョンの救世主",
+      "profile": "聖人になる運命の人。 He\nは情熱に満ちており、敵に平等な愛を与えます。"
+    },
+    "5": {
+      "name": "ジャスティン",
+      "nickname": "ワンダリング・パラディン",
+      "profile": "地位を剥奪された。 彼は他者保護を歩き回り、彼の名誉の規範に忠実であり続けます。"
+    },
+    "6": {
+      "name": "エイミー",
+      "nickname": "フォルムレスな風",
+      "profile": "若さは憎しみに縛られている。 彼女は彼女の人生のために\nwise-crackのように行動します。"
+    },
+    "7": {
+      "name": "ヴィクトリア",
+      "nickname": "ダークグリーンエイム",
+      "profile": "森の精霊に育てられた少女。 彼女は自然を愛し、混乱から森を守ります。"
+    },
+    "8": {
+      "name": "アラン",
+      "nickname": "優美な悪夢",
+      "profile": "人類に恐怖を届けたウォーロック しかし、生まれ変わりの失敗によって a\n 、彼は記憶を失いました。"
+    },
+    "9": {
+      "name": "シレナ",
+      "nickname": "サンダー・フィスト",
+      "profile": "父親はマスター・アサシン。 彼女の\nyouthを通して、彼女は戦いのテクニックを習得しました。"
+    },
+    "10": {
+      "name": "カイナックス",
+      "nickname": "夜明けのエッジ",
+      "profile": "武志の刃物の現オーナーである。 彼の\n動きは、ナイフのように流動的で鋭いです。"
+    },
+    "11": {
+      "name": "ダンマク ---------------"
+    },
+    "12": {
+      "name": "テンペスト",
+      "profile": "戦闘機パイロット。 武器と爆弾をスキルから ファイタージェットアイテムでアンロック。",
+      "note": "<bhell:hitbox_w: w/2>\n<bhell:hitbox_h: h/2>\n<bhell:select_se: {\"name\": \"Sound1\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}>\n<bhell:spawn_se: {\"name\": \"cat\", \"p\"LLN}}<bhell:death_se: {\"name\": \"Wolf\", \"volume\": 100, \"pitch\": 100, \"pan\": 0}>\n"
+    }
+  }
+}

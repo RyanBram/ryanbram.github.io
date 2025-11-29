@@ -1,0 +1,5 @@
+Stright = Stinger
+Wide = Tempest
+Helpers = Gemini
+Shotgun = Pulverizer
+Probes = Maverick

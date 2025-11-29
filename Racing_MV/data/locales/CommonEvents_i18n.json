@@ -1,0 +1,19 @@
+{
+  "en": {
+    "1": {
+      "name": "Two straight-line courses (no competition)"
+    },
+    "2": {
+      "name": "Two straight-line courses (with competition)"
+    },
+    "3": {
+      "name": "Five-headed general course (no obstacles)"
+    },
+    "4": {
+      "name": "Eight-head general course (with obstacles)"
+    },
+    "5": {
+      "name": "Tutorial course (with help)"
+    }
+  }
+}

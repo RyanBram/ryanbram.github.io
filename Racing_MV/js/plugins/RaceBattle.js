@@ -207,7 +207,7 @@
  */
 
 /*:ja
- * @plugindesc レースバトル
+ * @plugindesc Race Battle
  * @author Keiji Agusa
  *
  * @requiredAssets img/racebattle/character/chara1-4_jump
@@ -639,89 +639,89 @@ var SkillHelpHeight = 320;
 var _raceStartCount = 0;
 
 var IntermediateTopGroupCommentList = [
-	//1～5は、２頭レースの場合用に３位以下の表記をしない事
-	"%1o安定した走り。",
-	"%1o依然として１位をキープ。",
-	"先頭争いは%1oと%2o！",
-	"%2oは%1oを捉えられるか！？",
-	"%1o先頭\nその後ろから%2oが追っています！",
+	//1～5 are for two-horse races, so do not display below 3rd place
+	"%1o maintains a steady pace.",
+	"%1o is still holding the lead.",
+	"The battle for the lead is between %1o and %2o!",
+	"Can %2o catch up to %1o?",
+	"%1o is in the lead\n%2o is chasing from behind!",
 	//
-	"1番手%1o\n2番手%2o\n次いで%3o。",
-	"%2o追い上げます！\n%3oもいい走り！",
-	"%4oと%5oもいい走りをみせております！",
-	"%mも先頭グループの中にいます！",
-	"%m懸命な走りをみせております！",
+	"1st place %1o\n2nd place %2o\nFollowed by %3o.",
+	"%2o is closing in!\n%3o is also running well!",
+	"%4o and %5o are also showing good performance!",
+	"%m is among the leading group!",
+	"%m is showing a determined run!",
 ];
 var IntermediateFollowingGroupCommentList = [
-	//1～5は、２頭レースの場合用に３位以下の表記をしない事
-	"%1o安定した走り。",
-	"%1o依然として１位をキープ。",
-	"先頭争いは%1oと%2o！",
-	"%2oは%1oを捉えられるか！？",
-	"%1o先頭\nその後ろから%2oが追っています！",
+	//1～5 are for two-horse races, so do not display below 3rd place
+	"%1o maintains a steady pace.",
+	"%1o is still holding the lead.",
+	"The battle for the lead is between %1o and %2o!",
+	"Can %2o catch up to %1o?",
+	"%1o is in the lead\n%2o is chasing from behind!",
 	//
-	"1番手%1o\n2番手%2o\n次いで%3o。",
-	"%2o追い上げます\n%3oもいい走り！",
-	"%4oと%5oもいい走りをみせております！",
-	"%mは先頭グループに懸命に割り込もうとしてます！",
-	"%mは先頭グループに割り込めるか！？",
+	"1st place %1o\n2nd place %2o\nFollowed by %3o.",
+	"%2o is closing in\n%3o is also running well!",
+	"%4o and %5o are also showing good performance!",
+	"%m is trying hard to break into the leading group!",
+	"Can %m break into the leading group?",
 ];
 var _intermediateLiveCommentIndex = 0;
 var StartLiveCommentList = [
-	"各馬一斉ににスタートしました。",
-	"揃ってスタートしました。",
-	"まずまずのスタートです。",
-	"おっと%d出遅れた。"
+	"All horses have started simultaneously.",
+	"A synchronized start.",
+	"A decent start.",
+	"Oh no, %d is off to a slow start."
 ];
 var _startLiveCommentIndex = 0;
 var _lastSpurtLiveCommentIndex = 0;
 var _lastSpurtMyCharaInTopGroup = 0;
-//ラストスパート：スタート
+//Last spurt: Start
 var LastSpurtStartCommentList = [
-	"各馬一斉に駆け出しました！",
-	"最終コーナー抜けて最後の直線です！"
+	"All horses are dashing out at once!",
+	"Out of the final corner and into the last stretch!"
 ];
-//ラストスパート：区間A
+//Last spurt: Segment A
 var LastSpurtSegmentA_TopGroupCommentList = [
-	"%m速い！抜けきります！",
-	"うなる%m！速い！速い！！",
-	"%m逃げる！逃げ切れるか！"
+	"%m is fast! Breaking away!",
+	"%m is roaring! Fast! So fast!!",
+	"%m is escaping! Can they hold on?"
 ];
 var LastSpurtSegmentA_FollowingGroupCommentList = [
-	"逃げる！%1o逃げる！",
-	"%1o逃げ切る！逃げ切ります！",
-	"%1o粘る！このままゴールか！？"
+	"Escaping! %1o is escaping!",
+	"%1o is holding on! Can they make it to the finish?",
+	"%1o is persistent! Will they reach the goal like this?"
 ];
-//ラストスパート：区間B
+//Last spurt: Segment B
 var LastSpurtSegmentB_TopGroupCommentList = [
-	"%m抜け出した！",
-	"%mきている！",
-	"%m強い！のびてきます！"
+	"%m has broken away!",
+	"%m is coming!",
+	"%m is strong! They're stretching out!"
 ];
 var LastSpurtSegmentB_FollowingGroupCommentList = [
-	"トップは%1o！2番手は%2o！",
-	"リードは依然%1o！",
-	"先頭をいく%1o！"
+	"The leader is %1o! 2nd place is %2o!",
+	"The lead is still with %1o!",
+	"%1o is leading the way!"
 ];
-//ラストスパート：区間C
+//Last spurt: Segment C
 var LastSpurtSegmentC_TopGroupCommentList = [
-	"さあ%m抜け出しにかかります！",
-	"ここで注目するのは%m！",
-	"いいペースです%m！"
+	"Now %m is making their move!",
+	"The one to watch here is %m!",
+	"A good pace from %m!"
 ];
 var LastSpurtSegmentC_FollowingGroupCommentList = [
-	"さあここで抜け出すのはどの馬か！",
-	"先頭は%1oに入れ替わった！",
-	"%1oがきている！"
+	"Now, which horse will break away here!",
+	"The lead has changed to %1o!",
+	"%1o is coming up!"
 ];
-//ラストスパート：ゴール
+//Last spurt: Goal
 var WinGoalCommentList = [
-	"やりました！%m先頭でゴールです！",
-	"%m今颯爽とゴールしました！" //イベント時はこちらを使用で固定		
+	"They did it! %m crosses the finish line first!",
+	"%m has just gallantly crossed the finish line!" //Use this for events
 ];
 var LoseGoalCommentList = [
-	"%1o先頭でゴールです！",
-	"%1oゴーーーール！" //イベント時はこちらを使用で固定		
+	"%1o crosses the finish line first!",
+	"%1o gooooooal!" //Use this for events
 ];
 
 //-----------------------------------------------------------------------------

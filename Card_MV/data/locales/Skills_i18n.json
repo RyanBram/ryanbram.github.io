@@ -1,0 +1,1384 @@
+{
+  "en": {
+    "1": {
+      "name": "Attack",
+      "message1": "The attack!",
+      "note": "Skill number one is used when the Attack command is selected."
+    },
+    "2": {
+      "name": "Defensive",
+      "message1": "They are protecting themselves.",
+      "note": "Skill number two is used when the \n is selected for the Defend command."
+    },
+    "3": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "4": {
+      "name": "Parry",
+      "description": "The raritude ignores the attack of the Uncommon opponent.\n Number of activations: 1",
+      "note": "<cardEffect:6,0>\n<cardRules:6,1>\n<cardRepeats:1>"
+    },
+    "5": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "6": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "7": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "8": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "9": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "10": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "11": {
+      "name": "Counterattacking sparks",
+      "description": "2-damage attack on an odd-numbered HP opponent.\n Activated: 2",
+      "note": "<cardEffect:17,2>\n<cardRules:11,1 2,2>\n<cardRepeats:1>"
+    },
+    "12": {
+      "name": "Enchant Sanders",
+      "description": "When the opponent is 3rd, the attack power is increased by 1.\n Number of activations: 1",
+      "note": "<cardEffect:8,1>\n<cardRules:7,2 1,0>\n<cardRepeats:1>"
+    },
+    "13": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "14": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "15": {
+      "name": "Stoneskin",
+      "description": "Damages received from [Attack Type] - 1\n activations: 2",
+      "note": "<cardEffect:3,-1>\n<cardRules:4,0>\n<cardRepeats:2>"
+    },
+    "16": {
+      "name": "Samon Familia",
+      "description": "When your HP is less than 5, your attack power increases by 1.\n Number of activations: 1",
+      "note": "<cardEffect:8,1>\n<cardRules:21,5>\n<cardRepeats:1>"
+    },
+    "17": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "18": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "19": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "20": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "21": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "22": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "23": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "24": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "25": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "26": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "27": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "28": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "29": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "30": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "31": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "32": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "33": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "34": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "35": {
+      "name": "Cupid of Love",
+      "description": "All types of bonuses since then disabled \n activations: 1",
+      "note": "<cardEffect:25,0>\n<cardRules:1,0>\n<cardRepeats:1>"
+    },
+    "36": {
+      "name": "Multi-shot",
+      "description": "Damage to [Legend] + 2\n activations: 2",
+      "note": "<cardEffect:1,2>\n<cardRules:6,3>\n<cardRepeats:2>"
+    },
+    "37": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "38": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "39": {
+      "name": "Blood-sucking",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "40": {
+      "name": "Echo Location",
+      "description": "The raritude ignores the attack of the Uncommon opponent.\n Number of activations: 1",
+      "note": "<cardEffect:6,0>\n<cardRules:6,1>\n<cardRepeats:1>"
+    },
+    "41": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "42": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "43": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "44": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "45": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "46": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "47": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "48": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "49": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "50": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "51": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "52": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "53": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "54": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "55": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "56": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "57": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "58": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "59": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "60": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "61": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "62": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "63": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "64": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "65": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "66": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "67": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "68": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "69": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "70": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "71": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "72": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "73": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "74": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "75": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "76": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "77": {
+      "name": "Teamwork",
+      "description": "[Deck type] Damage to be dealt by unified + 2\n activations: 2",
+      "note": "<cardEffect:1,2>\n<cardRules:31,0>\n<cardRepeats:2>"
+    },
+    "78": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "79": {
+      "name": "Leadership",
+      "description": "[Deck Attributes] Damage to Unification + 2\n Activated: 2",
+      "note": "<cardEffect:1,2>\n<cardRules:32,0>\n<cardRepeats:2>"
+    },
+    "80": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "81": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "82": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "83": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "84": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "85": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "86": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "87": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "88": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "89": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "90": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "91": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "92": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "93": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "94": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "95": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "96": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "97": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "98": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "99": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "100": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "101": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "102": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "103": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "104": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "105": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "106": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "107": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "108": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "109": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "110": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "111": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "112": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "113": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "114": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "115": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "116": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "117": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "118": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "119": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "120": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "121": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "122": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "123": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "124": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "125": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "126": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "127": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "128": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "129": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "130": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "131": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "132": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "133": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "134": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "135": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "136": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "137": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "138": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "139": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "140": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "141": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "142": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "143": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "144": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "145": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "146": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "147": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "148": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "149": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "150": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "151": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "152": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "153": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "154": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "155": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "156": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "157": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "158": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "159": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "160": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "161": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "162": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "163": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "164": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "165": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "166": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "167": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "168": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "169": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "170": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "171": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "172": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "173": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "174": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "175": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "176": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "177": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "178": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "179": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "180": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "181": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "182": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "183": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "184": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "185": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "186": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "187": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "188": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "189": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "190": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "191": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "192": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "193": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "194": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "195": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "196": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "197": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "198": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "199": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "200": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "201": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "202": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "203": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "204": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "205": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "206": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "207": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "208": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "209": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "210": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "211": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "212": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "213": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "214": {
+      "name": "Bash",
+      "description": "Double the damage to the third turn.\n Number of activations: 1",
+      "note": "<cardEffect:2,0>\n<cardRules:3,3>\n<cardRepeats:1>"
+    },
+    "303": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "304": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "305": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "306": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "307": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "308": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "309": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "310": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "311": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "312": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "313": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "314": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "315": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "316": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "317": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "318": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "319": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "320": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "321": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "322": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "323": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "324": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "325": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "326": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "327": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "328": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "329": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "330": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "331": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "332": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "333": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "334": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "335": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "336": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "337": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "338": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "339": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "340": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "341": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "342": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "343": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "344": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "345": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "346": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "347": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "348": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "349": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "350": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "351": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "352": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "353": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "354": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "355": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "356": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "357": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "358": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "359": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "360": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "361": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "362": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "363": {
+      "name": "Blessings of fruit.",
+      "description": "1 recovery of your HP when attacked.\n Number of activations: 5",
+      "note": "<cardEffect:7,1>\n<cardRules:1,2>\n<cardRepeats:5>"
+    },
+    "364": {
+      "name": "芳 わわわわわ",
+      "description": "Disabling the inheritance skill of the opponent when your HP is 10.\n activation number: 1",
+      "note": "<cardEffect:5,0>\n<cardRules:22,10 1,0>\n<cardRepeats:1>"
+    }
+  }
+}

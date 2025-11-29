@@ -29,7 +29,7 @@
     // Set to true to block mouse/touch input to game when virtual gamepad is active
     // Set to false to allow both virtual gamepad and gamepad input simultaneously
     const BLOCK_GAME_INPUT_WHEN_GAMEPAD_ACTIVE = true;
-    const GAME_PATH = "./index.html";
+    const GAME_PATH = "./game.html";
     const COVER_IMAGE_FORMATS = ["cover.png", "cover.jpg", "cover.jpeg", "cover.webp", "cover.gif"];
 
     // --- Constants ---
